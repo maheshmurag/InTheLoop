@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>In The Loop - Options</title>
+	<style>
+		body: {
+			padding: 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<label>
+		Select a Theme:
+		<select id="theme_select">
+		</select>
+	</label>
+
+	<div id="theme_colors" style="padding: 10px; margin: 10px; border: 1px solid #555555">
+
+		<label>
+			Primary Color
+			<input type="text" id="color_primary">
+		</label>
+		<label>
+			Accent Color
+			<input type="text" id="color_accent">
+		</label>
+		<label>
+			Background Color
+			<input type="text" id="color_background">
+		</label>
+		<label>
+			Content Background Color
+			<input type="text" id="color_background_content">
+		</label>
+		<label>
+			Text Color
+			<input type="text" id="color_text">
+		</label>
+		<button id="save">Save</button>
+		<div id="status"></div>
+	</div>
+
+	<script src="options.js"></script>
+</body>
+
+</html>
