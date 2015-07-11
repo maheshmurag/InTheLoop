@@ -34,8 +34,8 @@ chrome.extension.sendMessage({}, function (response) {
             });
             //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             $(".hub_general > .general_body > tr").each(function (i, tr) {
-                var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"#\" class = \"del\" id = \"del"+i+"\">X<\a>]");
-                console.log("parsing this asst: class = \"del\" id = \"del"+i+"\"");
+                var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"#\" class = \"del\" id = \"del" + i + "\">X<\a>]");
+                console.log("parsing this asst: class = \"del\" id = \"del" + i + "\"");
 
 
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
@@ -58,18 +58,54 @@ chrome.extension.sendMessage({}, function (response) {
             });
 
             $(".del").click(delRow);
-            function delRow(event){
-                alert("you clicked delete on "+event.target.id);
+
+            function delRow(event) {
+                alert("you clicked delete on " + event.target.id);
                 var id = event.target.id;
-                $(".hub_general > .general_body > tr:eq("+id+")").remove();
+                $(".hub_general > .general_body > tr:eq(" + id + ")").remove();
+            }
+
+            function setCategoryPercentage(index, newScore, animate) {
+                if (!animate) {
+                    $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
+                }
+                else{
+                    var origElement = $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
+                    var origScore = origElement.text()+"";
+                    origScore = Number(origScore.substring(0,origScore.indexOf("%")));
+                    jQuery({val: origScore}).animate({val: newScore}, {
+                        duration: 500,
+                        easing:'swing',
+                        step: function() {
+                            origElement.text(Math.ceil(this.val) + "%");
+                        }
+                    });
+                }
+            }
+
+            function setOverallPercentage(value, animate){
+                if(animate)
+                {
+                    var origElement = $("b:nth-of-type(2)");
+                    var origScore = origElement.text()+"";
+                    origScore = Number(origScore.substring(0,origScore.indexOf("%")));
+                    jQuery({val: origScore}).animate({val: value}, {
+                        duration: 500,
+                        easing:'swing',
+                        step: function() {
+                            origElement.text(this.val.toFixed(2) + "%");
+                        }
+                    });
+                }
+                else{
+                    $("b:nth-of-type(2)").text("" + value + "%");
+                }
             }
 
             function insertTopRow() { //called on switch click
                 var param = false;
                 if ($("#myonoffswitch").is(":checked"))
                     param = true;
-
-                console.log("starting parse");
 
                 $test = $('<tr id="inserted"><td class="inserted_two" colspan="5">Category: <select id="categoryDropdown"></select>Assignment:<input type="text" id="aName">&nbsp;Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen">&nbsp;&nbsp;&nbsp;Category:/<a id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></tr>').hide(); //initializes the top row element
 
@@ -101,8 +137,11 @@ chrome.extension.sendMessage({}, function (response) {
 
                         var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2))
 
-                        $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (assignmentCategoryIndex + 2) + ") td:nth-child(3)").text(newCatScore + "%");
+                        setCategoryPercentage(assignmentCategoryIndex, newCatScore, true);
+
+                        //$("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (assignmentCategoryIndex + 2) + ") td:nth-child(3)").text(newCatScore + "%");
                         //                        console.log(categories[assignmentCategoryIndex].pointsD);
+
                         var sum = 0,
                             totalWeight = 0;
                         for (var i = 0; i < categories.length; i++) {
@@ -111,7 +150,11 @@ chrome.extension.sendMessage({}, function (response) {
                             console.log(categories[1].score + ":" + categories[i].percentage + ":" + sum)
                         }
                         sum = sum / totalWeight * 100;
-                        $("b:nth-of-type(2)").text("" + sum.toFixed(2) + "%");
+                        sum = sum.toFixed(2);
+
+//                        $("b:nth-of-type(2)").text("" + sum.toFixed(2) + "%");
+                        setOverallPercentage(sum, true)
+
                         var date = new Date();
                         var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
 
@@ -120,9 +163,7 @@ chrome.extension.sendMessage({}, function (response) {
                         //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                         var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
 
-                        $newRow = $("<tr class='"+isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + assignmentName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + assignmentPointN + "</div>" + assignmentPointN + " / " + assignmentPointD + " = " + assignmentCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
-
-
+                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + assignmentName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + assignmentPointN + "</div>" + assignmentPointN + " / " + assignmentPointD + " = " + assignmentCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
 
                         $("#inserted").after($newRow);
                         return false;
