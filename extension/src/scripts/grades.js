@@ -37,7 +37,6 @@ chrome.extension.sendMessage({}, function (response) {
                 var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"#\" class = \"del\" id = \"del" + i + "\">X<\a>]");
                 console.log("parsing this asst: class = \"del\" id = \"del" + i + "\"");
 
-
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
@@ -47,7 +46,6 @@ chrome.extension.sendMessage({}, function (response) {
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
                 }).text().trim();
-                //console.log(cName);
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
@@ -135,12 +133,8 @@ chrome.extension.sendMessage({}, function (response) {
                         categories[assignmentCategoryIndex].pointsD += assignmentPointD;
                         categories[assignmentCategoryIndex].score = (categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD);
 
-                        var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2))
-
+                        var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2));
                         setCategoryPercentage(assignmentCategoryIndex, newCatScore, true);
-
-                        //$("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (assignmentCategoryIndex + 2) + ") td:nth-child(3)").text(newCatScore + "%");
-                        //                        console.log(categories[assignmentCategoryIndex].pointsD);
 
                         var sum = 0,
                             totalWeight = 0;
@@ -152,13 +146,10 @@ chrome.extension.sendMessage({}, function (response) {
                         sum = sum / totalWeight * 100;
                         sum = sum.toFixed(2);
 
-//                        $("b:nth-of-type(2)").text("" + sum.toFixed(2) + "%");
                         setOverallPercentage(sum, true)
 
                         var date = new Date();
                         var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
-
-                        //console.log(assignmentCategory+":"+assignmentName+":"+assignmentPointN+":"+assignmentPointD);
 
                         //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                         var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
