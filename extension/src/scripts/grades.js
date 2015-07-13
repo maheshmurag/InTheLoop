@@ -31,6 +31,7 @@ chrome.extension.sendMessage({}, function (response) {
             //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             $(".hub_general > .general_body > tr").each(function (i, tr) {
                 var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"#\" class = \"del\" id = \"del" + (i+1) + "\">X<\a>]");
+
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
@@ -41,9 +42,10 @@ chrome.extension.sendMessage({}, function (response) {
                     return this.nodeType == 3;
                 }).text().trim();
                 
-                categories[cName].pointsN += pointN;
-                categories[cName].pointsD += pointD;
-                
+//                categories[cName+""].pointsN = 0;
+//                categories[cName+""].pointsD = 0;
+//                categories[cName+""].pointsN += pointN;
+//                categories[cName+""].pointsD += pointD;
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
@@ -136,12 +138,10 @@ chrome.extension.sendMessage({}, function (response) {
                         categories[assignmentCategoryIndex].pointsN += assignmentPointN;
                         categories[assignmentCategoryIndex].pointsD += assignmentPointD;
                         categories[assignmentCategoryIndex].score = (categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD);
+//                        categories[categoryName].pointsN += assignmentPointN;
+//                        categories[categoryName].pointsD += assignmentPointD;
                         
-                        categories[categoryName].pointsN += assignmentPointN;
-                        categories[categoryName].pointsD += assignmentPointD;
-                        
-                        var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2))
-
+                        var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2));
                         setCategoryPercentage(assignmentCategoryIndex, newCatScore, true);
 
                         var sum = 0,
