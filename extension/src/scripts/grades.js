@@ -11,7 +11,7 @@ chrome.extension.sendMessage({}, function (response) {
             $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
             var overallP = $("b:nth-of-type(2)").text() + "";
-            //            var categories2 = {};//associative array
+
             $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
                 if (i != 0) {
                     var catName = $("td:nth-child(1)", tr).text(),
@@ -27,7 +27,6 @@ chrome.extension.sendMessage({}, function (response) {
                         pointsN: 0,
                         pointsD: 0
                     };
-                    //                    categories2[catName] = tmp;
                     categories.push(tmp);
                 }
             });
@@ -229,7 +228,7 @@ chrome.extension.sendMessage({}, function (response) {
                 if ($("#myonoffswitch").is(":checked"))
                     param = true;
 
-                $test = $('<tr id="inserted"><td class="inserted_two" colspan="5">Category: <select id="categoryDropdown"></select>Assignment:<input type="text" id="aName">&nbsp;Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen">&nbsp;&nbsp;&nbsp;Category:/<a id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></tr>').hide(); //initializes the top row element
+                $test = $('<tr id="inserted"><td class="inserted_two" colspan="5">Category: <select id="categoryDropdown"></select>Assignment:<input type="text" id="aName">&nbsp;Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen">&nbsp;&nbsp;&nbsp;<a id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></tr>').hide(); //initializes the top row element
 
                 if (param) {
                     $test.show('slow'); //adds the top row element
