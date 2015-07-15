@@ -10,8 +10,8 @@ chrome.extension.sendMessage({}, function (response) {
             $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
             $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
-            var overallP= $("b:nth-of-type(2)").text() + "";
-//            var categories2 = {};//associative array
+            var overallP = $("b:nth-of-type(2)").text() + "";
+            //            var categories2 = {};//associative array
             $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
                 if (i != 0) {
                     var catName = $("td:nth-child(1)", tr).text(),
@@ -27,11 +27,34 @@ chrome.extension.sendMessage({}, function (response) {
                         pointsN: 0,
                         pointsD: 0
                     };
-//                    categories2[catName] = tmp;
+                    //                    categories2[catName] = tmp;
                     categories.push(tmp);
                 }
             });
-//            console.log("logging line 33: " + JSON.stringify(categories2));
+
+            var scoresToLetters = [];
+            var a1, lttr,pcntg;
+            $('h2:contains("Scale") + div * tr').each(function (i, tr){
+                $("td",tr).each(function (){
+                    a1 = $(this).text();
+                    lttr = a1.substring(0, a1.indexOf("=")).trim();
+                    pcntg = Number(a1.substring(a1.indexOf("=")+1,a1.indexOf("%")).trim());
+                    var pair = {
+                        letter: lttr,
+                        percent: pcntg
+                    }
+                    scoresToLetters.push(pair);
+                });
+            });
+            function compare(a,b) {
+                if (a.percent > b.percent)
+                    return -1;
+                if (a.percent < b.percent)
+                    return 1;
+                return 0;
+            }
+            scoresToLetters.sort(compare);
+
             //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             $(".hub_general > .general_body > tr").each(function (i, tr) {
                 var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X<\a>]");
@@ -44,14 +67,8 @@ chrome.extension.sendMessage({}, function (response) {
 
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[","").trim();
+                }).text().trim().replace("[", "").trim();
 
-//                console.log("logging line 51: '" + cName)//JSON.stringify(categories2[cName]));
-//                if(categories2.hasOwnProperty(cName))
-//                {
-//                    categories2[cName]["pointsN"] += pointN;
-//                    categories2[cName]["pointsD"] += pointD;
-//                }
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
@@ -60,35 +77,41 @@ chrome.extension.sendMessage({}, function (response) {
                     categories[elementPos].pointsD += pointD;
                 }
             });
+
             $(".del").click(delRow);
 
             function delRow(event) {
                 var id = event.target.id;
-                var cName = $("#"+id).parent().contents().filter(function () {
+                var cName = $("#" + id).parent().contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[","").trim();
+                }).text().trim().replace("[", "").trim();
 
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
 
-                var tr = $("#"+id).parent().parent().parent()
+                var tr = $("#" + id).parent().parent().parent()
 
                 var pointN = tr.find("td:nth-child(4)", tr).contents().filter(function () {
-                    return this.nodeType == 3;
-                }).text().replace(/\s/g, ""),
+                        return this.nodeType == 3;
+                    }).text().replace(/\s/g, ""),
                     pointD = Number(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
                     pointN = Number(pointN.substring(0, pointN.indexOf("/")));
-//                console.log("logging line 83: " + JSON.stringify(categories))
-//                console.log("logging line 84: " + elementPos)
                 console.log("-----------------------------------------------------------")
                 console.log("old overall %:" + overallP)
                 console.log("old cat score: " + categories[elementPos].pointsN + "/" + categories[elementPos].pointsD + " = " + categories[elementPos].score)
                 categories[elementPos].pointsN -= pointN;
                 categories[elementPos].pointsD -= pointD;
-                categories[elementPos].score = categories[elementPos].pointsN/categories[elementPos].pointsD;
-//                var x = Number((Math.round(((categories[elementPos].pointsN) / (categories[elementPos].pointsD) * 100) * 100) / 100).toFixed(2));
-                setCategoryPercentage(elementPos, categories[elementPos].score*100, true)
+                if (categories[elementPos].pointsD == 0) {
+                    //handle if denom is 0
+                    //need to remove category % from the considered categories
+
+                    categories[elementPos].score = "-";
+                    setCategoryPercentageStr(elementPos, categories[elementPos].score)
+                } else {
+                    categories[elementPos].score = categories[elementPos].pointsN / categories[elementPos].pointsD;
+                    setCategoryPercentage(elementPos, categories[elementPos].score * 100, true)
+                }
                 recalculateOverallPercentage();
                 console.log("removing asst: " + pointN + "/" + pointD)
                 console.log("new cat score: " + categories[elementPos].pointsN + "/" + categories[elementPos].pointsD + " = " + categories[elementPos].score)
@@ -99,6 +122,11 @@ chrome.extension.sendMessage({}, function (response) {
 
 
                 $("#" + id).parent().parent().parent().remove();
+            }
+
+            function setCategoryPercentageStr(index, newStr) {
+                $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
+
             }
 
             function setCategoryPercentage(index, newScore, animate) {
@@ -122,32 +150,39 @@ chrome.extension.sendMessage({}, function (response) {
                 }
             }
 
-/*            function setCategoryPercentageStr(catName, newScore, animate) {
-                if (!animate) {
-                    $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)").text(newScore + "%");
-                } else {
-                    var origElement = $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)");
-                    var origScore = origElement.text() + "";
-                    origScore = Number(origScore.substring(0, origScore.indexOf("%")));
-                    jQuery({
-                        val: origScore
-                    }).animate({
-                        val: newScore
-                    }, {
-                        duration: 500,
-                        easing: 'swing',
-                        step: function () {
-                            origElement.text(Math.ceil(this.val) + "%");
-                        }
-                    });
-                }
-            }*/
+            /*            function setCategoryPercentageStr(catName, newScore, animate) {
+                            if (!animate) {
+                                $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)").text(newScore + "%");
+                            } else {
+                                var origElement = $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)");
+                                var origScore = origElement.text() + "";
+                                origScore = Number(origScore.substring(0, origScore.indexOf("%")));
+                                jQuery({
+                                    val: origScore
+                                }).animate({
+                                    val: newScore
+                                }, {
+                                    duration: 500,
+                                    easing: 'swing',
+                                    step: function () {
+                                        origElement.text(Math.ceil(this.val) + "%");
+                                    }
+                                });
+                            }
+                        }*/
 
             function setOverallPercentage(value, animate) {
+                for(var i = 0; i < scoresToLetters.length;i++){
+                    if(value >= scoresToLetters[i].percent){
+                        $("b:nth-of-type(1)").text("" + scoresToLetters[i].letter);
+                        break;
+                    }
+                }
+
                 if (animate) {
                     var origElement = $("b:nth-of-type(2)");
                     var origScore = origElement.text() + "";
-                    overallP = value +"%";
+                    overallP = value + "%";
                     origScore = Number(origScore.substring(0, origScore.indexOf("%")));
                     jQuery({
                         val: origScore
@@ -165,17 +200,28 @@ chrome.extension.sendMessage({}, function (response) {
                 }
             }
 
-            function recalculateOverallPercentage(){
+            function setOverallPercentageStr(newStr){
+                $("b:nth-of-type(2)").text("" + newStr);
+                $("b:nth-of-type(1)").text(newStr);
+            }
+
+            function recalculateOverallPercentage() {
                 var sum = 0,
                     totalWeight = 0;
                 for (var i = 0; i < categories.length; i++) {
-                    sum += categories[i].score * categories[i].percentage;
-                    totalWeight += categories[i].percentage;
+                    if (categories[i].score != "-") {
+                        sum += categories[i].score * categories[i].percentage;
+                        totalWeight += categories[i].percentage;
+                    }
                 }
-                sum = sum / totalWeight * 100;
-                sum = sum.toFixed(2);
+                if (totalWeight == 0) {
+                    setOverallPercentageStr("-");
+                } else {
+                    sum = sum / totalWeight * 100;
+                    sum = sum.toFixed(2);
+                    setOverallPercentage(sum, true)
+                }
 
-                setOverallPercentage(sum, true)
             }
 
             function insertTopRow() {
@@ -190,15 +236,6 @@ chrome.extension.sendMessage({}, function (response) {
                     $('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
 
                     var dropdown = document.getElementById("categoryDropdown");
-
-//                    for (var index in categories2) {
-//                        if (!categories2.hasOwnProperty(index)) {
-//                            continue;
-//                        }
-//                        console.log("logging line 128: " + index);
-//                        console.log("logging line 129: " + JSON.stringify(categories2[index]));
-//                    }
-
 
                     for (var i = 0; i < categories.length; i++) {
                         var opt = categories[i].name;
@@ -232,7 +269,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                         //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                         var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
-
+                        recalculateOverallPercentage();
                         $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + assignmentName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + assignmentPointN + "</div>" + assignmentPointN + " / " + assignmentPointD + " = " + assignmentCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
 
                         $("#inserted").after($newRow);
