@@ -74,7 +74,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[", "").trim();
+                }).text().trim().replace("[", "").replace("]", "").trim();
 
                 var elementPos = categories.map(function (x) {
                     return x.name;
@@ -114,8 +114,7 @@ chrome.extension.sendMessage({}, function (response) {
                 var id = event.target.id;
                 var cName = $("#" + id).parent().contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[", "").trim();
-
+                }).text().trim().replace("[", "").replace("]", "").trim();
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
