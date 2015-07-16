@@ -10,6 +10,7 @@ chrome.extension.sendMessage({}, function (response) {
             $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
             $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
+            
             var overallP = $("b:nth-of-type(2)").text() + "";
 
             $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
@@ -33,6 +34,7 @@ chrome.extension.sendMessage({}, function (response) {
 
             var scoresToLetters = [];
             var a1, lttr,pcntg;
+            //reads through grade Scale div, 
             $('h2:contains("Scale") + div * tr').each(function (i, tr){
                 $("td",tr).each(function (){
                     a1 = $(this).text();
@@ -55,9 +57,15 @@ chrome.extension.sendMessage({}, function (response) {
             scoresToLetters.sort(compare);
 
             //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
+             var entries = new Array();
             $(".hub_general > .general_body > tr").each(function (i, tr) {
-                var asstNameLink = $("td:nth-child(1) > div > a", tr).after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X<\a>]");
-
+               // $("td:nth-child(4)").wrapInner("<div id = \"edit" + (i + 1) + "t\"></div>");
+                //$("td:nth-child(4) > div", tr).after("<a href=\"javascript:void(0);\" class = \"edit\" id = \"edit" + (i + 1) + "\">edit</a>");
+                var asstNameLink = $("td:nth-child(1) > div > a", tr);
+                var nameText = asstNameLink.text();
+                asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
+                
+                
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
@@ -75,8 +83,31 @@ chrome.extension.sendMessage({}, function (response) {
                     categories[elementPos].pointsN += pointN;
                     categories[elementPos].pointsD += pointD;
                 }
+                
+                var obj = {
+                    name: nameText,
+                    pointValN: pointN,
+                    pointValD: pointD,
+                    categoryName: cName,
+                    categoryIndex: elementPos
+                };
+                entries.push(obj);
             });
-
+            
+            $(".edit").click(editRow);
+                
+            function editRow(event){
+                var id = event.target.id;
+                var td = $("#"+id).parent();
+                $("#"+id+"t").blur(
+                    function() {
+                        $(this).attr('contentEditable', false);
+                    });
+                
+                $("#"+id+"t").attr('contentEditable', true);
+                
+            }
+            
             $(".del").click(delRow);
 
             function delRow(event) {
@@ -148,27 +179,6 @@ chrome.extension.sendMessage({}, function (response) {
                     });
                 }
             }
-
-            /*            function setCategoryPercentageStr(catName, newScore, animate) {
-                            if (!animate) {
-                                $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)").text(newScore + "%");
-                            } else {
-                                var origElement = $("h2:contains('Score') + div > table > tbody > tr:contains(" + catName + ") td:nth-child(3)");
-                                var origScore = origElement.text() + "";
-                                origScore = Number(origScore.substring(0, origScore.indexOf("%")));
-                                jQuery({
-                                    val: origScore
-                                }).animate({
-                                    val: newScore
-                                }, {
-                                    duration: 500,
-                                    easing: 'swing',
-                                    step: function () {
-                                        origElement.text(Math.ceil(this.val) + "%");
-                                    }
-                                });
-                            }
-                        }*/
 
             function setOverallPercentage(value, animate) {
                 for(var i = 0; i < scoresToLetters.length;i++){
