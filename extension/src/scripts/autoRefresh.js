@@ -9,6 +9,11 @@ function refreshPages(){
   });
 }
 
+chrome.runtime.onMessage.addListener(function(message){
+    alert('hi! message:' + message);
+    chrome.browserAction.setBadgeText({text: '' + message}); 
+});
+
 function onAlarm(alarm){
   console.log("onAlarm");
   if(alarm.name == "refreshSchoolLoop")refreshPages();

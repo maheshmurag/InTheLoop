@@ -1,3 +1,4 @@
+console.log('ITL Active');
 // CONSTANTS FOR DEFAULTS
 var themes = { //default theme set, although custom can change
 	none: {
