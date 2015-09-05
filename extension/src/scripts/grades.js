@@ -8,8 +8,6 @@ chrome.extension.sendMessage({}, function (response) {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
-//            $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
-//            $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
 
             var overallP = $("b:nth-of-type(2)").text() + "";
@@ -57,14 +55,12 @@ chrome.extension.sendMessage({}, function (response) {
             }
             scoresToLetters.sort(compare);
 
-            //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
+        //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to                               catPointsN, catPointsD and update corresponding array object
              var entries = new Array();
             $(".hub_general > .general_body > tr").each(function (i, tr) {
-               // $("td:nth-child(4)").wrapInner("<div id = \"edit" + (i + 1) + "t\"></div>");
-                //$("td:nth-child(4) > div", tr).after("<a href=\"javascript:void(0);\" class = \"edit\" id = \"edit" + (i + 1) + "\">edit</a>");
-                var asstNameLink = $("td:nth-child(1) > div > a", tr);
-                var nameText = asstNameLink.text();
-                asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
+            var asstNameLink = $("td:nth-child(1) > div > a", tr);
+            var nameText = asstNameLink.text();
+            asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) +    "\">X</a>]");
 
 
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
@@ -233,29 +229,33 @@ chrome.extension.sendMessage({}, function (response) {
 
             }
 
+
             function insertTopRow() {
-                var param = false;
-                if ($("#myonoffswitch").is(":checked"))
-                    param = true;
 
-                $test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element
+/*                var insertFields = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element */
+                
+                var insertFields = $(
+                    '<div><h3>Add Assignment</h3>Category: <select id="categoryDropdown"></select><br>' +
+                    'Assignment:<input type="text" id="aName"><br>' +
+                    'Grade:<input type="number" style="width:40px;" id="aNum">/<input type="number" style="width:40px;" id="aDen"><br>' +
+                    '<a style="float:left;" id="add_grade" href="#">add grade</a></div>').hide();
+                    //initializes the top row element
+                
+                insertFields.show('fast'); //adds the top row element
+                //$('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
+                $('.content_margin .content_spacing_sm').after(insertFields);
 
-//                if (param)
-                {
-                    $test.show('slow'); //adds the top row element
-                    $('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
+                var dropdown = document.getElementById("categoryDropdown");
 
-                    var dropdown = document.getElementById("categoryDropdown");
-
-                    for (var i = 0; i < categories.length; i++) {
-                        var opt = categories[i].name;
-                        var el = document.createElement("option");
-                        el.textContent = opt;
-                        el.value = opt;
-                        if (i == 0)
-                            el.selected = true;
-                        dropdown.appendChild(el);
-                    }
+                for (var i = 0; i < categories.length; i++) {
+                    var opt = categories[i].name;
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    if (i == 0)
+                        el.selected = true;
+                    dropdown.appendChild(el);
+                }
 
 
                     $("#add_grade").click(function () {
@@ -283,14 +283,9 @@ chrome.extension.sendMessage({}, function (response) {
                         $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + assignmentName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + assignmentPointN + "</div>" + assignmentPointN + " / " + assignmentPointD + " = " + assignmentCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
 
                         $("#inserted").after($newRow);
+                        console.log('added');
                         return false;
                     });
-                }
-//                else {
-//                    $('.inserted_two').fadeOut(800, function () {
-//                        $('.inserted').remove();
-//                    });
-//                }
             }
         }
     }, 10);
