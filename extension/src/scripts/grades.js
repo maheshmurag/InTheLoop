@@ -8,8 +8,8 @@ chrome.extension.sendMessage({}, function (response) {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
-//            $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
-//            $("#myonoffswitch").click(insertTopRow);
+            //            $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
+            //            $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
 
             var overallP = $("b:nth-of-type(2)").text() + "";
@@ -18,9 +18,9 @@ chrome.extension.sendMessage({}, function (response) {
                 if (i != 0) {
                     var catName = $("td:nth-child(1)", tr).text(),
                         catPTmp = $("td:nth-child(2)", tr).text(),
-                        catPercent = Number(catPTmp.substring(0, catPTmp.length - 1)) / 100,
+                        catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100,
                         catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, ""),
-                        catScore = Number(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
 
                     var tmp = {
                         name: catName,
@@ -34,13 +34,13 @@ chrome.extension.sendMessage({}, function (response) {
             });
 
             var scoresToLetters = [];
-            var a1, lttr,pcntg;
+            var a1, lttr, pcntg;
             //reads through grade Scale div,
-            $('h2:contains("Scale") + div * tr').each(function (i, tr){
-                $("td",tr).each(function (){
+            $('h2:contains("Scale") + div * tr').each(function (i, tr) {
+                $("td", tr).each(function () {
                     a1 = $(this).text();
                     lttr = a1.substring(0, a1.indexOf("=")).trim();
-                    pcntg = Number(a1.substring(a1.indexOf("=")+1,a1.indexOf("%")).trim());
+                    pcntg = num(a1.substring(a1.indexOf("=") + 1, a1.indexOf("%")).trim());
                     var pair = {
                         letter: lttr,
                         percent: pcntg
@@ -48,7 +48,8 @@ chrome.extension.sendMessage({}, function (response) {
                     scoresToLetters.push(pair);
                 });
             });
-            function compare(a,b) {
+
+            function compare(a, b) {
                 if (a.percent > b.percent)
                     return -1;
                 if (a.percent < b.percent)
@@ -57,10 +58,10 @@ chrome.extension.sendMessage({}, function (response) {
             }
             scoresToLetters.sort(compare);
 
-            //loop through all tr's in main table, ID the category, add assignment's pointN and pointD to catPointsN, catPointsD and update corresponding array object
-             var entries = new Array();
+            //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
+            var entries = new Array();
             $(".hub_general > .general_body > tr").each(function (i, tr) {
-               // $("td:nth-child(4)").wrapInner("<div id = \"edit" + (i + 1) + "t\"></div>");
+                // $("td:nth-child(4)").wrapInner("<div id = \"edit" + (i + 1) + "t\"></div>");
                 //$("td:nth-child(4) > div", tr).after("<a href=\"javascript:void(0);\" class = \"edit\" id = \"edit" + (i + 1) + "\">edit</a>");
                 var asstNameLink = $("td:nth-child(1) > div > a", tr);
                 var nameText = asstNameLink.text();
@@ -70,8 +71,8 @@ chrome.extension.sendMessage({}, function (response) {
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
-                    pointD = Number(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
-                    pointN = Number(pointN.substring(0, pointN.indexOf("/")));
+                    pointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
+                    pointN = num(pointN.substring(0, pointN.indexOf("/")));
 
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
@@ -97,18 +98,19 @@ chrome.extension.sendMessage({}, function (response) {
 
             $(".edit").click(editRow);
 
-            function editRow(event){
+            function editRow(event) {
                 var id = event.target.id;
-                var td = $("#"+id).parent();
-                $("#"+id+"t").blur(
-                    function() {
+                var td = $("#" + id).parent();
+                $("#" + id + "t").blur(
+                    function () {
                         $(this).attr('contentEditable', false);
                     });
-
-                $("#"+id+"t").attr('contentEditable', true);
-
+                $("#" + id + "t").attr('contentEditable', true);
             }
 
+            function num(param) {
+                return Number(param);
+            }
             $(".del").click(delRow);
 
             function delRow(event) {
@@ -125,8 +127,8 @@ chrome.extension.sendMessage({}, function (response) {
                 var pointN = tr.find("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
-                    pointD = Number(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
-                    pointN = Number(pointN.substring(0, pointN.indexOf("/")));
+                    pointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
+                    pointN = num(pointN.substring(0, pointN.indexOf("/")));
                 console.log("-----------------------------------------------------------")
                 console.log("old overall %:" + overallP)
                 console.log("old cat score: " + categories[elementPos].pointsN + "/" + categories[elementPos].pointsD + " = " + categories[elementPos].score)
@@ -148,12 +150,10 @@ chrome.extension.sendMessage({}, function (response) {
                 console.log("removing from category: " + categories[elementPos].name)
                 console.log("new overall %:" + overallP)
                 console.log("-----------------------------------------------------------")
-
-
-
                 $("#" + id).parent().parent().parent().remove();
             }
             insertTopRow();
+
             function setCategoryPercentageStr(index, newStr) {
                 $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
 
@@ -165,7 +165,7 @@ chrome.extension.sendMessage({}, function (response) {
                 } else {
                     var origElement = $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
                     var origScore = origElement.text() + "";
-                    origScore = Number(origScore.substring(0, origScore.indexOf("%")));
+                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
                     jQuery({
                         val: origScore
                     }).animate({
@@ -181,8 +181,8 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function setOverallPercentage(value, animate) {
-                for(var i = 0; i < scoresToLetters.length;i++){
-                    if(value >= scoresToLetters[i].percent){
+                for (var i = 0; i < scoresToLetters.length; i++) {
+                    if (value >= scoresToLetters[i].percent) {
                         $("b:nth-of-type(1)").text("" + scoresToLetters[i].letter);
                         break;
                     }
@@ -192,7 +192,7 @@ chrome.extension.sendMessage({}, function (response) {
                     var origElement = $("b:nth-of-type(2)");
                     var origScore = origElement.text() + "";
                     overallP = value + "%";
-                    origScore = Number(origScore.substring(0, origScore.indexOf("%")));
+                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
                     jQuery({
                         val: origScore
                     }).animate({
@@ -209,7 +209,7 @@ chrome.extension.sendMessage({}, function (response) {
                 }
             }
 
-            function setOverallPercentageStr(newStr){
+            function setOverallPercentageStr(newStr) {
                 $("b:nth-of-type(2)").text("" + newStr);
                 $("b:nth-of-type(1)").text(newStr);
             }
@@ -240,7 +240,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                 $test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element
 
-//                if (param)
+                //                if (param)
                 {
                     $test.show('slow'); //adds the top row element
                     $('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
@@ -258,21 +258,22 @@ chrome.extension.sendMessage({}, function (response) {
                     }
 
 
-                    $("#add_grade").click(function () {
-                        var assignmentCategoryIndex = $('#categoryDropdown')[0].selectedIndex, //document.getElementById('aCat').options[e.selectedIndex].text,
-                            assignmentName = document.getElementById('aName').value,
-                            assignmentPointN = Number(Number(document.getElementById('aNum').value).toFixed(2)),
-                            assignmentPointD = Number(Number(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
-                            assignmentCalcScore = (Math.round((assignmentPointN / assignmentPointD * 100) * 100) / 100).toFixed(2),
-                            categoryName = categories[assignmentCategoryIndex].name;
-                        categories[assignmentCategoryIndex].pointsN += assignmentPointN;
-                        categories[assignmentCategoryIndex].pointsD += assignmentPointD;
-                        categories[assignmentCategoryIndex].score = (categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD);
-                        //                        categories[categoryName].pointsN += assignmentPointN;
-                        //                        categories[categoryName].pointsD += assignmentPointD;
 
-                        var newCatScore = Number((Math.round(((categories[assignmentCategoryIndex].pointsN) / (categories[assignmentCategoryIndex].pointsD) * 100) * 100) / 100).toFixed(2));
-                        setCategoryPercentage(assignmentCategoryIndex, newCatScore, true);
+                    $("#add_grade").click(addGrades);
+
+                    function addGrades() {
+                        var ACI = $('#categoryDropdown')[0].selectedIndex, //assignmentCategoryIndex //document.getElementById('aCat').options[e.selectedIndex].text,
+                            asstName = document.getElementById('aName').value,
+                            asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
+                            asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
+                            asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100).toFixed(2),
+                            categoryName = categories[ACI].name;
+                        categories[ACI].pointsN += asstPointN;
+                        categories[ACI].pointsD += asstPointD;
+                        categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
+
+                        var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100) * 100) / 100).toFixed(2));
+                        setCategoryPercentage(ACI, newCatScore, true);
 
                         var date = new Date();
                         var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
@@ -280,17 +281,17 @@ chrome.extension.sendMessage({}, function (response) {
                         //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                         var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
                         recalculateOverallPercentage();
-                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + assignmentName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + assignmentPointN + "</div>" + assignmentPointN + " / " + assignmentPointD + " = " + assignmentCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
 
                         $("#inserted").after($newRow);
                         return false;
-                    });
+                    };
                 }
-//                else {
-//                    $('.inserted_two').fadeOut(800, function () {
-//                        $('.inserted').remove();
-//                    });
-//                }
+                //                else {
+                //                    $('.inserted_two').fadeOut(800, function () {
+                //                        $('.inserted').remove();
+                //                    });
+                //                }
             }
         }
     }, 10);
