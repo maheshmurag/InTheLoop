@@ -1,13 +1,13 @@
 {
 	"manifest_version" : 2,
 	"name": "In The Loop",
-  	"version": "2.1",
+  	"version": "0.1",
 
   	"description": "A suite of features that improve the SchoolLoop interface",
-  	"icons": { "19": "icons/icon19.png" },
+  	"icons": { "16": "icons/icon16.png",
+           "48": "icons/icon48.png",
+          "128": "icons/icon128.png" },
   	"background": {
-    	"persistent": false,
-		"scripts": ["src/scripts/autoRefresh.js"]
   	},
 
 	"options_page": "src/options/options.html",
@@ -34,7 +34,7 @@
 	"permissions": ["tabs","storage", "alarms"],
 	"browser_action": {
 		"default_title": "In The Loop",
-		"default_icon": "icons/icon19.png",
+		"default_icon": "icons/icon48.png",
 		"default_popup": "src/browser_action/browser_action.html"
 	}
 }

@@ -17,11 +17,10 @@ function onAlarm(alarm){
 
 chrome.alarms.onAlarm.addListener(onAlarm);
 
-var period_in_mins = 60;
+var period_in_mins = 9007199254740991;
 
 chrome.alarms.get("refreshSchoolLoop", function(alarm){
   if(typeof alarm == "undefined" || alarm.periondInMinutes != period_in_mins){
-    console.log("created alarm");
     chrome.alarms.create("refreshSchoolLoop", {
       delayInMinutes: period_in_mins,
       periodInMinutes: period_in_mins
