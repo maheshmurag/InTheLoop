@@ -1,13 +1,8 @@
-//TODO: When extension is loaded, add id attribute to all elements that allows the extension
-//to change elements easily using corresponding #id attribute.
 
-//TODO: Write methods that allow for changing elements easily, like setCategory(value, true)
-//true indicates whether to animate or not
 chrome.extension.sendMessage({}, function (response) {
     var readyStateCheckInterval = setInterval(function () {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
-
             //            $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
             //            $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
@@ -68,6 +63,8 @@ chrome.extension.sendMessage({}, function (response) {
                 asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
 
 
+
+
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
@@ -115,29 +112,25 @@ chrome.extension.sendMessage({}, function (response) {
 
             function delRow(event) {
                 var id = event.target.id;
-                var cName = $("#" + id).parent().contents().filter(function () {
+                var caller = $("#" + id);
+                sharedDelFunction(caller);
+            }
+            function sharedDelFunction(caller){
+                var cName = caller.parent().contents().filter(function () {
                     return this.nodeType == 3;
                 }).text().trim().replace("[", "").replace("]", "").trim();
                 var elementPos = categories.map(function (x) {
                     return x.name;
                 }).indexOf(cName);
-
-                var tr = $("#" + id).parent().parent().parent()
-
+                var tr = caller.parent().parent().parent()
                 var pointN = tr.find("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),
                     pointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
                     pointN = num(pointN.substring(0, pointN.indexOf("/")));
-                console.log("-----------------------------------------------------------")
-                console.log("old overall %:" + overallP)
-                console.log("old cat score: " + categories[elementPos].pointsN + "/" + categories[elementPos].pointsD + " = " + categories[elementPos].score)
                 categories[elementPos].pointsN -= pointN;
                 categories[elementPos].pointsD -= pointD;
                 if (categories[elementPos].pointsD == 0) {
-                    //handle if denom is 0
-                    //need to remove category % from the considered categories
-
                     categories[elementPos].score = "-";
                     setCategoryPercentageStr(elementPos, categories[elementPos].score)
                 } else {
@@ -145,18 +138,12 @@ chrome.extension.sendMessage({}, function (response) {
                     setCategoryPercentage(elementPos, categories[elementPos].score * 100, true)
                 }
                 recalculateOverallPercentage();
-                console.log("removing asst: " + pointN + "/" + pointD)
-                console.log("new cat score: " + categories[elementPos].pointsN + "/" + categories[elementPos].pointsD + " = " + categories[elementPos].score)
-                console.log("removing from category: " + categories[elementPos].name)
-                console.log("new overall %:" + overallP)
-                console.log("-----------------------------------------------------------")
-                $("#" + id).parent().parent().parent().remove();
+                caller.parent().parent().parent().remove();
             }
             insertTopRow();
 
             function setCategoryPercentageStr(index, newStr) {
                 $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
-
             }
 
             function setCategoryPercentage(index, newScore, animate) {
@@ -187,7 +174,6 @@ chrome.extension.sendMessage({}, function (response) {
                         break;
                     }
                 }
-
                 if (animate) {
                     var origElement = $("b:nth-of-type(2)");
                     var origScore = origElement.text() + "";
@@ -230,8 +216,11 @@ chrome.extension.sendMessage({}, function (response) {
                     sum = sum.toFixed(2);
                     setOverallPercentage(sum, true)
                 }
-
             }
+            $(document).on('click', "a.deldel",function(e){
+                        var caller = $(this);
+                        sharedDelFunction(caller);
+            });
 
             function insertTopRow() {
                 var param = false;
@@ -239,7 +228,6 @@ chrome.extension.sendMessage({}, function (response) {
                     param = true;
 
                 $test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element
-
                 //                if (param)
                 {
                     $test.show('slow'); //adds the top row element
@@ -257,31 +245,26 @@ chrome.extension.sendMessage({}, function (response) {
                         dropdown.appendChild(el);
                     }
 
-
-
                     $("#add_grade").click(addGrades);
 
                     function addGrades() {
                         var ACI = $('#categoryDropdown')[0].selectedIndex, //assignmentCategoryIndex //document.getElementById('aCat').options[e.selectedIndex].text,
                             asstName = document.getElementById('aName').value,
                             asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
-                            asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
+                            asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)),//tofixed adds trailing zeroes
                             asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100).toFixed(2),
                             categoryName = categories[ACI].name;
                         categories[ACI].pointsN += asstPointN;
                         categories[ACI].pointsD += asstPointD;
                         categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
-
                         var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100) * 100) / 100).toFixed(2));
                         setCategoryPercentage(ACI, newCatScore, true);
-
                         var date = new Date();
                         var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
-
                         //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                         var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
                         recalculateOverallPercentage();
-                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "</a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
 
                         $("#inserted").after($newRow);
                         return false;
