@@ -1,0 +1,38 @@
+{
+    "manifest_version" : 2,
+    "name": "In The Loop",
+      "version": "0.1",
+
+      "description": "A suite of features that improve the SchoolLoop interface",
+      "icons": { "16": "icons/icon16.png",
+           "48": "icons/icon48.png",
+          "128": "icons/icon128.png" },
+      "background": {
+      },
+
+    "content_scripts":[
+        {
+            "matches":["https://*.schoolloop.com/", "https://*.schoolloop.com/portal/student_home*", "https://*.schoolloop.com/news/*", "https://*.schoolloop.com/progress_report/*"],
+            "js": ["lib/jquery-2.1.3.min.js"],
+            "run_at":"document_end"
+        },
+        {
+            "matches": [
+                "https://*.schoolloop.com/progress_report/*"
+            ],
+            "css": [
+                "styles/buttonStyles.css"
+            ],
+            "js": [
+                "src/scripts/grades.min.js",
+                "lib/jquery-2.1.3.min.js"
+            ]
+        }
+    ],
+    "permissions": ["tabs","storage", "alarms"],
+    "browser_action": {
+        "default_title": "In The Loop",
+        "default_icon": "icons/icon48.png",
+        "default_popup": "src/browser_action/browser_action.html"
+    }
+}

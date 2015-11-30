@@ -61,10 +61,6 @@ chrome.extension.sendMessage({}, function (response) {
                 var asstNameLink = $("td:nth-child(1) > div > a", tr);
                 var nameText = asstNameLink.text();
                 asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
-
-
-
-
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                         return this.nodeType == 3;
                     }).text().replace(/\s/g, ""),

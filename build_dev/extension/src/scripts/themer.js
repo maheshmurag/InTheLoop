@@ -92,7 +92,7 @@ chrome.storage.sync.get({ themes:themes, current_theme:currentTheme }, function(
 		addCSSRule(sheet, ".round-left", "background: " + content_background + ";", 0);
 		addCSSRule(sheet, ".round-right", "background: " + content_background + ";", 0);
 		*/
-		
+
 		//body:
 		addCSSRule(sheet, "body", "background: " + background + ";", 0); //body background
 
