@@ -1,5 +1,5 @@
 # InTheLoop
-An extension that improves the SchoolLoop interface with 2 core features.
+An extension that improves the School Loop interface with 2 core features.
 1. Allows for adding/deleting grades to calculate one's grade even before it is updated.
 2. Adds a theming interface (comes with 1 default theme)
 
