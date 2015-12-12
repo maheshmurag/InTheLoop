@@ -7,8 +7,9 @@ A Chrome extension that improves the School Loop interface with 2 core features.
 InTheLoop is still in development, and is not on the Chrome Web Store at the moment. However, if you would like to install the beta version:   
 
 1.  Download the extension.crx file in build_final/extension.crx (click "View Raw")
-2.  Drag and drop the file into chrome://extensions
-3.  Go to the "Progress Report" page for one of your classes.
+2.  Go to the chrome://extensions page and enable the "Developer Mode" checkbox
+3.  Drag and drop the file into chrome://extensions
+4.  Go to the "Progress Report" page for one of your classes.
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Demo of Grade Calculation:
