@@ -23,11 +23,4 @@ function selectTab(tabNo){
   chrome.tabs.update(tabNo, {active:true});
 }
 
-function showOptions(){
-  chrome.tabs.create({
-    url: chrome.extension.getURL("src/options/options.html")
-  }, function(){});
-}
-
 document.getElementById("openTab").addEventListener("click", openTab);
-document.getElementById("options").addEventListener("click", showOptions);

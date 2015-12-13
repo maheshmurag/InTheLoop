@@ -10,8 +10,6 @@
   	"background": {
   	},
 
-	"options_page": "src/options/options.html",
-
 	"content_scripts":[
 		{
 			"matches":["https://*.schoolloop.com/", "https://*.schoolloop.com/portal/student_home*", "https://*.schoolloop.com/news/*", "https://*.schoolloop.com/progress_report/*"],

@@ -1,14 +1,9 @@
-
 chrome.extension.sendMessage({}, function (response) {
     var readyStateCheckInterval = setInterval(function () {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
-            //            $(".page_title").after("<div class='onoffswitch' style='float:right;'><input type='checkbox' name='onoffswitch' value='true' class='onoffswitch-checkbox' id='myonoffswitch'><label class='onoffswitch-label' for='myonoffswitch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>"); //adds the switch after the page title
-            //            $("#myonoffswitch").click(insertTopRow);
             var categories = new Array();
-
             var overallP = $("b:nth-of-type(2)").text() + "";
-
             $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
                 if (i != 0) {
                     var catName = $("td:nth-child(1)", tr).text(),
@@ -16,7 +11,6 @@ chrome.extension.sendMessage({}, function (response) {
                         catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100,
                         catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, ""),
                         catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
-
                     var tmp = {
                         name: catName,
                         percentage: catPercent, //category weightage
@@ -27,7 +21,6 @@ chrome.extension.sendMessage({}, function (response) {
                     categories.push(tmp);
                 }
             });
-
             var scoresToLetters = [];
             var a1, lttr, pcntg;
             //reads through grade Scale div,
@@ -56,8 +49,6 @@ chrome.extension.sendMessage({}, function (response) {
             //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             var entries = new Array();
             $(".hub_general > .general_body > tr").each(function (i, tr) {
-                // $("td:nth-child(4)").wrapInner("<div id = \"edit" + (i + 1) + "t\"></div>");
-                //$("td:nth-child(4) > div", tr).after("<a href=\"javascript:void(0);\" class = \"edit\" id = \"edit" + (i + 1) + "\">edit</a>");
                 var asstNameLink = $("td:nth-child(1) > div > a", tr);
                 var nameText = asstNameLink.text();
                 asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
@@ -78,7 +69,6 @@ chrome.extension.sendMessage({}, function (response) {
                     categories[elementPos].pointsN += pointN;
                     categories[elementPos].pointsD += pointD;
                 }
-
                 var obj = {
                     name: nameText,
                     pointValN: pointN,
@@ -111,7 +101,8 @@ chrome.extension.sendMessage({}, function (response) {
                 var caller = $("#" + id);
                 sharedDelFunction(caller);
             }
-            function sharedDelFunction(caller){
+
+            function sharedDelFunction(caller) {
                 var cName = caller.parent().contents().filter(function () {
                     return this.nodeType == 3;
                 }).text().trim().replace("[", "").replace("]", "").trim();
@@ -213,9 +204,9 @@ chrome.extension.sendMessage({}, function (response) {
                     setOverallPercentage(sum, true)
                 }
             }
-            $(document).on('click', "a.deldel",function(e){
-                        var caller = $(this);
-                        sharedDelFunction(caller);
+            $(document).on('click', "a.deldel", function (e) {
+                var caller = $(this);
+                sharedDelFunction(caller);
             });
 
             function insertTopRow() {
@@ -224,53 +215,45 @@ chrome.extension.sendMessage({}, function (response) {
                     param = true;
 
                 $test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element
-                //                if (param)
-                {
-                    $test.show('slow'); //adds the top row element
-                    $('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
 
-                    var dropdown = document.getElementById("categoryDropdown");
+                $test.show('slow'); //adds the top row element
+                $('.hub_general > .general_body > tr:first').before($test); //adds the top row before the table's first row
 
-                    for (var i = 0; i < categories.length; i++) {
-                        var opt = categories[i].name;
-                        var el = document.createElement("option");
-                        el.textContent = opt;
-                        el.value = opt;
-                        if (i == 0)
-                            el.selected = true;
-                        dropdown.appendChild(el);
-                    }
+                var dropdown = document.getElementById("categoryDropdown");
 
-                    $("#add_grade").click(addGrades);
-
-                    function addGrades() {
-                        var ACI = $('#categoryDropdown')[0].selectedIndex, //assignmentCategoryIndex //document.getElementById('aCat').options[e.selectedIndex].text,
-                            asstName = document.getElementById('aName').value,
-                            asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
-                            asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)),//tofixed adds trailing zeroes
-                            asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100).toFixed(2),
-                            categoryName = categories[ACI].name;
-                        categories[ACI].pointsN += asstPointN;
-                        categories[ACI].pointsD += asstPointD;
-                        categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
-                        var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100) * 100) / 100).toFixed(2));
-                        setCategoryPercentage(ACI, newCatScore, true);
-                        var date = new Date();
-                        var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
-                        //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
-                        var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
-                        recalculateOverallPercentage();
-                        $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
-
-                        $("#inserted").after($newRow);
-                        return false;
-                    };
+                for (var i = 0; i < categories.length; i++) {
+                    var opt = categories[i].name;
+                    var el = document.createElement("option");
+                    el.textContent = opt;
+                    el.value = opt;
+                    if (i == 0)
+                        el.selected = true;
+                    dropdown.appendChild(el);
                 }
-                //                else {
-                //                    $('.inserted_two').fadeOut(800, function () {
-                //                        $('.inserted').remove();
-                //                    });
-                //                }
+
+                $("#add_grade").click(addGrades);
+
+                function addGrades() {
+                    var ACI = $('#categoryDropdown')[0].selectedIndex,
+                        asstName = document.getElementById('aName').value,
+                        asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
+                        asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
+                        asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100).toFixed(2),
+                        categoryName = categories[ACI].name;
+                    categories[ACI].pointsN += asstPointN;
+                    categories[ACI].pointsD += asstPointD;
+                    categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
+                    var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100) * 100) / 100).toFixed(2));
+                    setCategoryPercentage(ACI, newCatScore, true);
+                    var date = new Date();
+                    var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
+                    //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
+                    var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
+                    recalculateOverallPercentage();
+                    $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                    $("#inserted").after($newRow);
+                    return false;
+                };
             }
         }
     }, 10);
