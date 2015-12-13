@@ -3,10 +3,11 @@ A Chrome extension that improves the School Loop interface by letting users ente
 
 ##Future Features:   
 1. Improved user interface 
-2. More robust grade calculation (function even with letter grades instead of numbers)
-3. Work with point-based grading system
-4. Add and edit categories
-5. Final grade calculation
+2. Add a function that displays total # of points per category and overall
+3. More robust grade calculation (function even with letter grades instead of numbers)
+4. Work with point-based grading system
+5. Add and edit categories
+6. Final grade calculation
 
 
 ##Installation
