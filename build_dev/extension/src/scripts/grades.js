@@ -67,7 +67,7 @@ chrome.extension.sendMessage({}, function (response) {
         $(".hub_general > .general_body > tr").each(function (i, tr) {
             var asstNameLink = $("td:nth-child(1) > div > a", tr);
             var nameText = asstNameLink.text();
-            asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
+            asstNameLink.after(" [<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
             var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                 return this.nodeType == 3;
             }).text().replace(/\s/g, "");
@@ -78,7 +78,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[", "").replace("]", "").trim();
+                }).text().replace(/[\[\]]/g, "").trim();
 
                 var elementPos = categories.map(function (x) {
                     return x.name;
@@ -124,7 +124,7 @@ chrome.extension.sendMessage({}, function (response) {
         function sharedDelFunction(caller) {
             var cName = caller.parent().contents().filter(function () {
                 return this.nodeType == 3;
-            }).text().trim().replace("[", "").replace("]", "").trim();
+            }).text().replace(/[\[\]]/g, "").trim();
             var elementPos = categories.map(function (x) {
                 return x.name;
             }).indexOf(cName);
@@ -269,6 +269,8 @@ chrome.extension.sendMessage({}, function (response) {
             $("#add_grade").click(addGrades);
 
             function addGrades() {
+                if(isNaN(document.getElementById('aDen').value))
+                    return window.alert("Invalid entry!");
                 var ACI = $('#categoryDropdown')[0].selectedIndex,
                     asstName = document.getElementById('aName').value,
                     asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
@@ -285,7 +287,7 @@ chrome.extension.sendMessage({}, function (response) {
                 //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                 var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
                 recalculateOverallPercentage();
-                $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                $newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + " [<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
                 $("#inserted").after($newRow);
                 return false;
             };
