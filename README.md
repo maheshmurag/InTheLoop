@@ -2,12 +2,7 @@
 A Chrome extension that improves the School Loop interface by letting users enter a sandbox mode in which they can calculate what their grades would be after the teacher inputs or deletes grades.
 
 ##Installation
-InTheLoop is still in development, and is not on the Chrome Web Store at the moment. However, if you would like to install the beta version:   
-
-1.  Download the extension.crx file located at "build_final/extension.crx" (click "View Raw")
-2.  Go to the chrome://extensions page and enable the "Developer Mode" checkbox
-3.  Drag and drop the file into chrome://extensions
-4.  Go to the "Progress Report" page for one of your classes.
+InTheLoop is still in development, but the beta version is available [here](https://chrome.google.com/webstore/detail/in-the-loop-for-school-lo/ppigcngidmooiiafkelbilbojiijffag).
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Demo of Grade Calculation:
