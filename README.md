@@ -1,7 +1,5 @@
 # InTheLoop
-A Chrome extension that improves the School Loop interface with 2 core features.   
-1. Allows for adding/deleting grades to calculate one's grade even before it is updated.   
-2. Adds a theming interface (comes with 1 default theme)   
+A Chrome extension that improves the School Loop interface by letting users enter a sandbox mode in which they can calculate what their grades would be after the teacher inputs or deletes grades.
 
 ##Installation
 InTheLoop is still in development, and is not on the Chrome Web Store at the moment. However, if you would like to install the beta version:   
