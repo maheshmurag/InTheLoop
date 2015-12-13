@@ -269,7 +269,7 @@ chrome.extension.sendMessage({}, function (response) {
             $("#add_grade").click(addGrades);
 
             function addGrades() {
-                if(isNaN(document.getElementById('aDen').value))
+                if(document.getElementById('aNum').value == 0 && document.getElementById('aDen').value == 0)
                     return window.alert("Invalid entry!");
                 var ACI = $('#categoryDropdown')[0].selectedIndex,
                     asstName = document.getElementById('aName').value,
