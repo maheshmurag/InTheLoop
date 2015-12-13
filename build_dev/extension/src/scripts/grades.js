@@ -53,30 +53,33 @@ chrome.extension.sendMessage({}, function (response) {
                 var nameText = asstNameLink.text();
                 asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
                 var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
-                        return this.nodeType == 3;
-                    }).text().replace(/\s/g, ""),
-                    pointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
-                    pointN = num(pointN.substring(0, pointN.indexOf("/")));
-
-                var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
-                }).text().trim().replace("[", "").replace("]", "").trim();
+                }).text().replace(/\s/g, "");
+                if (!(pointN.indexOf("/") < 0 || pointN.indexOf("=") < 0)) {
 
-                var elementPos = categories.map(function (x) {
-                    return x.name;
-                }).indexOf(cName);
-                if (elementPos >= 0) {
-                    categories[elementPos].pointsN += pointN;
-                    categories[elementPos].pointsD += pointD;
+                    var pointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("="))),
+                        pointN = num(pointN.substring(0, pointN.indexOf("/")));
+
+                    var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
+                        return this.nodeType == 3;
+                    }).text().trim().replace("[", "").replace("]", "").trim();
+
+                    var elementPos = categories.map(function (x) {
+                        return x.name;
+                    }).indexOf(cName);
+                    if (elementPos >= 0) {
+                        categories[elementPos].pointsN += pointN;
+                        categories[elementPos].pointsD += pointD;
+                    }
+                    var obj = {
+                        name: nameText,
+                        pointValN: pointN,
+                        pointValD: pointD,
+                        categoryName: cName,
+                        categoryIndex: elementPos
+                    };
+                    entries.push(obj);
                 }
-                var obj = {
-                    name: nameText,
-                    pointValN: pointN,
-                    pointValD: pointD,
-                    categoryName: cName,
-                    categoryIndex: elementPos
-                };
-                entries.push(obj);
             });
 
             $(".edit").click(editRow);
