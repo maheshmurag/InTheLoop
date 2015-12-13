@@ -4,13 +4,31 @@ chrome.extension.sendMessage({}, function (response) {
             clearInterval(readyStateCheckInterval);
             var categories = new Array();
             var overallP = $("b:nth-of-type(2)").text() + "";
+            var pointageSystem = false;
+            var rowCount = 0;
             $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
-                if (i != 0) {
-                    var catName = $("td:nth-child(1)", tr).text(),
-                        catPTmp = $("td:nth-child(2)", tr).text(),
-                        catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100,
-                        catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, ""),
+                if(i == 0){
+                    if($("td:nth-child(2)", tr).text().indexOf("Score")>-1){
+                        //no points
+                        rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
+                        pointageSystem = true;
+                    }
+                }
+                else{
+                    var catName, catPTmp, catPercent, catSTmp, catScore;
+                    if(!pointageSystem){
+                        catName = $("td:nth-child(1)", tr).text();
+                        catPTmp = $("td:nth-child(2)", tr).text();
+                        catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100;
+                        catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, "");
                         catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                    }
+                    else{
+                        catName = $("td:nth-child(1)", tr).text();
+                        catPercent = (100/rowCount)/100;
+                        catSTmp = $("td:nth-child(2)", tr).text().replace(/\s/g, "");
+                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                    }
                     var tmp = {
                         name: catName,
                         percentage: catPercent, //category weightage
@@ -70,15 +88,15 @@ chrome.extension.sendMessage({}, function (response) {
                     if (elementPos >= 0) {
                         categories[elementPos].pointsN += pointN;
                         categories[elementPos].pointsD += pointD;
+                        var obj = {
+                            name: nameText,
+                            pointValN: pointN,
+                            pointValD: pointD,
+                            categoryName: cName,
+                            categoryIndex: elementPos
+                        };
+                        entries.push(obj);
                     }
-                    var obj = {
-                        name: nameText,
-                        pointValN: pointN,
-                        pointValD: pointD,
-                        categoryName: cName,
-                        categoryIndex: elementPos
-                    };
-                    entries.push(obj);
                 }
             });
 
@@ -193,18 +211,34 @@ chrome.extension.sendMessage({}, function (response) {
             function recalculateOverallPercentage() {
                 var sum = 0,
                     totalWeight = 0;
-                for (var i = 0; i < categories.length; i++) {
-                    if (categories[i].score != "-") {
-                        sum += categories[i].score * categories[i].percentage;
-                        totalWeight += categories[i].percentage;
+                if(pointageSystem){
+                    var nnn = 0;
+                    var ddd = 0;
+                    for (var i = 0; i < categories.length; i++) {
+                        if (categories[i].score != "-") {
+                            nnn += categories[i].pointsN;
+                            ddd += categories[i].pointsD;
+                        }
                     }
-                }
-                if (totalWeight == 0) {
-                    setOverallPercentageStr("-");
-                } else {
-                    sum = sum / totalWeight * 100;
+                    sum = (nnn/ddd) *  100;
                     sum = sum.toFixed(2);
                     setOverallPercentage(sum, true)
+                }
+                else{
+                    for (var i = 0; i < categories.length; i++) {
+                        if (categories[i].score != "-") {
+                            sum += categories[i].score * categories[i].percentage;
+                            totalWeight += categories[i].percentage;
+                        }
+                    }
+                    if (totalWeight == 0) {
+                        setOverallPercentageStr("-");
+                    }
+                    else if(totalWeight != 0){
+                        sum = sum / totalWeight * 100;
+                        sum = sum.toFixed(2);
+                        setOverallPercentage(sum, true)
+                    }
                 }
             }
             $(document).on('click', "a.deldel", function (e) {

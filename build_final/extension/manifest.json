@@ -1,7 +1,7 @@
-﻿{
+{
 	"manifest_version" : 2,
-	"name": "In The Loop for School Loop™",
-  	"version": "0.0.3",
+	"name": "In The Loop for School Loop™ (beta)",
+  	"version": "0.0.6",
 	"short_name": "In The Loop",
 
   	"description": "A suite of features that improve the SchoolLoop interface",
@@ -30,10 +30,5 @@
 			]
 		}
 	],
-	"permissions": ["storage", "alarms"],
-	"browser_action": {
-		"default_title": "In The Loop for School Loop™",
-		"default_icon": "icons/icon48.png",
-		"default_popup": "src/browser_action/browser_action.html"
-	}
+	"permissions": ["storage", "alarms"]
 }
