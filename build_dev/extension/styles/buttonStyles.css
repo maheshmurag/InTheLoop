@@ -44,3 +44,6 @@
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px;
 }
+#categoryDropdown{
+    max-width: 150px;
+}
