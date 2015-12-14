@@ -9,6 +9,7 @@ A Chrome extension that improves the School Loop interface by letting users ente
 5. Add and edit categories
 6. Final grade calculation
 7. Handle [this](https://scontent.xx.fbcdn.net/hphotos-xft1/v/t34.0-12/12395361_1647944725464690_391096720_n.jpg?oh=a616ca29147d5ecedfc4a79247d47484&oe=567014EB).
+8. Count and store table length then highlight classes when row length changes (i.e. a basic notifications system).
 
 
 ##Installation
