@@ -1,1 +1,26 @@
-function openTab(){chrome.tabs.query({url:["*://montavista.schoolloop.com/","*://montavista.schoolloop.com/portal/student_home*"]},function(o){console.log(o),0==o.length?createTab():selectTab(o[0].id)})}function createTab(){chrome.tabs.create({url:"https://montavista.schoolloop.com"},function(){})}function selectTab(o){console.log("selectTab "+o),chrome.tabs.update(o,{active:!0})}document.getElementById("openTab").addEventListener("click",openTab);
+function openTab(){
+
+  chrome.tabs.query({
+    url: ["*://montavista.schoolloop.com/", "*://montavista.schoolloop.com/portal/student_home*"]
+  }, function(tabs){
+    console.log(tabs);
+    if(tabs.length == 0)createTab();
+    else selectTab(tabs[0].id);
+  })
+
+}
+
+function createTab(){
+  chrome.tabs.create({
+    url: "https://montavista.schoolloop.com"
+  }, function(){
+
+  });
+}
+
+function selectTab(tabNo){
+  console.log("selectTab " + tabNo);
+  chrome.tabs.update(tabNo, {active:true});
+}
+
+document.getElementById("openTab").addEventListener("click", openTab);
