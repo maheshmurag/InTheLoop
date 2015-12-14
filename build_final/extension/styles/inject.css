@@ -1,8 +1,0 @@
-.nav_employee .trigger, .header_tabs ul .current a, .header_tabs, #container_header_top a, #container_page, #page_title{
-	border: none;
-}
-
-#container_page{
-	padding-top: 0;
-	margin-top: 75px;
-}
