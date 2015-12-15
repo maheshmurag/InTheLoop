@@ -19,7 +19,7 @@ Note: This extension only works for number grades (not for letter grades like "A
 ##Changelog
 0.0.7 - Attempted fix for points-based (no weightage) grade parsing by detecting 
 Priorities for future release:    
-1.UX/Design - mainly move the row above table header    
+1. UX/Design - mainly move the row above table header    
 2. Bug Fixes - Parsing EC/NaN errors    
 3. Notifications system - Highlight classes which have new grade entries (and/or display notification by re-parsing every 5 minutes)    
 
