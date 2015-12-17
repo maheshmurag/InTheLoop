@@ -2,3 +2,5 @@
 *.zip
 *.pem
 *.crx
+build/
+node_modules/
