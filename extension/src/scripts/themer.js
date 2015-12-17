@@ -30,7 +30,7 @@ var themes = { //default theme set, although custom can change
 			text: "#FAFAFA"
 		}
 	}
-}
+};
 
 var currentTheme = "none";
 //END DEFAULT CONSTANTS

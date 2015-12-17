@@ -3,7 +3,7 @@ function refreshPages(){
     url:"*://montavista.schoolloop.com/*"
   }, function(Tabs){
     console.log(Tabs);
-    for(i in Tabs){
+    for(var i in Tabs){
       chrome.tabs.reload(Tabs[i].id);
     }
   });

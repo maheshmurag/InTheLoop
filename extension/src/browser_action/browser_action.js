@@ -4,9 +4,9 @@ function openTab(){
     url: ["*://montavista.schoolloop.com/", "*://montavista.schoolloop.com/portal/student_home*"]
   }, function(tabs){
     console.log(tabs);
-    if(tabs.length == 0)createTab();
+    if(tabs.length === 0)createTab();
     else selectTab(tabs[0].id);
-  })
+  });
 
 }
 
