@@ -13,15 +13,13 @@ Note: This extension only works for number grades (not for letter grades like "A
 5. Add and edit categories
 6. Final grade calculation
 7. Handle [this](https://scontent.xx.fbcdn.net/hphotos-xft1/v/t34.0-12/12395361_1647944725464690_391096720_n.jpg?oh=a616ca29147d5ecedfc4a79247d47484&oe=567014EB).
-8. Count and store table length then highlight classes when row length changes (i.e. a basic notifications system).
-9. Better Chrome Store logos and icon (instead of using School Loop's icon)
+8. Better Chrome Store logos and icon (instead of using School Loop's icon)
 
 ##Changelog
 0.0.7 - Attempted fix for points-based (no weightage) grade parsing by detecting 
 Priorities for future release:    
 1. UX/Design - mainly move the row above table header    
 2. Bug Fixes - Parsing EC/NaN errors    
-3. Notifications system - Highlight classes which have new grade entries (and/or display notification by re-parsing every 5 minutes)    
 
 ##Demo of Grade Calculation:
 Adding Grades
