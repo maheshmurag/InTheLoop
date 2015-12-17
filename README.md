@@ -1,3 +1,4 @@
+ [![Build Status](https://travis-ci.org/mash99/InTheLoop.svg?branch=develop)](https://travis-ci.org/mash99/InTheLoop)
 # InTheLoop
 A Chrome extension that improves the School Loop interface by letting users enter a sandbox mode in which they can calculate what their grades would be after the teacher inputs or deletes grades.
 
