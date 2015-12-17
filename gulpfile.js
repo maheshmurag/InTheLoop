@@ -13,8 +13,8 @@ var uglify = require('gulp-uglify');
 
 gulp.task('default', ['dev']);
 
-gulp.task('dev', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html'], function(){
-    gulp.watch('extension/src/**/*.js', ['scripts']);
+gulp.task('dev', ['js:dev', 'css', 'manifest', 'icons', 'lib', 'html'], function(){
+    gulp.watch('extension/src/**/*.js', ['js:dev']);
     gulp.watch('extension/styles/**/*.css', ['css']);
     gulp.watch('extension/manifest.json', ['manifest']);
     gulp.watch('extension/icons/**/*', ['icons']);
@@ -22,7 +22,7 @@ gulp.task('dev', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html'], functio
     gulp.watch('extension/src/**/*.html', ['html']);
 });
 
-gulp.task('build', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html']);
+gulp.task('build', ['js:build', 'css', 'manifest', 'icons', 'lib', 'html']);
 
 gulp.task('clean', function(){
     return gulp.src('build/*', {read:false})
@@ -39,10 +39,19 @@ gulp.task('clean-css', function(){
         .pipe(clean());
 })
 
-gulp.task('scripts', ['clean-js'], function(){
+gulp.task('js:dev', ['clean-js'], function(){
     return gulp.src('extension/src/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter(stylish))
+        .pipe(uglify())
+        .pipe(gulp.dest('build/src'));
+});
+
+gulp.task('js:build', ['clean-js'], function(){
+    return gulp.src('extension/src/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter(stylish))
+        .pipe(jshint.reporter('fail'))
         .pipe(uglify())
         .pipe(gulp.dest('build/src'));
 });
