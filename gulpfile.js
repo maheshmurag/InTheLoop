@@ -11,7 +11,9 @@ var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var uglify = require('gulp-uglify');
 
-gulp.task('default', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html'], function(){
+gulp.task('default', ['dev']);
+
+gulp.task('dev', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html'], function(){
     gulp.watch('extension/src/**/*.js', ['scripts']);
     gulp.watch('extension/styles/**/*.css', ['css']);
     gulp.watch('extension/manifest.json', ['manifest']);
@@ -19,6 +21,8 @@ gulp.task('default', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html'], fun
     gulp.watch('extension/lib/**/*', ['lib']);
     gulp.watch('extension/src/**/*.html', ['html']);
 });
+
+gulp.task('build', ['scripts', 'css', 'manifest', 'icons', 'lib', 'html']);
 
 gulp.task('clean', function(){
     return gulp.src('build/*', {read:false})
