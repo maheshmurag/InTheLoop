@@ -43,6 +43,7 @@ gulp.task('scripts', ['clean-js'], function(){
     return gulp.src('extension/src/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter(stylish))
+        .pipe(jshint.reporter('fail'))
         .pipe(uglify())
         .pipe(gulp.dest('build/src'));
 });
