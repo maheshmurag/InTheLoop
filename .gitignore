@@ -1,0 +1,10 @@
+# InTheLoop
+
+*.zip
+
+*.pem
+
+*.crx
+build/
+node_modules/
+*.log
