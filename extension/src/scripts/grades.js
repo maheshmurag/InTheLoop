@@ -9,6 +9,37 @@ chrome.extension.sendMessage({}, function (response) {
             var overallP = $("b:nth-of-type(2)").text() + "";
             var pointageSystem = false;
             var rowCount = 0;
+            var setOverallPercentage = function (value, animate) {
+                for (var i = 0; i < scoresToLetters.length; i++) {
+                    if (value >= scoresToLetters[i].percent) {
+                        $("b:nth-of-type(1)").text("" + scoresToLetters[i].letter);
+                        break;
+                    }
+                }
+                if (animate) {
+                    var origElement = $("b:nth-of-type(2)");
+                    var origScore = origElement.text() + "";
+                    overallP = value + "%";
+                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
+                    jQuery({
+                        val: origScore
+                    }).animate({
+                        val: value
+                    }, {
+                        duration: 500,
+                        easing: 'swing',
+                        step: function () {
+                            origElement.text(this.val.toFixed(2) + "%");
+                        }
+                    });
+                } else {
+                    $("b:nth-of-type(2)").text("" + value + "%");
+                }
+            };
+            var setOverallPercentageStr = function (newStr) {
+                $("b:nth-of-type(2)").text("" + newStr);
+                $("b:nth-of-type(1)").text(newStr);
+            };
             var recalculateOverallPercentage = function () {
                 var sum = 0,
                     totalWeight = 0;
@@ -105,22 +136,6 @@ chrome.extension.sendMessage({}, function (response) {
                     }
                 });
             };
-            var newCatChanged = function () {
-                parseCategories();
-                repopulateDropdown();
-                recalculateOverallPercentage();
-            };
-            var makeCategoriesEditable = function () {
-                if (pointageSystem) return;
-                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
-                    if (i > 0) {
-                        var percentStr = $("td:nth-child(2)", tr).text();
-                        var percent = num(percentStr.substring(0, percentStr.length - 1));
-                        $("td:nth-child(2)", tr).replaceWith("<td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value=" + percent + " style='max-width:65%;' type='number'></input>%</td>");
-                        $(".addedCatWeight").change(newCatChanged);
-                    }
-                });
-            };
             var parseGradeEntries = function () {
                 entries = [];
                 $(".hub_general > .general_body > tr").each(function (i, tr) {
@@ -152,6 +167,23 @@ chrome.extension.sendMessage({}, function (response) {
                             };
                             entries.push(obj);
                         }
+                    }
+                });
+            };
+            var newCatChanged = function () {
+                parseCategories();
+                parseGradeEntries();
+                repopulateDropdown();
+                recalculateOverallPercentage();
+            };
+            var makeCategoriesEditable = function () {
+                if (pointageSystem) return;
+                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+                    if (i > 0) {
+                        var percentStr = $("td:nth-child(2)", tr).text();
+                        var percent = num(percentStr.substring(0, percentStr.length - 1));
+                        $("td:nth-child(2)", tr).replaceWith("<td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value=" + percent + " style='max-width:65%;' type='number'></input>%</td>");
+                        $(".addedCatWeight").change(newCatChanged);
                     }
                 });
             };
@@ -245,38 +277,8 @@ chrome.extension.sendMessage({}, function (response) {
                 var caller = $("#" + id);
                 sharedDelFunction(caller);
             };
-            
-            var setOverallPercentage = function (value, animate) {
-                for (var i = 0; i < scoresToLetters.length; i++) {
-                    if (value >= scoresToLetters[i].percent) {
-                        $("b:nth-of-type(1)").text("" + scoresToLetters[i].letter);
-                        break;
-                    }
-                }
-                if (animate) {
-                    var origElement = $("b:nth-of-type(2)");
-                    var origScore = origElement.text() + "";
-                    overallP = value + "%";
-                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
-                    jQuery({
-                        val: origScore
-                    }).animate({
-                        val: value
-                    }, {
-                        duration: 500,
-                        easing: 'swing',
-                        step: function () {
-                            origElement.text(this.val.toFixed(2) + "%");
-                        }
-                    });
-                } else {
-                    $("b:nth-of-type(2)").text("" + value + "%");
-                }
-            };
-            var setOverallPercentageStr = function (newStr) {
-                $("b:nth-of-type(2)").text("" + newStr);
-                $("b:nth-of-type(1)").text(newStr);
-            };
+
+
             var editRow = function (event) {
                 var id = event.target.id;
                 var td = $("#" + id).parent();
@@ -295,9 +297,6 @@ chrome.extension.sendMessage({}, function (response) {
 
                 test.show('slow'); //adds the top row element
                 $('.hub_general > .general_body > tr:first').before(test); //adds top row before the table's first row
-
-                $("#add_grade").click(addGrades);
-
                 function addGrades() {
                     var ACI = $('#categoryDropdown')[0].selectedIndex,
                         asstName = document.getElementById('aName').value,
@@ -319,6 +318,7 @@ chrome.extension.sendMessage({}, function (response) {
                     $("#inserted").after(newRow);
                     return false;
                 }
+                $("#add_grade").click(addGrades);
             };
 
             checkIfPointageSystem();
