@@ -64,6 +64,7 @@ chrome.extension.sendMessage({}, function (response) {
             };
             var checkIfPointageSystem = function () {
                 pointageSystem = $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(2)').text().indexOf("Score") > -1;
+                console.log("pointageSystem is " + pointageSystem);
             };
             var parseCategories = function () {
                 categories = [];
