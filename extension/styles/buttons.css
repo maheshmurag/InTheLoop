@@ -1,12 +1,7 @@
-
 button {
   appearance: none;
   box-shadow: none;
   border-radius: 0;
-}
-
-button:focus {
-  outline: none
 }
 
 section.flat button {
@@ -30,6 +25,7 @@ section.flat button.active {
 
 section.border button {
   color: #6496c8;
+  background: #000000;
   background: rgba(0,0,0,0);
   border: solid 2px #6496c8;
 }
