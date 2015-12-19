@@ -60,8 +60,61 @@ chrome.extension.sendMessage({}, function (response) {
                 $(".hub_general > .general_body > tr").each(function (i, tr) {
                     var asstNameLink = $("td:nth-child(1) > div > a", tr);
                     asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
-                }
-               );
+                });
+            };
+            var checkIfPointageSystem = function () {
+                pointageSystem = $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(2)').text().indexOf("Score") > -1;
+            };
+            var parseCategories = function () {
+                categories = [];
+                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+                    var catName, catPTmp, catPercent, catSTmp, catScore;
+                    var tempCat = $("td:nth-child(1)", tr).children();
+                    var tempCatWeight = $("td:nth-child(2)", tr).children();
+                    if (tempCat.length === 1) {
+                        catName = tempCat.first().val();
+                        catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100;
+                    } else
+                        catName = $("td:nth-child(1)", tr).text();
+                    if (tempCatWeight.length === 1) {
+                        catPTmp = tempCatWeight.first().val();
+                        catPercent = num(catPTmp) / 100;
+                    } else
+                        catPTmp = $("td:nth-child(2)", tr).text();
+
+                    if (!pointageSystem) {
+                        catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, "");
+                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                    } else {
+                        catPercent = (100 / rowCount) / 100;
+                        catSTmp = $("td:nth-child(2)", tr).text().replace(/\s/g, "");
+                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                    }
+                    var tmp = {
+                        name: catName,
+                        percentage: catPercent, //category weightage
+                        score: catScore,
+                        pointsN: 0,
+                        pointsD: 0
+                    };
+                    categories.push(tmp);
+                });
+            };
+            var newCatChanged = function () {
+                parseCategories();
+                repopulateDropdown();
+                recalculateOverallPercentage();
+            };
+            var makeCategoriesEditable = function () {
+                if (pointageSystem) return;
+                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+                    if (i > 0) {
+                        var percentStr = $("td:nth-child(2)", tr).text();
+                        var percent = num(percentStr.substring(0, percentStr.length - 1));
+                        $("td:nth-child(2)", tr).replaceWith("<td nowrap style='max-width:1px'><input class='addedCatWeight' value=" + percent + " style='max-width:65%;' type='number'></input>%</td>");
+                        $(".addedCatWeight").change(newCatChanged);
+                    }
+                });
             };
             var parseGradeEntries = function () {
                 entries = [];
@@ -97,59 +150,18 @@ chrome.extension.sendMessage({}, function (response) {
                     }
                 });
             };
-            var parseCategories = function () {
-                categories = [];
-                $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
-                    if (i === 0) {
-                        if ($("td:nth-child(2)", tr).text().indexOf("Score") > -1) {
-                            //we know that it is not a category-based system
-                            rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
-                            pointageSystem = true;
-                        }
-                    } else {
-                        var catName, catPTmp, catPercent, catSTmp, catScore;
-                        var tempCat = $("td:nth-child(1)", tr).children();
-                        var tempCatWeight = $("td:nth-child(2)", tr).children();
-                        if (tempCat.length === 1 && tempCatWeight.length === 1) {
-                            catName = tempCat.first().val();
-                            catPTmp = tempCatWeight.first().val();
-                        } else {
-                            catName = $("td:nth-child(1)", tr).text();
-                            catPTmp = $("td:nth-child(2)", tr).text();
-                        }
-                        if (!pointageSystem) {
-                            catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100;
-                            catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, "");
-                            catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
-                        } else {
-                            catPercent = (100 / rowCount) / 100;
-                            catSTmp = $("td:nth-child(2)", tr).text().replace(/\s/g, "");
-                            catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
-                        }
-                        var tmp = {
-                            name: catName,
-                            percentage: catPercent, //category weightage
-                            score: catScore,
-                            pointsN: 0,
-                            pointsD: 0
-                        };
-                        categories.push(tmp);
-                    }
-                });
-            };
-            var newCatChanged = function () {
-                parseCategories();
-                repopulateDropdown();
-                recalculateOverallPercentage();       
-            };
             var addCategory = function () {
                 $("h2:contains('Score') + div > table > tbody > tr:last").after("<tr><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat'></input></td><td nowrap style='max-width:1px'><input class='addedCatWeight' value='20' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>100%</td></tr>");
                 $(".addedCat").change(newCatChanged);
                 $(".addedCatWeight").change(newCatChanged);
                 newCatChanged();
             };
-            $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>"); //add plus button for categories
-            $(".addCat").click(addCategory);
+            var insertAddCatButton = function () {
+                if (!pointageSystem) {
+                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
+                    $(".addCat").click(addCategory);
+                }
+            }; //add plus button for categories
 
             //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             var parseScale = function () {
@@ -175,7 +187,6 @@ chrome.extension.sendMessage({}, function (response) {
                 };
                 scoresToLetters.sort(compare);
             };
-
             var delRow = function (event) {
                 var id = event.target.id;
                 var caller = $("#" + id);
@@ -304,6 +315,11 @@ chrome.extension.sendMessage({}, function (response) {
                 }
             };
 
+            checkIfPointageSystem();
+            if (!pointageSystem) {
+                insertAddCatButton();
+                makeCategoriesEditable();
+            }
             parseCategories();
             parseScale();
             addDelButton();
