@@ -64,41 +64,45 @@ chrome.extension.sendMessage({}, function (response) {
             };
             var checkIfPointageSystem = function () {
                 pointageSystem = $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(2)').text().indexOf("Score") > -1;
+                rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
                 console.log("pointageSystem is " + pointageSystem);
             };
             var parseCategories = function () {
                 categories = [];
                 $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
-                    var catName, catPTmp, catPercent, catSTmp, catScore;
-                    var tempCat = $("td:nth-child(1)", tr).children();
-                    var tempCatWeight = $("td:nth-child(2)", tr).children();
-                    if (tempCat.length === 1) {
-                        catName = tempCat.first().val();
-                        catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100;
-                    } else
-                        catName = $("td:nth-child(1)", tr).text();
-                    if (tempCatWeight.length === 1) {
-                        catPTmp = tempCatWeight.first().val();
-                        catPercent = num(catPTmp) / 100;
-                    } else
-                        catPTmp = $("td:nth-child(2)", tr).text();
-
-                    if (!pointageSystem) {
-                        catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, "");
-                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
-                    } else {
-                        catPercent = (100 / rowCount) / 100;
-                        catSTmp = $("td:nth-child(2)", tr).text().replace(/\s/g, "");
-                        catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                    if (i > 0) {
+                        var catName, catPTmp, catPercent, catSTmp, catScore;
+                        var tempCat = $("td:nth-child(1)", tr).children();
+                        var tempCatWeight = $("td:nth-child(2)", tr).children();
+                        if (tempCat.length === 1) {
+                            catName = tempCat.first().val();
+                        } else {
+                            catName = $("td:nth-child(1)", tr).text();
+                        }
+                        if (tempCatWeight.length === 1) {
+                            catPTmp = tempCatWeight.first().val();
+                            catPercent = num(catPTmp) / 100;
+                        } else {
+                            catPTmp = $("td:nth-child(2)", tr).text();
+                            catPercent = num(catPTmp.substring(0, catPTmp.length - 1)) / 100;
+                        }
+                        if (!pointageSystem) {
+                            catSTmp = $("td:nth-child(3)", tr).text().replace(/\s/g, "");
+                            catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                        } else {
+                            catPercent = (100 / rowCount) / 100;
+                            catSTmp = $("td:nth-child(2)", tr).text().replace(/\s/g, "");
+                            catScore = num(catSTmp.substring(0, catSTmp.length - 1)) / 100;
+                        }
+                        var tmp = {
+                            name: catName,
+                            percentage: catPercent, //category weightage
+                            score: catScore,
+                            pointsN: 0,
+                            pointsD: 0
+                        };
+                        categories.push(tmp);
                     }
-                    var tmp = {
-                        name: catName,
-                        percentage: catPercent, //category weightage
-                        score: catScore,
-                        pointsN: 0,
-                        pointsD: 0
-                    };
-                    categories.push(tmp);
                 });
             };
             var newCatChanged = function () {
@@ -112,7 +116,7 @@ chrome.extension.sendMessage({}, function (response) {
                     if (i > 0) {
                         var percentStr = $("td:nth-child(2)", tr).text();
                         var percent = num(percentStr.substring(0, percentStr.length - 1));
-                        $("td:nth-child(2)", tr).replaceWith("<td nowrap style='max-width:1px'><input class='addedCatWeight' value=" + percent + " style='max-width:65%;' type='number'></input>%</td>");
+                        $("td:nth-child(2)", tr).replaceWith("<td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value=" + percent + " style='max-width:65%;' type='number'></input>%</td>");
                         $(".addedCatWeight").change(newCatChanged);
                     }
                 });
@@ -152,7 +156,7 @@ chrome.extension.sendMessage({}, function (response) {
                 });
             };
             var addCategory = function () {
-                $("h2:contains('Score') + div > table > tbody > tr:last").after("<tr><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat'></input></td><td nowrap style='max-width:1px'><input class='addedCatWeight' value='20' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>100%</td></tr>");
+                $("h2:contains('Score') + div > table > tbody > tr:last").after("<tr><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>0%</td></tr>");
                 $(".addedCat").change(newCatChanged);
                 $(".addedCatWeight").change(newCatChanged);
                 newCatChanged();
@@ -188,10 +192,28 @@ chrome.extension.sendMessage({}, function (response) {
                 };
                 scoresToLetters.sort(compare);
             };
-            var delRow = function (event) {
-                var id = event.target.id;
-                var caller = $("#" + id);
-                sharedDelFunction(caller);
+            var setCategoryPercentageStr = function (index, newStr) {
+                $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
+            };
+            var setCategoryPercentage = function (index, newScore, animate) {
+                if (!animate) {
+                    $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
+                } else {
+                    var origElement = $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
+                    var origScore = origElement.text() + "";
+                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
+                    jQuery({
+                        val: origScore
+                    }).animate({
+                        val: newScore
+                    }, {
+                        duration: 500,
+                        easing: 'swing',
+                        step: function () {
+                            origElement.text((this.val).toFixed(2) + "%");
+                        }
+                    });
+                }
             };
             var sharedDelFunction = function (caller) {
                 var cName = caller.parent().contents().filter(function () {
@@ -218,29 +240,12 @@ chrome.extension.sendMessage({}, function (response) {
                 recalculateOverallPercentage();
                 caller.parent().parent().parent().remove();
             };
-            var setCategoryPercentageStr = function (index, newStr) {
-                $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
+            var delRow = function (event) {
+                var id = event.target.id;
+                var caller = $("#" + id);
+                sharedDelFunction(caller);
             };
-            var setCategoryPercentage = function (index, newScore, animate) {
-                if (!animate) {
-                    $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
-                } else {
-                    var origElement = $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
-                    var origScore = origElement.text() + "";
-                    origScore = num(origScore.substring(0, origScore.indexOf("%")));
-                    jQuery({
-                        val: origScore
-                    }).animate({
-                        val: newScore
-                    }, {
-                        duration: 500,
-                        easing: 'swing',
-                        step: function () {
-                            origElement.text((this.val).toFixed(2) + "%");
-                        }
-                    });
-                }
-            };
+            
             var setOverallPercentage = function (value, animate) {
                 for (var i = 0; i < scoresToLetters.length; i++) {
                     if (value >= scoresToLetters[i].percent) {
