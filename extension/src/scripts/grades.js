@@ -12,9 +12,14 @@ chrome.extension.sendMessage({}, function (response) {
             var num = function (param) {
                 return Number(param);
             };
+            var addCategory = function(){
+                $("h2:contains('Score') + div > table > tbody > tr:last").after("<tr><td><input type='text' style='max-width:75%'></input></td><td nowrap style='max-width:1px'><input style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>-%</td></tr>");
+            };
             var parseCategories = function () {
                 $('h2:contains("Score") + div > table > tbody > tr').each(function (i, tr) {
                     if (i === 0) {
+                        $("td:nth-child(1)", tr).html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");//add plus button for categories
+                        $(".addCat").click(addCategory);
                         if ($("td:nth-child(2)", tr).text().indexOf("Score") > -1) {
                             //we know that it is not a category-based system
                             rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
@@ -44,7 +49,9 @@ chrome.extension.sendMessage({}, function (response) {
                         categories.push(tmp);
                     }
                 });
-            }; //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
+            };
+            
+            //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
             var parseScale = function () {
                 var a1, lttr, pcntg;
                 $('h2:contains("Scale") + div * tr').each(function (i, tr) {
