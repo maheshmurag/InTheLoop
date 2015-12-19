@@ -188,7 +188,7 @@ chrome.extension.sendMessage({}, function (response) {
                 });
             };
             var addCategory = function () {
-                var trToAdd = $("<tr style='display: none;'><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>0%</td></tr>");
+                var trToAdd = $("<tr style='display: none;'><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>-</td></tr>");
                 $("h2:contains('Score') + div > table > tbody > tr:last").after(trToAdd);
                 trToAdd.fadeIn();
                 $(".addedCat").change(newCatChanged);
