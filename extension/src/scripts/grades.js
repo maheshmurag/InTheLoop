@@ -188,14 +188,16 @@ chrome.extension.sendMessage({}, function (response) {
                 });
             };
             var addCategory = function () {
-                $("h2:contains('Score') + div > table > tbody > tr:last").after("<tr><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>0%</td></tr>");
+                var trToAdd = $("<tr style='display: none;'><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>0%</td></tr>");
+                $("h2:contains('Score') + div > table > tbody > tr:last").after(trToAdd);
+                trToAdd.fadeIn();
                 $(".addedCat").change(newCatChanged);
                 $(".addedCatWeight").change(newCatChanged);
                 newCatChanged();
             };
             var insertAddCatButton = function () {
                 if (!pointageSystem) {
-                    var st = 'Category: <section style="display:inline;" class="flat"><button class="addCat">Add Grade</button></section>';
+                    var st = 'Category: <section style="display:inline;" class="flat"><button class="addCat">Add Category</button></section>';
                     $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html(st);
 //                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
                     $(".addCat").click(addCategory);
@@ -272,7 +274,7 @@ chrome.extension.sendMessage({}, function (response) {
                     setCategoryPercentage(elementPos, categories[elementPos].score * 100, true);
                 }
                 recalculateOverallPercentage();
-                caller.parent().parent().parent().remove();
+                caller.parent().parent().parent().fadeOut(300, function() { $(this).remove(); });
             };
             var delRow = function (event) {
                 var id = event.target.id;
@@ -295,7 +297,7 @@ chrome.extension.sendMessage({}, function (response) {
                 if ($("#myonoffswitch").is(":checked"))
                     param = true;
 
-                var test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><a style="float:right;" id="add_grade" id="add_grade" href="#" style="float:right; padding-right:30px;">add grade</a></td></td></tr>').hide(); //initializes the top row element
+                var test = $('<tr id="inserted"><td align="center" class="inserted_two" colspan="1">Category: <select id="categoryDropdown"></select></td><td colspan="2" align="center" >Assignment:<input type="text" id="aName">&nbsp;<td style="vertical-align:middle;" colspan="2"><div style="float: left; ">Grade:<input type="number"    style="width:40px;" id="aNum">/<input     style="width:40px;" type="number" id="aDen"></div><section style="display:inline; padding-right:30px; float:right;" class="flat"><button id="add_grade">Add Grade</button></section></td></td></tr>').hide(); //initializes the top row element
 
                 test.show('slow'); //adds the top row element
                 $('.hub_general > .general_body > tr:first').before(test); //adds top row before the table's first row
@@ -316,8 +318,10 @@ chrome.extension.sendMessage({}, function (response) {
                     //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                     var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
                     recalculateOverallPercentage();
-                    var newRow = $("<tr class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                    var newRow = $("<tr style='display:none;' class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
                     $("#inserted").after(newRow);
+                    newRow.fadeIn();
+                    
                     return false;
                 }
                 $("#add_grade").click(addGrades);
