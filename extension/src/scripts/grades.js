@@ -195,7 +195,9 @@ chrome.extension.sendMessage({}, function (response) {
             };
             var insertAddCatButton = function () {
                 if (!pointageSystem) {
-                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
+                    var st = 'Category: <section style="display:inline;" class="flat"><button class="addCat">Add Grade</button></section>';
+                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html(st);
+//                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
                     $(".addCat").click(addCategory);
                 }
             }; //add plus button for categories
