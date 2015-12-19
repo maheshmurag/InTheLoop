@@ -199,7 +199,7 @@ chrome.extension.sendMessage({}, function (response) {
                 if (!pointageSystem) {
                     var st = 'Category: <section style="display:inline;" class="flat"><button class="addCat">Add Category</button></section>';
                     $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html(st);
-//                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
+                    //                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
                     $(".addCat").click(addCategory);
                 }
             }; //add plus button for categories
@@ -231,6 +231,13 @@ chrome.extension.sendMessage({}, function (response) {
             var setCategoryPercentageStr = function (index, newStr) {
                 $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
             };
+
+            var round = function(value) {
+//                return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+                return Math.ceil(value*1000)/1000;
+            };
+
+
             var setCategoryPercentage = function (index, newScore, animate) {
                 if (!animate) {
                     $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
@@ -245,8 +252,9 @@ chrome.extension.sendMessage({}, function (response) {
                     }, {
                         duration: 500,
                         easing: 'swing',
-                        step: function () {
-                            origElement.text((this.val).toFixed(2) + "%");
+                        progress: function () {
+                            var t = round(this.val);
+                            origElement.text(t + "%");
                         }
                     });
                 }
@@ -274,7 +282,9 @@ chrome.extension.sendMessage({}, function (response) {
                     setCategoryPercentage(elementPos, categories[elementPos].score * 100, true);
                 }
                 recalculateOverallPercentage();
-                caller.parent().parent().parent().fadeOut(300, function() { $(this).remove(); });
+                caller.parent().parent().parent().fadeOut(300, function () {
+                    $(this).remove();
+                });
             };
             var delRow = function (event) {
                 var id = event.target.id;
@@ -311,7 +321,7 @@ chrome.extension.sendMessage({}, function (response) {
                     categories[ACI].pointsN += asstPointN;
                     categories[ACI].pointsD += asstPointD;
                     categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
-                    var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100) * 100) / 100).toFixed(2));
+                    var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100.0) * 100.0) / 100.0).toFixed(2));
                     setCategoryPercentage(ACI, newCatScore, true);
                     var date = new Date();
                     var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
@@ -321,7 +331,7 @@ chrome.extension.sendMessage({}, function (response) {
                     var newRow = $("<tr style='display:none;' class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
                     $("#inserted").after(newRow);
                     newRow.fadeIn();
-                    
+
                     return false;
                 }
                 $("#add_grade").click(addGrades);
