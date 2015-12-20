@@ -1,78 +1,70 @@
-.tipr_content
-{
-     font: 13px/1.7 'Helvetica Neue', Helvetica, Arial, sans-serif;
-     color: #fff; 
-     background-color: #333;
-     padding: 9px 17px;
+.tipr_content {
+    font: 13px/1.7 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #fff;
+    background-color: #333;
+    padding: 9px 17px;
 }
-.tipr_container_bottom
-{
-     display: none;
-     position: absolute;
-     margin-top: 13px;
-     box-shadow: 2px 2px 5px #333;
-     z-index: 1000;
+.tipr_container_bottom {
+    display: none;
+    position: absolute;
+    margin-top: 13px;
+    box-shadow: 2px 2px 5px #333;
+    z-index: 1000;
 }
-.tipr_container_top
-{
-     display: none;
-     position: absolute;
-     margin-top: -77px;
-     box-shadow: 2px 2px 5px #333;
-     z-index: 1000;
+.tipr_container_top {
+    display: none;
+    position: absolute;
+    margin-top: -65px;
+    box-shadow: 2px 2px 5px #333;
+    z-index: 1000;
 }
-.tipr_point_top, .tipr_point_bottom 
-{
-     position: relative;
-	background: #fff;
-	border: 1px solid #333;
+.tipr_point_top,
+.tipr_point_bottom {
+    position: relative;
+    background: #fff;
+    border: 1px solid #333;
 }
-.tipr_point_top:after, .tipr_point_top:before
-{
-	position: absolute;
-	pointer-events: none;
-	border: solid transparent;
-	top: 100%;
-	content: "";
-	height: 0;
-	width: 0;
+.tipr_point_top:after,
+.tipr_point_top:before {
+    position: absolute;
+    pointer-events: none;
+    border: solid transparent;
+    top: 100%;
+    content: "";
+    height: 0;
+    width: 0;
 }
-.tipr_point_top:after
-{
-	border-top-color: #333;
-	border-width: 8px;
-	left: 50%;
-	margin-left: -8px;
+.tipr_point_top:after {
+    border-top-color: #333;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
 }
-.tipr_point_top:before 
-{
-	border-top-color: #333;
-	border-width: 9px;
-	left: 50%;
-	margin-left: -9px;
+.tipr_point_top:before {
+    border-top-color: #333;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
 }
-.tipr_point_bottom:after, .tipr_point_bottom:before
-{
-	position: absolute;
-	pointer-events: none;
-	border: solid transparent;
-	bottom: 100%;
-	content: "";
-	height: 0;
-	width: 0;
+.tipr_point_bottom:after,
+.tipr_point_bottom:before {
+    position: absolute;
+    pointer-events: none;
+    border: solid transparent;
+    bottom: 100%;
+    content: "";
+    height: 0;
+    width: 0;
 }
-.tipr_point_bottom:after
-{
-	border-bottom-color: #333;
-	border-width: 8px;
-	left: 50%;
-	margin-left: -8px;
+.tipr_point_bottom:after {
+    border-bottom-color: #333;
+    border-width: 8px;
+    left: 50%;
+    margin-left: -8px;
 }
-.tipr_point_bottom:before 
-{
-	border-bottom-color: #333;
-	border-width: 9px;
-	left: 50%;
-	margin-left: -9px;
+.tipr_point_bottom:before {
+    border-bottom-color: #333;
+    border-width: 9px;
+    left: 50%;
+    margin-left: -9px;
 }
-
