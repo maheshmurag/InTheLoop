@@ -15,6 +15,7 @@ Note: This extension only works for number grades (not for letter grades like "A
 6. ~~Final grade calculation~~
 7. Handle [this](https://scontent.xx.fbcdn.net/hphotos-xft1/v/t34.0-12/12395361_1647944725464690_391096720_n.jpg?oh=a616ca29147d5ecedfc4a79247d47484&oe=567014EB).
 8. Better Chrome Store logos and icon (instead of using School Loop's icon)
+9. Make changes to grade trend
 
 ##Changelog
 0.1.2 - Tooltips for # of points per category/total
@@ -30,9 +31,12 @@ Priorities for future release:
 
 ##Demo of Grade Calculation:
 Adding Grades
-![](https://i.gyazo.com/3df6057e276cac0228153a3cf29a81fa.gif)
+![](https://i.gyazo.com/6c424770f10b8598c4439b36c89193b4.gif)
 
 Deleting Grades
-![](https://i.gyazo.com/c58a324298bf87404d153c2f85afb485.gif)
+![](https://i.gyazo.com/8252613bbe697fef07c8f1bf9a5d9134.gif)
+
+Adding and Editing Categories
+![](https://i.gyazo.com/0fdfe0e3ac2ad56c8b86b2599b6720b0.gif)
 
 Note: The icon, "schoolloop.com", and any other School Loop assets used in this extension belong to School Loop, Inc. Any other assets belong to their respective owners.
