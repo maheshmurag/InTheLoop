@@ -17,6 +17,8 @@ Note: This extension only works for number grades (not for letter grades like "A
 8. Better Chrome Store logos and icon (instead of using School Loop's icon)
 
 ##Changelog
+0.1.1 - Category bug fixes for rounding errors
+
 0.1 - Ability to add new categories and edit old ones + a little styling
 
 0.0.7 - Attempted fix for points-based (no weightage) grade parsing by detecting 
