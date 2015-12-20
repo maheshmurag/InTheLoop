@@ -98,6 +98,29 @@ chrome.extension.sendMessage({}, function (response) {
                 rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
                 console.log("pointageSystem is " + pointageSystem);
             };
+            var readdTooltips = function() {
+                if(pointageSystem)
+                    return;
+                var pN = 0, pD = 0;
+                for(var i = 0; i < categories.length; i++){
+                    pN += categories[i].pointsN;
+                    pD += categories[i].pointsD;
+                }
+                var sumStr = pN + " / " + pD;
+                $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(3)').html('<div class="tip" data-tip="' + sumStr + '">Score</div>');
+                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+                    if (i > 0) {
+                        var x = $("td:nth-child(3)", tr);
+                        var xxy = x.text();
+                        var xx = categories[i-1].pointsN + " / " + categories[i-1].pointsD;
+                        x.empty().append('<div class="tip" data-tip="' + xx + '">' + xxy + '</div>');
+                    }
+                });
+                $('.tip').tipr({
+                      'speed': 350,
+                      'mode': 'top'
+                 });
+            };
             var parseCategories = function () {
                 categories = [];
                 $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
@@ -135,6 +158,7 @@ chrome.extension.sendMessage({}, function (response) {
                         categories.push(tmp);
                     }
                 });
+                readdTooltips();
             };
             var parseGradeEntries = function () {
                 entries = [];
@@ -175,6 +199,7 @@ chrome.extension.sendMessage({}, function (response) {
                 parseGradeEntries();
                 repopulateDropdown();
                 recalculateOverallPercentage();
+                readdTooltips();
             };
             var makeCategoriesEditable = function () {
                 if (pointageSystem) return;
@@ -202,9 +227,7 @@ chrome.extension.sendMessage({}, function (response) {
                     //                    $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html("Category: <a href=\"javascript:void(0);\" class = \"addCat\">+</a>");
                     $(".addCat").click(addCategory);
                 }
-            }; //add plus button for categories
-
-            //loop through all tr's in main table, ID the category, add asst's pointN and pointD to catPointsN, catPointsD and update corresponding array object
+            };
             var parseScale = function () {
                 var a1, lttr, pcntg;
                 $('h2:contains("Scale") + div * tr').each(function (i, tr) {
@@ -230,14 +253,12 @@ chrome.extension.sendMessage({}, function (response) {
             };
             var setCategoryPercentageStr = function (index, newStr) {
                 $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
+                readdTooltips();
             };
-
             var round = function(value) {
 //                return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
                 return Math.ceil(value*1000)/1000;
             };
-
-
             var setCategoryPercentage = function (index, newScore, animate) {
                 if (!animate) {
                     $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
@@ -255,6 +276,9 @@ chrome.extension.sendMessage({}, function (response) {
                         progress: function () {
                             var t = round(this.val);
                             origElement.text(t + "%");
+                        },
+                        complete: function(){
+                            readdTooltips();
                         }
                     });
                 }
@@ -291,8 +315,6 @@ chrome.extension.sendMessage({}, function (response) {
                 var caller = $("#" + id);
                 sharedDelFunction(caller);
             };
-
-
             var editRow = function (event) {
                 var id = event.target.id;
                 var td = $("#" + id).parent();
@@ -338,14 +360,15 @@ chrome.extension.sendMessage({}, function (response) {
             };
 
             checkIfPointageSystem();
+            parseCategories();
+            parseScale();
+            parseGradeEntries();
             if (!pointageSystem) {
                 insertAddCatButton();
                 makeCategoriesEditable();
+                readdTooltips();
             }
-            parseCategories();
-            parseScale();
             addDelButton();
-            parseGradeEntries();
             insertTopRow();
             repopulateDropdown();
             $(".edit").click(editRow);
