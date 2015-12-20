@@ -87,10 +87,27 @@ chrome.extension.sendMessage({}, function (response) {
                     dropdown.appendChild(el);
                 }
             };
+            var showDelButton = function(event){
+                var caller = $(this);
+                var s = $("td:nth-child(1) > div > a:nth-of-type(1)", caller);
+                s.show();
+            };
+            var hideDelButton = function(event){
+                var caller = $(this);
+                var s = $("td:nth-child(1) > div > a:nth-of-type(1)", caller);
+                s.hide();
+            };
             var addDelButton = function () {
+                var rule = {
+                    'margin-left': '2em'
+                };
+                $(".hub_general > .general_body > tr").css(rule);
                 $(".hub_general > .general_body > tr").each(function (i, tr) {
-                    var asstNameLink = $("td:nth-child(1) > div > a", tr);
-                    asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
+                    $(".hub_general > .general_body > tr:nth-child(" + i + ")").hover(showDelButton, hideDelButton);
+                    var asstTd = $("td:nth-child(1) > div > a", tr);
+                    var height = asstTd.height();
+                    asstTd.before("<a style='display:none;float:left; margin-left: -2.5em;line-height:" + height + "px;' href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>");
+
                 });
             };
             var checkIfPointageSystem = function () {
@@ -98,11 +115,12 @@ chrome.extension.sendMessage({}, function (response) {
                 rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
                 console.log("pointageSystem is " + pointageSystem);
             };
-            var readdTooltips = function() {
-                if(pointageSystem)
+            var readdTooltips = function () {
+                if (pointageSystem)
                     return;
-                var pN = 0, pD = 0;
-                for(var i = 0; i < categories.length; i++){
+                var pN = 0,
+                    pD = 0;
+                for (var i = 0; i < categories.length; i++) {
                     pN += categories[i].pointsN;
                     pD += categories[i].pointsD;
                 }
@@ -112,14 +130,14 @@ chrome.extension.sendMessage({}, function (response) {
                     if (i > 0) {
                         var x = $("td:nth-child(3)", tr);
                         var xxy = x.text();
-                        var xx = categories[i-1].pointsN + " / " + categories[i-1].pointsD;
+                        var xx = categories[i - 1].pointsN + " / " + categories[i - 1].pointsD;
                         x.empty().append('<div class="tip" data-tip="' + xx + '">' + xxy + '</div>');
                     }
                 });
                 $('.tip').tipr({
-                      'speed': 350,
-                      'mode': 'top'
-                 });
+                    'speed': 350,
+                    'mode': 'top'
+                });
             };
             var parseCategories = function () {
                 categories = [];
@@ -255,9 +273,9 @@ chrome.extension.sendMessage({}, function (response) {
                 $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
                 readdTooltips();
             };
-            var round = function(value) {
-//                return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-                return Math.ceil(value*1000)/1000;
+            var round = function (value) {
+                //                return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+                return Math.ceil(value * 1000) / 1000;
             };
             var setCategoryPercentage = function (index, newScore, animate) {
                 if (!animate) {
@@ -277,7 +295,7 @@ chrome.extension.sendMessage({}, function (response) {
                             var t = round(this.val);
                             origElement.text(t + "%");
                         },
-                        complete: function(){
+                        complete: function () {
                             readdTooltips();
                         }
                     });
