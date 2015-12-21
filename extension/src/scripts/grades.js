@@ -115,28 +115,33 @@ chrome.extension.sendMessage({}, function (response) {
                 console.log("pointageSystem is " + pointageSystem);
             };
             var readdTooltips = function () {
-                if (pointageSystem)
-                    return;
-                var pN = 0,
-                    pD = 0;
-                for (var i = 0; i < categories.length; i++) {
-                    pN += categories[i].pointsN;
-                    pD += categories[i].pointsD;
-                }
-                var sumStr = pN + " / " + pD;
-                $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(3)').html('<div class="tip" data-tip="' + sumStr + '">Score</div>');
-                $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
-                    if (i > 0) {
-                        var x = $("td:nth-child(3)", tr);
-                        var xxy = x.text();
-                        var xx = categories[i - 1].pointsN + " / " + categories[i - 1].pointsD;
-                        x.empty().append('<div class="tip" data-tip="' + xx + '">' + xxy + '</div>');
+                try {
+                    if (pointageSystem)
+                        return;
+                    var pN = 0,
+                        pD = 0;
+                    for (var i = 0; i < categories.length; i++) {
+                        pN += categories[i].pointsN;
+                        pD += categories[i].pointsD;
                     }
-                });
-                $('.tip').tipr({
-                    'speed': 350,
-                    'mode': 'top'
-                });
+                    var sumStr = pN + " / " + pD;
+                    $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(3)').html('<div class="tip" data-tip="' + sumStr + '">Score</div>');
+                    $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+                        if (i > 0) {
+                            var x = $("td:nth-child(3)", tr);
+                            var xxy = x.text();
+                            var xx = categories[i - 1].pointsN + " / " + categories[i - 1].pointsD;
+                            x.empty().append('<div class="tip" data-tip="' + xx + '">' + xxy + '</div>');
+                        }
+                    });
+                    $('.tip').tipr({
+                        'speed': 350,
+                        'mode': 'top'
+                    });
+                } catch (err) {
+                    console.log("In The Loop failed to insert tooltips");
+                    failed = true;
+                }
             };
             var parseCategories = function () {
                 categories = [];
@@ -452,8 +457,7 @@ chrome.extension.sendMessage({}, function (response) {
                         sharedDelFunction(caller);
                     });
                 }
-            }
-            else{
+            } else {
                 console.log("In The Loop failed to start! (Line 457); e.length = " + entries.length + "; c.length = " + categories.length);
             }
         }
