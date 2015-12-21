@@ -98,16 +98,9 @@ chrome.extension.sendMessage({}, function (response) {
                 s.hide();
             };
             var addDelButton = function () {
-                var rule = {
-                    'margin-left': '2em'
-                };
-                $(".hub_general > .general_body > tr").css(rule);
                 $(".hub_general > .general_body > tr").each(function (i, tr) {
-                    $(".hub_general > .general_body > tr:nth-child(" + i + ")").hover(showDelButton, hideDelButton);
-                    var asstTd = $("td:nth-child(1) > div > a", tr);
-                    var height = asstTd.height();
-                    asstTd.before("<a style='display:none;float:left; margin-left: -2.5em;line-height:" + height + "px;' href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>");
-
+                    var asstNameLink = $("td:nth-child(1) > div > a", tr);
+                    asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
                 });
             };
             var checkIfPointageSystem = function () {
@@ -274,8 +267,7 @@ chrome.extension.sendMessage({}, function (response) {
                 readdTooltips();
             };
             var round = function (value) {
-                //                return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-                return Math.ceil(value * 1000) / 1000;
+                return Math.ceil(value * 100) / 100;
             };
             var setCategoryPercentage = function (index, newScore, animate) {
                 if (!animate) {
