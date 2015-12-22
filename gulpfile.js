@@ -35,7 +35,7 @@ gulp.task('clean-js', function(){
 })
 
 gulp.task('clean-css', function(){
-    return gulp.src('build/**/*.css', {read:false})
+    return gulp.src('build/styles/**/*.css', {read:false})
         .pipe(clean());
 })
 
