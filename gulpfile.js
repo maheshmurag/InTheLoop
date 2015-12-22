@@ -30,7 +30,7 @@ gulp.task('clean', function(){
 })
 
 gulp.task('clean-js', function(){
-    return gulp.src('build/**/*.js', {read:false})
+    return gulp.src('build/src/**/*.js', {read:false})
         .pipe(clean());
 })
 
