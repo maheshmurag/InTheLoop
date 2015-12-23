@@ -1,33 +1,176 @@
 var themes = { //default theme set, although custom can change
 	none: {
 		name: "No Theme",
-		colors: {
-			background: "#000000",
-			primary: "#FFFFFF",
-			accent: "#FFFFFF",
-			background_content: "#FFFFFF",
-			text: "#000000"
-		}
-	},
-	custom: {
-		name: "Custom Theme",
-		colors: {
-			background: "#000000",
-			primary: "#FFFFFF",
-			accent: "#FFFFFF",
-			background_content: "#FFFFFF",
-			text: "#000000"
-		}
+		key: "none"
 	},
 	mvhs: {
 		name: "MVHS",
+		key: "mvhs",
 		colors: {
 			background: "#424242",
 			primary: "#7E57C2",
 			accent: "#FFD54F",
 			background_content: "#FFECB3",
-			text: "#FAFAFA"
+			text: "#FAFAFA",
+			text_secondary: "#7E57C2"
 		}
+	},
+	limegrey: {
+		name: "Lime Grey",
+		key: "limegrey",
+		colors: {
+			background: "#424242",
+			primary: "#607D8B",
+			accent: "#CDDC39",
+			background_content: "#CFD8DC",
+			text: "#FAFAFA",
+			text_secondary: "#607D8B"
+		}
+	},
+	firenze: {
+		name: "Firenze",
+		key: "firenze",
+		colors: {
+			background: "#B64926",
+			primary: "#8E2800",
+			accent: "#FFB03B",
+			background_content: "#FFF0A5",
+			text: "#FAFAFA",
+			text_secondary: "#FAFAFA"
+		}
+	},
+	coolgreen: {
+		name: "Cool Green",
+		key: "firenze",
+		colors: {
+			background: "#D1DBBD",
+			primary: "#3E606F",
+			accent: "#91AA9D",
+			background_content: "#FCFFF5",
+			text: "#FAFAFA",
+			text_secondary: "#FAFAFA"
+		}
+	},
+	unsplashrandom: {
+		name: "Unsplash - Random Image",
+		key: "unsplashrandom",
+		colors: {
+			background: "url(https://unsplash.it/1960/1080/?random) no-repeat fixed center center/cover",
+			primary: "#424242",
+			accent: "#E0E0E0",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#424242"
+		}
+	},
+	snowyroad: {
+		name: "Snowy Road",
+		key: "snowyroad",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/snowyroad.jpg) no-repeat fixed center center/cover",
+			primary: "#424242",
+			accent: "#E0E0E0",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#424242"
+		}
+	},
+	snowylake: {
+		name: "Snowy Lake",
+		key: "snowylake",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/snowylake.jpg) no-repeat fixed center center/cover",
+			primary: "#424242",
+			accent: "#E0E0E0",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#424242"
+		}
+	},
+	rockypeaks: {
+		name: "Rocky Peaks",
+		key: "rockypeaks",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/rockypeaks.jpg) no-repeat fixed center center/cover",
+			primary: "#424242",
+			accent: "#E0E0E0",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#424242"
+		}
+	},
+	bluepeaks: {
+		name: "Blue Peaks",
+		key: "bluepeaks",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/bluepeaks.jpg) no-repeat fixed center center/cover",
+			primary: "#3F51B5",
+			accent: "#D6DDF7",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#3F51B5"
+		}
+	},
+	abovetheclouds: {
+		name: "Above the Clouds",
+		key: "abovetheclouds",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/abovetheclouds.jpg) no-repeat fixed center center/cover",
+			primary: "#424242",
+			accent: "#E0E0E0",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#424242"
+		}
+	},
+	fall: {
+		name: "Fall Colors",
+		key: "fall",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/fallcolors.jpg) no-repeat fixed center center/cover",
+			primary: "#58393E",
+			accent: "#D8965A",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#FAFAFA"
+		}
+	},
+	falltwo: {
+		name: "Fall Colors Two",
+		key: "falltwo",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/fallcolors2.jpg) no-repeat fixed center center/cover",
+			primary: "#58393E",
+			accent: "#D8965A",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#FAFAFA"
+		}
+	},
+	goldengate: {
+		name: "Golden Gate",
+		key: "goldengate",
+		colors: {
+			background: "url(https://mash99.github.io/InTheLoop/bgs/goldengate.jpg) no-repeat fixed center center/cover",
+			primary: "#c0362c",
+			accent: "#6A4142",
+			background_content: "#EEEEEE",
+			text: "#FAFAFA",
+			text_secondary: "#FAFAFA"
+		}
+	}
+};
+
+var custom_default = {
+	name: "Custom Theme",
+	key: "custom",
+	colors: {
+		background: "#000000",
+		primary: "#FFFFFF",
+		accent: "#FFFFFF",
+		background_content: "#FFFFFF",
+		text: "#000000",
+		text_secondary: "#FFFFFF"
 	}
 };
 
@@ -36,48 +179,60 @@ var currentTheme = "none";
 var dropdown = document.getElementById("theme_select");
 
 function loadThemes(){
+	chrome.storage.sync.get({current_theme:themes.none, custom_theme:custom_default},function(data){
 
-	chrome.storage.sync.get({themes:themes, current_theme:currentTheme},function(data){
+		//in case we've added more stuff, add saved info to our default custom
+		themes.custom = Object.assign(custom_default, data.custom_theme);
 
-		//load all themes to dropdown entries
-		for(var item in data.themes){
+		var current = data.current_theme.key;
+		console.log('saved current theme key = ' + current);
+		if(!themes[current]){
+			current = "custom";
+			themes.custom.colors = Object.assign(themes.custom.colors, data.current_theme.colors);
+		}else{
+		}
+
+		for(var theme in themes){
 			var option = document.createElement("option");
-			option.text = data.themes[item].name;
-			option.value = item;
+			option.text = themes[theme].name;
+			option.value = theme;
 			dropdown.add(option);
 		}
-		themes = data.themes;
-		//set current dropdown value to current theme
-		selectTheme(data.current_theme);
+
+		setTheme(current);
+
+		console.log('themes:');
+		console.log(themes);
 	});
 }
 
-function selectTheme(theme){
-	currentTheme = theme;
-	dropdown.value = currentTheme;
-	themeSelected();
+//updates data once a theme is selected in the dropdown
+function onThemeSelected(){
+	setTheme(dropdown.value);
 }
 
-//updates data once a theme is selected in the dropdown
-function themeSelected(){
-	var themeColorsDiv = document.getElementById("theme_colors");
-	currentTheme = dropdown.value;
-	if(currentTheme == "none"){
-		themeColorsDiv.style.display = "none";
-	}else{
-		themeColorsDiv.style.display = "block";
-	}
-	loadTheme(themes[currentTheme]);
-	saveThemes();
+function setTheme(themeId){
+	currentTheme = themeId;
+	dropdown.value = themeId;
+	loadTheme(themeId);
+	console.log('saving, currentTheme=' + themeId);
+	chrome.storage.sync.set({current_theme:themes[themeId]}, function(){
+		//TODO: add feedback
+	});
 }
 
 //Loads a theme to the text fields
-function loadTheme(data){
-	document.getElementById("color_primary").value = data.colors.primary;
-	document.getElementById("color_accent").value = data.colors.accent;
-	document.getElementById("color_background").value = data.colors.background;
-	document.getElementById("color_background_content").value = data.colors.background_content;
-	document.getElementById("color_text").value = data.colors.text;
+function loadTheme(themeId){
+	document.getElementById("theme_colors").style.display = (themeId == "none")?"none":"block";
+	var colors = themes[themeId].colors;
+	if(!colors)return;
+
+	document.getElementById("color_primary").value = colors.primary;
+	document.getElementById("color_accent").value = colors.accent;
+	document.getElementById("color_background").value = colors.background;
+	document.getElementById("color_background_content").value = colors.background_content;
+	document.getElementById("color_text").value = colors.text;
+	document.getElementById("color_text_secondary").value = colors.text_secondary;
 }
 
 function saveThemes(){
@@ -88,16 +243,15 @@ function saveThemes(){
 		colorData.background = document.getElementById("color_background").value;
 		colorData.background_content = document.getElementById("color_background_content").value;
 		colorData.text = document.getElementById("color_text").value;
+		colorData.text_secondary = document.getElementById("color_text_secondary").value;
 		//if the data has been changed, set theme to custom
 		if(getString(colorData) != getString(themes[currentTheme].colors)){
 				themes.custom.colors = colorData;
-				selectTheme("custom");
-				console.log(themes);
+				setTheme("custom");
+				chrome.storage.sync.set({custom_theme: themes.custom}, function(){
+					//TODO: add notification saying "Saved"
+				});
 		}
-		chrome.storage.sync.set({themes:themes, current_theme:currentTheme}, function(){
-			//TODO: add notification saying "Saved"
-		});
-
 }
 
 function getString(data){
@@ -106,10 +260,11 @@ function getString(data){
 		data.accent + ";" +
 		data.background + ";" +
 		data.background_content + ";" +
-		data.text + ";";
+		data.text + ";" +
+		data.text_secondary + ';';
 	return str;
 }
 
 document.addEventListener('DOMContentLoaded', loadThemes);
 document.getElementById("save").addEventListener("click", saveThemes);
-dropdown.addEventListener("change", themeSelected);
+dropdown.addEventListener("change", onThemeSelected);

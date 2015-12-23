@@ -1,38 +1,7 @@
-// CONSTANTS FOR DEFAULTS
-var themes = { //default theme set, although custom can change
-	none: {
-		name: "No Theme",
-		colors: {
-			background: "#000000",
-			primary: "#FFFFFF",
-			accent: "#FFFFFF",
-			background_content: "#FFFFFF",
-			text: "#000000"
-		}
-	},
-	custom: {
-		name: "Custom Theme",
-		colors: {
-			background: "#000000",
-			primary: "#FFFFFF",
-			accent: "#FFFFFF",
-			background_content: "#FFFFFF",
-			text: "#000000"
-		}
-	},
-	mvhs: {
-		name: "MVHS",
-		colors: {
-			background: "#424242",
-			primary: "#7E57C2",
-			accent: "#FFD54F",
-			background_content: "#FFECB3",
-			text: "#FAFAFA"
-		}
-	}
+var currentTheme = {
+	name: "No Theme",
+	key: "none"
 };
-
-var currentTheme = "none";
 //END DEFAULT CONSTANTS
 
 var sheet = (function() {
@@ -53,36 +22,25 @@ function addCSSRule(sheet, selector, rules, index) {
 	}
 }
 
-/*
-CYAN DARK THEME
-var background = "#424242";
-var primary_color = "#009688";
-var accent_color = "#B0BEC5";
-var content_background = "#B0BEC5";
-var text_light = "#FAFAFA";
-*/
-
-
 var moveBtns = document.getElementById("employee");
 document.getElementById("page_title").appendChild(moveBtns);
 
-// Use default value color = 'red' and likesColor = true.
-chrome.storage.sync.get({ themes:themes, current_theme:currentTheme }, function(data) {
+chrome.storage.sync.get({current_theme:currentTheme}, function(data) {
+	console.log('data: ');
+	console.log(data);
 
-	themes = data.themes;
-	currentTheme = data.current_theme;
+	console.log('current_theme: ');
+	console.log(data.current_theme);
 
-	var colors = themes[currentTheme].colors;
+	var colors = data.current_theme.colors;
 
-	background = colors.background;
-	primary_color = colors.primary;
-	accent_color = colors.accent;
-	content_background = colors.background_content;
-	text_light = colors.text;
-
-	//TODO: MAKE THIS JQUERY
-
-	if (currentTheme != "none") {
+	if (colors) {
+		background = colors.background;
+		primary_color = colors.primary;
+		accent_color = colors.accent;
+		content_background = colors.background_content;
+		text = colors.text;
+		text_secondary = colors.text_secondary;
 
 		//login:
 		/*
@@ -94,28 +52,37 @@ chrome.storage.sync.get({ themes:themes, current_theme:currentTheme }, function(
 		*/
 
 		//body:
-		addCSSRule(sheet, "body", "background: " + background + ";", 0); //body background
+		//addCSSRule(sheet, "body", "background: " + background + ";", 0); //body background
+		console.log('background: ' + background);
+		$('body').css({'background':background});
 
-		//Header:
-		addCSSRule(sheet, "#container_header_links", "background: " + primary_color + ";", 0); //sets header background
-		document.getElementById("container_header_nav").parentNode.style.background = "none"; //top strip of content main page
+		//Header
+		$('#container_header_links').css({'background': primary_color}); //sets header background
+		$('#container_header_nav').parent().css({'background':'none'}); //top strip of content main page
 
-		addCSSRule(sheet, ".header_icons a", "background-color: " + accent_color + ";", 0);
-		addCSSRule(sheet, ".header_icons a:hover", "background-color: " + primary_color + "; color:" + text_light + ";", 0);
+		$('.header_icons a').css({'background-color':accent_color, 'color':text_secondary});
+		$('.header_icons a').hover(function(){
+			$(this).css({'background-color':primary_color, 'color':text});
+		}, function(){
+			$(this).css({'background-color':accent_color, 'color':text_secondary});
+		});
+
+		// addCSSRule(sheet, ".header_icons a", "background-color: " + accent_color + ";", 0);
+		addCSSRule(sheet, ".header_icons a:hover", "background-color: " + primary_color + "; color:" + text + ";", 0);
 
 		addCSSRule(sheet, ".fixedHeader a:hover", "background-color: " + accent_color + ";color: " + primary_color + ";", 0);
 
 		//"Class Site", "Groups" buttons
 		addCSSRule(sheet, ".nav_employee a.trigger:focus, .nav_employee a.trigger:hover", "background: " + accent_color + "; color:" + primary_color + ";", 0);
-		addCSSRule(sheet, ".nav_employee a.trigger", "background: " + primary_color + "; color:" + text_light + ";", 0);
+		addCSSRule(sheet, ".nav_employee a.trigger", "background: " + primary_color + "; color:" + text + ";", 0);
 
 		//page title
-		addCSSRule(sheet, ".page_title", "color: " + primary_color + ";", 0);
+		$(".page_title").css({"color":primary_color});
 
-		addCSSRule(sheet, "#container_page, #container_content", "background: " + content_background + ";", 0);
+		$("#container_page, #container_content").css({'background':content_background});
 
-		addCSSRule(sheet, "#container_footer a", "color: " + text_light + ";", 0);
-		addCSSRule(sheet, "#container_footer", "background: " + background + "; color: " + text_light + ";", 0);
+		$("#container_footer a").css({"color":text});
+		$("#container_footer").css({"background":"none", "color":text});
 
 	}
 

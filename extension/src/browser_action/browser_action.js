@@ -24,3 +24,11 @@ function selectTab(tabNo){
 }
 
 document.getElementById("openTab").addEventListener("click", openTab);
+
+document.getElementById("options").addEventListener("click", function() {
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+  } else {
+    window.open(chrome.runtime.getURL('src/options/options.html'));
+  }
+});
