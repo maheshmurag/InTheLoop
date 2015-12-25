@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>In The Loop - Options</title>
+	<style>
+		body: {
+			padding: 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<label for="sl_subdomain">SchoolLoop Subdomain</label>
+		<input type="text" id="sl_subdomain"></br>
+
+	<label for="theme_select">Select a Theme:</label>
+		<select id="theme_select"></select>
+
+	<div id="theme_colors" style="padding: 10px; margin: 10px; border: 1px solid #555555">
+
+		<label for="color_primary">Primary Color</label>
+			<input type="text" id="color_primary"></br>
+		<label for="color_accent">Accent Color</label>
+			<input type="text" id="color_accent"></br>
+		<label for="color_background">Background Color</label>
+			<input type="text" id="color_background"></br>
+		<label for="color_background_content">Content Background Color</label>
+			<input type="text" id="color_background_content"></br>
+		<label for="color_text">Text Color</label>
+			<input type="text" id="color_text"></br>
+		<label for="color_text_secondary">Secondary Text Color</label>
+			<input type="text" id="color_text_secondary"></br>
+		<button id="save">Save</button>
+		<div id="status"></div>
+	</div>
+
+	<script src="../../lib/underscore-min.js"></script>
+	<script src="options.js"></script>
+</body>
+
+</html>
