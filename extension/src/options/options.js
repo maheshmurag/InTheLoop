@@ -218,6 +218,7 @@ function setTheme(themeId){
 	console.log('saving, currentTheme=' + themeId);
 	chrome.storage.sync.set({current_theme:themes[themeId]}, function(){
 		//TODO: add feedback
+		reloadPages();
 	});
 }
 
@@ -250,6 +251,7 @@ function saveThemes(){
 				setTheme("custom");
 				chrome.storage.sync.set({custom_theme: themes.custom}, function(){
 					//TODO: add notification saying "Saved"
+					reloadPages();
 				});
 		}
 }
@@ -265,6 +267,36 @@ function getString(data){
 	return str;
 }
 
-document.addEventListener('DOMContentLoaded', loadThemes);
+var slSubdomain = document.getElementById('sl_subdomain');
+slSubdomain.addEventListener("change", function(){
+	var subd = slSubdomain.value;
+	chrome.storage.sync.set({sl_subdomain:subd}, function(){
+		//TODO: add feedback
+	});
+});
+
+function loadSubdomain(){
+	chrome.storage.sync.get({sl_subdomain:"montavista"}, function(data){
+		slSubdomain.value = data.sl_subdomain;
+	});
+}
+
+function reloadPages(){
+  chrome.tabs.query({
+    url:"*://*.schoolloop.com/*"
+  }, function(Tabs){
+    console.log(Tabs);
+    for(var i in Tabs){
+      chrome.tabs.reload(Tabs[i].id);
+    }
+  });
+}
+
+function init(){
+	loadThemes();
+	loadSubdomain();
+}
+
+document.addEventListener('DOMContentLoaded', init);
 document.getElementById("save").addEventListener("click", saveThemes);
 dropdown.addEventListener("change", onThemeSelected);

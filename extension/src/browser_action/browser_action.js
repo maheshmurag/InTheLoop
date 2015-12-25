@@ -1,7 +1,7 @@
 function openTab(){
 
   chrome.tabs.query({
-    url: ["*://montavista.schoolloop.com/", "*://montavista.schoolloop.com/portal/student_home*"]
+    url: ["*://*.schoolloop.com/", "*://*.schoolloop.com/portal/student_home*"]
   }, function(tabs){
     console.log(tabs);
     if(tabs.length === 0)createTab();
@@ -11,11 +11,12 @@ function openTab(){
 }
 
 function createTab(){
-  chrome.tabs.create({
-    url: "https://montavista.schoolloop.com"
-  }, function(){
-
-  });
+    chrome.storage.sync.get({sl_subdomain:"montavista"}, function(data){
+        chrome.tabs.create({
+          url: "https://" + data.sl_subdomain + ".schoolloop.com"
+        }, function(){
+	    });
+    });
 }
 
 function selectTab(tabNo){
