@@ -14,7 +14,26 @@ function onAlarm(alarm){
   if(alarm.name == "refreshSchoolLoop")refreshPages();
 }
 
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    console.log('changes');
+    console.log(changes);
+    if(changes.current_theme || changes.custom || changes.sandbox_enabled){
+        reloadPages();
+    }
+});
 
+function reloadPages(){
+    chrome.tabs.query({
+        url:"*://*.schoolloop.com/*"
+    }, function(Tabs){
+        console.log(Tabs);
+        for(var i in Tabs){
+            chrome.tabs.reload(Tabs[i].id);
+        }
+    });
+}
+
+/*
 chrome.alarms.onAlarm.addListener(onAlarm);
 
 var period_in_mins = 9007199254740991;
@@ -26,4 +45,4 @@ chrome.alarms.get("refreshSchoolLoop", function(alarm){
       periodInMinutes: period_in_mins
     });
   }
-});
+}); */

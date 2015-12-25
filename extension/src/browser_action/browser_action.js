@@ -24,6 +24,26 @@ function selectTab(tabNo){
   chrome.tabs.update(tabNo, {active:true});
 }
 
+var sandboxEnabled = document.getElementById("sandbox");
+sandboxEnabled.addEventListener("change", function(){
+    console.log('checked? ' + sandboxEnabled.checked);
+    chrome.storage.sync.set({sandbox_enabled:sandboxEnabled.checked}, function(){
+        //TODO: Feedback
+    });
+});
+
+function loadSandboxEnabled(){
+    chrome.storage.sync.get({sandbox_enabled:true}, function(data){
+        sandboxEnabled.checked = data.sandbox_enabled;
+    });
+}
+
+function init(){
+    loadSandboxEnabled();
+}
+
+init();
+
 document.getElementById("openTab").addEventListener("click", openTab);
 
 document.getElementById("options").addEventListener("click", function() {

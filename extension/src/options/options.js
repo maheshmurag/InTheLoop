@@ -218,7 +218,6 @@ function setTheme(themeId){
 	console.log('saving, currentTheme=' + themeId);
 	chrome.storage.sync.set({current_theme:themes[themeId]}, function(){
 		//TODO: add feedback
-		reloadPages();
 	});
 }
 
@@ -251,7 +250,6 @@ function saveThemes(){
 				setTheme("custom");
 				chrome.storage.sync.set({custom_theme: themes.custom}, function(){
 					//TODO: add notification saying "Saved"
-					reloadPages();
 				});
 		}
 }
@@ -279,17 +277,6 @@ function loadSubdomain(){
 	chrome.storage.sync.get({sl_subdomain:"montavista"}, function(data){
 		slSubdomain.value = data.sl_subdomain;
 	});
-}
-
-function reloadPages(){
-  chrome.tabs.query({
-    url:"*://*.schoolloop.com/*"
-  }, function(Tabs){
-    console.log(Tabs);
-    for(var i in Tabs){
-      chrome.tabs.reload(Tabs[i].id);
-    }
-  });
 }
 
 function init(){

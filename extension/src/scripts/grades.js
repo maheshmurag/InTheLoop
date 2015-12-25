@@ -10,8 +10,14 @@ var overallP = $("b:nth-of-type(2)").text() + "";
 var pointageSystem = false;
 var rowCount = 0;
 
-$( document ).ready(function() {
+$( document ).ready(function(){
+    chrome.storage.sync.get({sandbox_enabled:true}, function(data){
+        if(data.sandbox_enabled)runGrades();
+    });
+});
 
+function runGrades(){
+    console.log('running grade magic');
     checkIfPointageSystem();
     parseCategories();
     parseScale();
@@ -36,7 +42,7 @@ $( document ).ready(function() {
     } else {
         console.log("In The Loop failed to start! (Line 457); e.length = " + entries.length + "; c.length = " + categories.length);
     }
-});
+}
 
 function setOverallPercentage (value, animate) {
     for (var i = 0; i < scoresToLetters.length; i++) {
