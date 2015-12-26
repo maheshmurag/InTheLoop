@@ -1,3 +1,4 @@
+//npm install gulp-clean gulp-autoprefixer gulp-minify-css gulp-csslint gulp-sourcemaps gulp-jshint jshint-stylish gulp-uglify
 var gulp = require('gulp');
 
 var clean = require('gulp-clean');

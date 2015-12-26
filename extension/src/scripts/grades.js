@@ -17,7 +17,7 @@ $( document ).ready(function(){
 });
 
 function runGrades(){
-    console.log('running grade magic');
+    console.log('Running In The Loop grade magic');
     checkIfPointageSystem();
     parseCategories();
     parseScale();
@@ -233,7 +233,11 @@ function parseGradeEntries () {
             if (!(pointN.indexOf("/") < 0 || pointN.indexOf("=") < 0)) {
                 var asstPointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("=")));
                 var asstPointN = num(pointN.substring(0, pointN.indexOf("/")));
-
+                if(isNaN(asstPointD) || isNaN(asstPointN)){
+                    console.log("In The Loop failed to process grade entries (NaN 237)");
+                    failed = true;
+                    return;
+                }
                 var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
                     return this.nodeType == 3;
                 }).text().trim().replace("[", "").replace("]", "").trim();
@@ -252,6 +256,11 @@ function parseGradeEntries () {
                         categoryIndex: elementPos
                     };
                     entries.push(obj);
+                }
+                else{
+                    console.log("In The Loop failed to process grade entries (261)");
+                    failed = true;
+                    return;
                 }
             }
         });
