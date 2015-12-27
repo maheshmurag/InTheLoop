@@ -7,7 +7,7 @@ InTheLoop is still in development, but the beta version is available [here](http
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Privacy
-The only data In The Loop stores are custom themes made by the user. The extension does not send data to any server, and does not store login credentials, grade info, or any other personal information. Its source code is available at https://github.com/mash99/InTheLoop.
+The only data In The Loop stores are custom themes made by the user. The extension does not send data to any server, and does not store login credentials, grade info, or any other personal information.
 
 ##Future Features:   
 1. Improved user interface 
