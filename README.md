@@ -6,6 +6,9 @@ A Chrome extension that improves the School Loop interface by letting users ente
 InTheLoop is still in development, but the beta version is available [here](https://chrome.google.com/webstore/detail/in-the-loop-for-school-lo/ppigcngidmooiiafkelbilbojiijffag).
 Note: This extension only works for number grades (not for letter grades like "A")
 
+##Privacy
+The only data In The Loop stores are custom themes made by the user. The extension does not send data to any server, and does not store login credentials, grade info, or any other personal information. Its source code is available at https://github.com/mash99/InTheLoop.
+
 ##Future Features:   
 1. Improved user interface 
 2. ~~Add a function that displays total # of points per category and overall~~
