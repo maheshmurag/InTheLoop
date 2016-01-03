@@ -18,6 +18,8 @@ Note: This extension only works for number grades (not for letter grades like "A
 9. Make changes to grade trend
 
 ##Changelog
+0.2.1 - Theming and bugfixes!
+
 0.1.2 - Tooltips for # of points per category/total
 
 0.1.1 - Category bug fixes for rounding errors
