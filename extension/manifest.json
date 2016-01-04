@@ -16,7 +16,6 @@
 		"scripts":["src/scripts/autoRefresh.js"],
 		"persistent": false
 	},
-    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
 	"content_scripts":[
 		{
 			"matches":["https://*.schoolloop.com/", "https://*.schoolloop.com/portal/student_home*", "https://*.schoolloop.com/news/*", "https://*.schoolloop.com/progress_report/*"],
