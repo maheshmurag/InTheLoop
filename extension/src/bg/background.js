@@ -20,10 +20,6 @@ chrome.runtime.onInstalled.addListener(function () {
 
 var checkFunc = function () {
     var objToSync;
-    chrome.storage.local.get('classes', function (obj) {
-        console.log("BEG:");
-        console.log(obj);
-    });
     $.get("https://montavista.schoolloop.com/portal/student_home", function (data) {
         // load response text into a new page element
         var SLPage = document.createElement("html");
@@ -95,7 +91,7 @@ var checkFunc = function () {
                             title: "In The Loop Notification",
                             message: s
                         };
-                        chrome.notifications.create("", options, console.log("notification created!"));
+                        chrome.notifications.create("", options, function(){});
                     }
                     objToSync = {};
                     for (i = 0; i < classArray.length; i++) {
@@ -103,10 +99,6 @@ var checkFunc = function () {
                     }
                     chrome.storage.local.set({
                         classes: objToSync
-                    });
-                    chrome.storage.local.get('classes', function (obj) {
-                        console.log("END:");
-                        console.log(obj);
                     });
                 }
             });
