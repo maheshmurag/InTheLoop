@@ -37,7 +37,6 @@ var checkFunc = function () {
         } else { //logged in
             chrome.browserAction.setBadgeText({'text': ''});
             chrome.storage.local.set({popupMsg: ""});
-            console.log("Logged in!");
             var classArray = [];
 
             $(".portal_tab_cont.academics_cont .content .ajax_accordion", page).each(function (i, obj) {
@@ -59,24 +58,17 @@ var checkFunc = function () {
                 if (Object.keys(obj.classes).length === 0) {
                     objToSync = {};
                     var linksToSync = {};
-                    console.log("classes is empty");
                     for (var i = 0; i < classArray.length; i++) {
                         objToSync[classArray[i].name] = classArray[i].perc;
                         linksToSync[classArray[i].name] = classArray[i].link;
                     }
-                    console.table(classArray);
                     chrome.storage.local.set({
                         classes: objToSync,
                         links: linksToSync
                     });
-                    chrome.storage.local.get('classes', function (obj) {
-                        console.log("END:");
-                        console.log(obj);
-                    });
                     return;
                 } else {
                     //compare each grade and then notify and then set to current
-                    console.log("Previous data retrieved!");
                     var arr = [];
                     for (var i = 0; i < classArray.length; i++) {
                         if (obj.classes[classArray[i].name] != classArray[i].perc) {
@@ -104,7 +96,6 @@ var checkFunc = function () {
                             message: s
                         };
                         chrome.notifications.create("", options, console.log("notification created!"));
-
                     }
                     objToSync = {};
                     for (i = 0; i < classArray.length; i++) {
