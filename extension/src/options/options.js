@@ -1,3 +1,4 @@
+/*global document, chrome, console, $*/
 var themes = { //default theme set, although custom can change
 	none: {
 		name: "No Theme",
@@ -264,6 +265,24 @@ function getString(data){
 		data.text_secondary + ';';
 	return str;
 }
+
+$('.tip').tipr({
+        'speed': 350,
+        'mode': 'top'
+});
+
+
+  $("span#q1").hover(function () {
+    $(this).append("<div class='tooltip'><p>Your school's subdomain (e.g. 'montavista' or 'lynbrook')</p></div>");
+  }, function () {
+    $("div.tooltip").remove();
+  });
+
+  $("span#q2").hover(function () {
+    $(this).append("<div class='tooltip'><p>If you leave this blank, notifications will only work if you've recently logged into School Loop on your computer (Credentials are only stored locally)</p></div>");
+  }, function () {
+    $("div.tooltip").remove();
+  });
 
 var slSubdomain = document.getElementById('sl_subdomain');
 slSubdomain.addEventListener("change", function(){

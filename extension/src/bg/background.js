@@ -9,6 +9,8 @@ chrome.runtime.onInstalled.addListener(function () {
         classes: {}
     });
     
+
+    
     chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
     
     var school = "";
