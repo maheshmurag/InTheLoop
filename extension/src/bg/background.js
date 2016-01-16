@@ -8,9 +8,7 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.local.set({
         classes: {}
     });
-    
-
-    
+    chrome.storage.local.set({popupMsg: ""});
     chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
     
     var school = "";
@@ -22,6 +20,41 @@ chrome.runtime.onInstalled.addListener(function () {
     });
    
 });
+
+//var attemptLogin = function(){
+//    
+//    
+//      $.ajax({
+//          url: "https://montavista.schoolloop.com/portal/student_home",
+//          type: "GET",
+//          dataType: "html",
+//          success: function () {
+//              $.ajax({
+//                  url: "https://montavista.schoolloop.com/portal/login?etarget=login_form",
+//                  type: "POST",
+//                  data: {
+//                      login_name: "",
+//                      password: ""
+//                  },
+//                  dataType: "json",
+//                  success: function (data) {
+//                      console.log("Success: ");
+//                      console.log(data);
+////                      $.ajax({
+////                          url: "https://montavista.schoolloop.com/portal/student_home",
+////                          type: "GET",
+////                          dataType: "html",
+////                          success: function(data){
+////                              console.log("line 48")
+////                              console.log(data)
+////                          }
+////                      });
+//                  }
+//              });
+//          }
+//      })
+//    
+//}
 
 var checkFunc = function () {
     var objToSync;
@@ -37,7 +70,15 @@ var checkFunc = function () {
         var schoolName = $("#page_title_login", page);
         if (schoolName.length) { //not logged in
             console.log("Grade update notifications won't work unless you're logged in!");
+//            $("input[name='login_name']", page).val("");
+//            $("input[name='password']", page).val("");
+//            $("a.btn-action-highlight-lg").trigger("click");
+//            console.log("attempted login line 63")
+            chrome.browserAction.setBadgeText({text: "ERR"});
+            chrome.storage.local.set({popupMsg: "Login to School Loop to enable notifications"});
         } else { //logged in
+            chrome.browserAction.setBadgeText({'text': ''});
+            chrome.storage.local.set({popupMsg: ""});
             console.log("Logged in!");
             var classArray = [];
 

@@ -42,6 +42,18 @@ function init(){
     loadSandboxEnabled();
 }
 
+chrome.storage.local.get('popupMsg', function(data){
+    var errorDiv = document.getElementById('errors');
+    var errorP = document.getElementById('errorsP');
+    if(data.popupMsg == "")
+        errorDiv.style.display = "none"
+    else{
+        errorDiv.style.display = "block"
+        errorP.innerHTML = data.popupMsg;
+    }
+    chrome.extension.getBackgroundPage().console.log(data.popupMsg + " : line 48");
+})
+
 init();
 
 document.getElementById("openTab").addEventListener("click", openTab);
