@@ -266,12 +266,6 @@ function getString(data){
 	return str;
 }
 
-$('.tip').tipr({
-        'speed': 350,
-        'mode': 'top'
-});
-
-
   $("span#q1").hover(function () {
     $(this).append("<div class='tooltip'><p>Your school's subdomain (e.g. 'montavista' or 'lynbrook')</p></div>");
   }, function () {
