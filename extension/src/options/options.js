@@ -179,7 +179,7 @@ var currentTheme = "none";
 var dropdown = document.getElementById("theme_select");
 
 function loadThemes(){
-	chrome.storage.sync.get({current_theme:themes.none, custom_theme:custom_default},function(data){
+	chrome.storage.local.get({current_theme:themes.none, custom_theme:custom_default},function(data){
 
 		//in case we've added more stuff, add saved info to our default custom
 		themes.custom = Object.assign(custom_default, data.custom_theme);
@@ -216,7 +216,7 @@ function setTheme(themeId){
 	dropdown.value = themeId;
 	loadTheme(themeId);
 	console.log('saving, currentTheme=' + themeId);
-	chrome.storage.sync.set({current_theme:themes[themeId]}, function(){
+	chrome.storage.local.set({current_theme:themes[themeId]}, function(){
 		//TODO: add feedback
 	});
 }
@@ -248,7 +248,7 @@ function saveThemes(){
 		if(getString(colorData) != getString(themes[currentTheme].colors)){
 				themes.custom.colors = colorData;
 				setTheme("custom");
-				chrome.storage.sync.set({custom_theme: themes.custom}, function(){
+				chrome.storage.local.set({custom_theme: themes.custom}, function(){
 					//TODO: add notification saying "Saved"
 				});
 		}
@@ -268,13 +268,17 @@ function getString(data){
 var slSubdomain = document.getElementById('sl_subdomain');
 slSubdomain.addEventListener("change", function(){
 	var subd = slSubdomain.value;
-	chrome.storage.sync.set({sl_subdomain:subd}, function(){
-		//TODO: add feedback
+	chrome.storage.local.set({sl_subdomain:subd}, function(){
+		chrome.notifications.onClicked.addListener(function (notifId) {
+            chrome.tabs.create({
+                url: "https://" + subd +".schoolloop.com/portal/student_home"
+            });
+        });
 	});
 });
 
 function loadSubdomain(){
-	chrome.storage.sync.get({sl_subdomain:"montavista"}, function(data){
+	chrome.storage.local.get("sl_subdomain", function(data){
 		slSubdomain.value = data.sl_subdomain;
 	});
 }
