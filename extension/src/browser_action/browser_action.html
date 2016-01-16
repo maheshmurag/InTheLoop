@@ -10,8 +10,12 @@
 			cursor:pointer;
 			width: 100%;
 			padding: 5px;
-			margin: 5px 0px 0px 0px;
+/*			margin: 5px 0px 0px 0px;*/
 		}
+        #errors{
+            margin-bottom: -15px;
+            margin-top: -10px;
+        }
 		.listItem:hover{
 			background: #D1C4E9;
 		}
@@ -19,7 +23,7 @@
 	</head>
 	<body>
     <div id = "errors" style="display: none;">
-        <p id = "errorsP">f</p>
+        <p class="listItem" style="color: red;" id = "errorsP">In The Loop</p>
     </div>
 	<div class="listItem"><label style="float: left; margin-right: 20%;" for="sandbox">Grade Tools:</label>
     <input type="checkbox" id="sandbox"></div>
