@@ -1,3 +1,5 @@
+chrome.runtime.sendMessage({msg: "logged_in"}, function(response) {});
+
 var currentTheme = {
 	name: "No Theme",
 	key: "none"
