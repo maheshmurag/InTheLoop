@@ -4,7 +4,7 @@
 	<title>In The Loop - Options</title>
 	<style>
 		body {
-			padding: 20px;
+			padding: 5px;
 		}
         span.question {
           cursor: pointer;
@@ -52,17 +52,24 @@
 </head>
 
 <body>
-	<span class="question" id="q1" style="margin-left: -20px; margin-right: 5px;">?</span><label for="sl_subdomain">School Loop Subdomain </label> 
-    <input type="text" id="sl_subdomain"><br>
+    <div>
+<!--        <span class="question" id="q1" style="margin-left: -20px; margin-right: 5px;">?</span>-->
+        <label for="sl_subdomain"><strong>School Loop Subdomain:</strong></label>
+        <span>https://</span>
+        <input type="text" id="sl_subdomain" style="width:80px;">
+        <span>.schoolloop.com</span><br>
+    </div>
 <!--    <div class="tip" data-tip="Your school's subdomain. Examples: 'montavista' or 'lynbrook'">?</div>-->
     
+<!--
     <span class="question" id="q2" style="margin-left: -20px;margin-right: 5px;">?</span><label for="sl_username">School Loop Username</label>
     <input type="text" id="sl_username"><br>
     
     <span class="question" id="q2" style="margin-left: -20px; margin-right: 5px;">?</span><label for="sl_password">School Loop Password</label>
     <input type="password" id="sl_password"><br>
+-->
     
-	<label for="theme_select">Select a Theme:</label>
+	<label for="theme_select"><strong>Select a Theme:</strong></label>
 		<select id="theme_select"></select>
 
 	<div id="theme_colors" style="padding: 10px; margin: 10px; border: 1px solid #555555">
