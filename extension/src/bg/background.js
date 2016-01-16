@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
     
     var school = "";
-    chrome.storage.local.get("sl_subdomain",function (data){school = data.sl_subdomain})
+    chrome.storage.local.get("sl_subdomain",function (data){school = data.sl_subdomain;});
     chrome.notifications.onClicked.addListener(function (notifId) {
         chrome.tabs.create({
             url: "https://" + school +".schoolloop.com/portal/student_home"
