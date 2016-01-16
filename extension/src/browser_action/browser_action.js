@@ -1,9 +1,10 @@
+/*global define, chrome, $, console, document, window*/
 function openTab(){
 
   chrome.tabs.query({
     url: ["*://*.schoolloop.com/", "*://*.schoolloop.com/portal/student_home*"]
   }, function(tabs){
-    console.log(tabs);
+    //console.log(tabs);
     if(tabs.length === 0)createTab();
     else selectTab(tabs[0].id);
   });
@@ -45,14 +46,14 @@ function init(){
 chrome.storage.local.get('popupMsg', function(data){
     var errorDiv = document.getElementById('errors');
     var errorP = document.getElementById('errorsP');
-    if(data.popupMsg == "")
-        errorDiv.style.display = "none"
+    if(data.popupMsg === "")
+        errorDiv.style.display = "none";
     else{
-        errorDiv.style.display = "block"
+        errorDiv.style.display = "block";
         errorP.innerHTML = data.popupMsg;
     }
-    chrome.extension.getBackgroundPage().console.log(data.popupMsg + " : line 48");
-})
+//    chrome.extension.getBackgroundPage().console.log(data.popupMsg + " : line 48");
+});
 
 init();
 

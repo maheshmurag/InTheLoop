@@ -1,15 +1,4 @@
-/*
-function refreshPages(){
-  chrome.tabs.query({
-    url:"*://montavista.schoolloop.com/*"
-  }, function(Tabs){
-    console.log(Tabs);
-    for(var i in Tabs){
-      chrome.tabs.reload(Tabs[i].id);
-    }
-  });
-}
-*/
+/*global chrome*/
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
     if(changes.current_theme || changes.custom || changes.sandbox_enabled){

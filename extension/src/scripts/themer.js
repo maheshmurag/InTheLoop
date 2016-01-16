@@ -1,3 +1,4 @@
+/*global $, chrome, document, console*/
 chrome.runtime.sendMessage({msg: "logged_in"}, function(response) {});
 
 var currentTheme = {
@@ -37,12 +38,12 @@ chrome.storage.sync.get({current_theme:currentTheme}, function(data) {
 	var colors = data.current_theme.colors;
 
 	if (colors) {
-		background = colors.background;
-		primary_color = colors.primary;
-		accent_color = colors.accent;
-		content_background = colors.background_content;
-		text = colors.text;
-		text_secondary = colors.text_secondary;
+		var background = colors.background;
+		var primary_color = colors.primary;
+		var accent_color = colors.accent;
+		var content_background = colors.background_content;
+		var text = colors.text;
+		var text_secondary = colors.text_secondary;
 
 		//login:
 		/*
