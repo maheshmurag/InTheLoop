@@ -305,6 +305,7 @@ var resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", function(){
     chrome.storage.local.set({classes: {}}); 
     //chrome.storage.local.get('classes', function(data){console.log(data.classes)})
+    chrome.extension.getBackgroundPage().alert("Local grade data has been reset!")
 });
 
 var notifsEnabled = document.getElementById("enableNotif");
