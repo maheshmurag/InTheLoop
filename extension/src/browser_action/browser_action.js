@@ -12,7 +12,7 @@ function openTab(){
 }
 
 function createTab(){
-    chrome.storage.sync.get({sl_subdomain:"montavista"}, function(data){
+    chrome.storage.local.get({sl_subdomain:"montavista"}, function(data){
         chrome.tabs.create({
           url: "https://" + data.sl_subdomain + ".schoolloop.com"
         }, function(){
@@ -28,13 +28,13 @@ function selectTab(tabNo){
 var sandboxEnabled = document.getElementById("sandbox");
 sandboxEnabled.addEventListener("change", function(){
     console.log('checked? ' + sandboxEnabled.checked);
-    chrome.storage.sync.set({sandbox_enabled:sandboxEnabled.checked}, function(){
+    chrome.storage.local.set({sandbox_enabled:sandboxEnabled.checked}, function(){
         //TODO: Feedback
     });
 });
 
 function loadSandboxEnabled(){
-    chrome.storage.sync.get({sandbox_enabled:true}, function(data){
+    chrome.storage.local.get({sandbox_enabled:true}, function(data){
         sandboxEnabled.checked = data.sandbox_enabled;
     });
 }
@@ -42,6 +42,12 @@ function loadSandboxEnabled(){
 function init(){
     loadSandboxEnabled();
 }
+
+var pOnClick = function(){
+    chrome.storage.local.get("sl_subdomain", function(data){
+        chrome.tabs.create({ url: "https://"+data.sl_subdomain+".schoolloop.com/portal/login" });
+    });
+};
 
 chrome.storage.local.get('popupMsg', function(data){
     var errorDiv = document.getElementById('errors');
@@ -51,9 +57,12 @@ chrome.storage.local.get('popupMsg', function(data){
     else{
         errorDiv.style.display = "block";
         errorP.innerHTML = data.popupMsg;
+        errorP.addEventListener("click", pOnClick);
     }
 //    chrome.extension.getBackgroundPage().console.log(data.popupMsg + " : line 48");
 });
+
+
 
 init();
 

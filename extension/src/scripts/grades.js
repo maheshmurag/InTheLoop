@@ -11,7 +11,7 @@ var pointageSystem = false;
 var rowCount = 0;
 
 $( document ).ready(function(){
-    chrome.storage.sync.get({sandbox_enabled:true}, function(data){
+    chrome.storage.local.get({sandbox_enabled:true}, function(data){
         if(data.sandbox_enabled)runGrades();
     });
 });

@@ -28,7 +28,7 @@ function addCSSRule(sheet, selector, rules, index) {
 var moveBtns = document.getElementById("employee");
 document.getElementById("page_title").appendChild(moveBtns);
 
-chrome.storage.sync.get({current_theme:currentTheme}, function(data) {
+chrome.storage.local.get({current_theme:currentTheme}, function(data) {
 	console.log('data: ');
 	console.log(data);
 
