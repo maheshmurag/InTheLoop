@@ -20,12 +20,12 @@ chrome.runtime.onInstalled.addListener(function () {
 
 
 var checkFunc = function () {
-    var enabled = true;
-    chrome.storage.local.get("notifs", function(data){enabled = data.notifs;});
-    if(!enabled){
+    var exitFunc = function(){
         console.log("In The Loop notifications are disabled!");
         return;
-    }
+    };
+    chrome.storage.local.get("notifs", function(data){if(!data.notifs)exitFunc();});
+    
     
     var objToSync;
     $.get("https://montavista.schoolloop.com/portal/student_home", function (data) {

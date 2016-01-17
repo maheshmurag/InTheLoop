@@ -310,9 +310,10 @@ resetButton.addEventListener("click", function(){
 
 var notifsEnabled = document.getElementById("enableNotif");
 notifsEnabled.addEventListener("change", function(){
-    chrome.storage.sync.set({notifs:notifsEnabled.checked}, function(){});
+    chrome.storage.local.set({notifs:notifsEnabled.checked});
     document.getElementById("resetButton").disabled = !notifsEnabled.checked;
     chrome.storage.local.set({classes: {}});
+    chrome.extension.getBackgroundPage().console.log("set notifs: " + notifsEnabled.checked);
 });
 
 chrome.storage.local.get('notifs', function(data){
