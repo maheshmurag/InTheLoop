@@ -58,6 +58,12 @@ var checkFunc = function () {
                 classArray.push(objToPush);
             });
             //get grades current
+            var userName = $("span.page_title", page).text().trim();
+            var nameMatches = false;
+            var setNameMatches = function(data){
+                nameMatches = (userName == (""+data).trim());
+            };
+            chrome.storage.local.get("name", function(data){setNameMatches(data.name);});
             chrome.storage.local.get('classes', function (obj) {
                 if (Object.keys(obj.classes).length === 0) {
                     objToSync = {};
@@ -68,10 +74,11 @@ var checkFunc = function () {
                     }
                     chrome.storage.local.set({
                         classes: objToSync,
-                        links: linksToSync
+                        links: linksToSync,
+                        name: userName
                     });
                     return;
-                } else {
+                } else if(nameMatches){
                     //compare each grade and then notify and then set to current
                     var arr = [];
                     for (var i = 0; i < classArray.length; i++) {
