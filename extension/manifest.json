@@ -4,7 +4,7 @@
   	"version": "0.2.1",
 	"short_name": "In The Loop",
 
-  	"description": "A suite of features that improve the SchoolLoop interface",
+  	"description": "A suite of features that improve the School Loop interface",
   	"icons": { "16": "icons/icon16.png",
            "48": "icons/icon48.png",
           "128": "icons/icon128.png" },
