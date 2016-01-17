@@ -273,7 +273,7 @@ function getString(data){
   });
 
   $("span#q2").hover(function () {
-    $(this).append("<div class='tooltip'><p>If you leave this blank, notifications will only work if you've recently logged into School Loop on your computer (Credentials are only stored locally)</p></div>");
+    $(this).append("<div class='tooltip'><p>Because of School Loop's restrictions, notifications will only work if you've recently logged into School Loop on your computer (Credentials are NOT stored)</p></div>");
   }, function () {
     $("div.tooltip").remove();
   });
@@ -304,7 +304,7 @@ function init(){
 var resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", function(){
     chrome.storage.local.set({classes: {}}); 
-    chrome.storage.local.get('classes', function(data){console.log(data.classes)})
+    //chrome.storage.local.get('classes', function(data){console.log(data.classes)})
 });
 
 var notifsEnabled = document.getElementById("enableNotif");

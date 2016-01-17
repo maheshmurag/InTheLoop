@@ -4,7 +4,7 @@
 	<title>In The Loop - Options</title>
 	<style>
 		body {
-			padding: 5px;
+			padding: 15px;
 		}
         span.question {
           cursor: pointer;
@@ -45,7 +45,7 @@
           left: -6px;
         }
         div.tooltip p {
-          margin: 10px;
+          margin: 5px;
           color: White;
         }
 	</style>
@@ -73,7 +73,6 @@
 		<select id="theme_select"></select>
 
 	<div id="theme_colors" style="padding: 10px; margin: 10px; border: 1px solid #555555">
-
 		<label for="color_primary">Primary Color</label>
 			<input type="text" id="color_primary"><br>
 		<label for="color_accent">Accent Color</label>
@@ -90,7 +89,7 @@
 		<div id="status"></div>
 	</div>
     
-    <div class="listItem"><label style="float: left; margin-right: 5%;" for="enableNotif"><strong>Enable Notifications:</strong></label>
+    <div class="listItem"><span class="question" id="q2" style="margin-left: -20px;margin-right: 5px;">?</span><label style="margin-right: 5%;" for="enableNotif"><strong>Enable Notifications:</strong></label>
     <input type="checkbox" id="enableNotif"></div>
     
     <div class="listItem"><button id="resetButton">Reset Grade Data</button></div>
