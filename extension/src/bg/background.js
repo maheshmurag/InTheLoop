@@ -5,6 +5,7 @@ chrome.runtime.onInstalled.addListener(function () {
         classes: {}
     });
     chrome.storage.local.set({popupMsg: ""});
+    chrome.storage.local.set({notifs: true});
     chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
     
     var school = "";

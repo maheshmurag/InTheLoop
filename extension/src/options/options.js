@@ -301,6 +301,32 @@ function init(){
 	loadSubdomain();
 }
 
+var resetButton = document.getElementById("resetButton");
+resetButton.addEventListener("click", function(){
+    chrome.storage.local.set({classes: {}}); 
+    chrome.storage.local.get('classes', function(data){console.log(data.classes)})
+});
+
+var notifsEnabled = document.getElementById("enableNotif");
+notifsEnabled.addEventListener("change", function(){
+    chrome.storage.sync.set({notifs:notifsEnabled.checked}, function(){});
+    document.getElementById("resetButton").disabled = !notifsEnabled.checked;
+    chrome.storage.local.set({classes: {}});
+});
+
+chrome.storage.local.get('notifs', function(data){
+    if(data.notifs){
+        document.getElementById("enableNotif").checked = true;
+        document.getElementById("resetButton").disabled = false;
+    }
+    else{
+        document.getElementById("enableNotif").checked = false;
+        chrome.storage.local.set({classes: {}});
+        document.getElementById("resetButton").disabled = true;
+    }
+        
+});
+
 document.addEventListener('DOMContentLoaded', init);
 document.getElementById("save").addEventListener("click", saveThemes);
 dropdown.addEventListener("change", onThemeSelected);
