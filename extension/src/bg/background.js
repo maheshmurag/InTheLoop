@@ -1,6 +1,7 @@
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
 chrome.runtime.onInstalled.addListener(function () {
+    chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({
         classes: {}
     });
