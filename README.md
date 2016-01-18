@@ -21,6 +21,8 @@ The only data In The Loop stores are custom themes made by the user. The extensi
 9. Make changes to grade trend
 
 ##Changelog
+0.3 - Notifications
+
 0.2.1 - Theming + bug fixes
 
 0.1.2 - Tooltips for # of points per category/total
