@@ -87,68 +87,61 @@ var parseGradeChanges = function(subdomain){
             var nameMatches = false;
             var setNameMatches = function(data){
                 nameMatches = (userName == (""+data).trim());
-                console.log(classArray)
-                saveToStorage(classArray, userName, nameMatches);
             };
             chrome.storage.local.get("name", function(data){setNameMatches(data.name);});
-            
-        }
-    });
-};
-
-var saveToStorage = function(classArray, userName, nameMatches){
-    var objToSync;
-    chrome.storage.local.get('classes', function (obj) { 
-        if (Object.keys(obj.classes).length === 0) {
-            objToSync = {};
-            //var linksToSync = {};
-            for (var i = 0; i < classArray.length; i++) {
-                objToSync[classArray[i].name] = classArray[i].perc;
-                //linksToSync[classArray[i].name] = classArray[i].link;
-            }
-            chrome.storage.local.set({
-                classes: objToSync,                        
-                name: userName
-                //,links: linksToSync,
-            });
-            return;
-        } else if(nameMatches){
-            //compare each grade and then notify and then set to current
-            var arr = [];
-            for (var i = 0; i < classArray.length; i++) {
-                if (obj.classes[classArray[i].name] != classArray[i].perc) {
-                    console.log("Grade Discrepancy for class " + classArray[i].name + ". " +
-                        obj.classes[classArray[i].name] + " vs " + classArray[i].perc);
-                    arr.push(classArray[i].name);
-                    console.log(classArray);
+            chrome.storage.local.get('classes', function (obj) {
+                
+                if (Object.keys(obj.classes).length === 0) {
+                    objToSync = {};
+                    //var linksToSync = {};
+                    for (var i = 0; i < classArray.length; i++) {
+                        objToSync[classArray[i].name] = classArray[i].perc;
+                        //linksToSync[classArray[i].name] = classArray[i].link;
+                    }
+                    chrome.storage.local.set({
+                        classes: objToSync,                        
+                        name: userName
+                        //,links: linksToSync,
+                    });
+                    return;
+                } else if(nameMatches){
+                    //compare each grade and then notify and then set to current
+                    var arr = [];
+                    for (var i = 0; i < classArray.length; i++) {
+                        if (obj.classes[classArray[i].name] != classArray[i].perc) {
+                            console.log("Grade Discrepancy for class " + classArray[i].name + ". " +
+                                obj.classes[classArray[i].name] + " vs " + classArray[i].perc);
+                            arr.push(classArray[i].name);
+                        }
+                    }
+                    if (arr.length > 0) {
+                        var s = "";
+                        if (arr.length == 1)
+                            s = "Your " + arr[0] + " grade has changed!";
+                        else if (arr.length == 2)
+                            s = "Grades have changed for " + arr[0] + " and " + arr[1] + "!";
+                        else {
+                            s = "Grades have changed for ";
+                            for (i = 0; i < arr.length - 1; i++)
+                                s += arr[i] + ", ";
+                            s += "and " + arr[arr.length - 1] + "!";
+                        }
+                        var options = {
+                            type: "basic",
+                            iconUrl: "icons/notif.png",
+                            title: "In The Loop Notification",
+                            message: s
+                        };
+                        chrome.notifications.create("", options, function(){});
+                    }
+                    objToSync = {};
+                    for (i = 0; i < classArray.length; i++) {
+                        objToSync[classArray[i].name] = classArray[i].perc;
+                    }
+                    chrome.storage.local.set({
+                        classes: objToSync
+                    });
                 }
-            }
-            if (arr.length > 0) {
-                var s = "";
-                if (arr.length == 1)
-                    s = "Your " + arr[0] + " grade has changed!";
-                else if (arr.length == 2)
-                    s = "Grades have changed for " + arr[0] + " and " + arr[1] + "!";
-                else {
-                    s = "Grades have changed for ";
-                    for (i = 0; i < arr.length - 1; i++)
-                        s += arr[i] + ", ";
-                    s += "and " + arr[arr.length - 1] + "!";
-                }
-                var options = {
-                    type: "basic",
-                    iconUrl: "icons/notif.png",
-                    title: "In The Loop Notification",
-                    message: s
-                };
-                chrome.notifications.create("", options, function(){});
-            }
-            objToSync = {};
-            for (i = 0; i < classArray.length; i++) {
-                objToSync[classArray[i].name] = classArray[i].perc;
-            }
-            chrome.storage.local.set({
-                classes: objToSync
             });
         }
     });
