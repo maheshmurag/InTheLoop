@@ -12,15 +12,13 @@ chrome.runtime.onInstalled.addListener(function () {
     var school = "";
     var setSchool = function(data){
         school = data;
+        chrome.notifications.onClicked.addListener(function (notifId) {
+            chrome.tabs.create({
+                url: "https://" + school +".schoolloop.com/portal/student_home"
+            });
+        });
     };
     chrome.storage.local.get("sl_subdomain",function (data){setSchool(data.sl_subdomain);});
-    chrome.notifications.onClicked.addListener(function (notifId) {
-        chrome.tabs.create({
-            url: "https://" + school +".schoolloop.com/portal/student_home"
-        });
-    });
-    
-   
 });
 
 var parseGradeChanges = function(subdomain){

@@ -12,7 +12,7 @@ function openTab(){
 }
 
 function createTab(){
-    chrome.storage.local.get({sl_subdomain:"montavista"}, function(data){
+    chrome.storage.local.get("sl_subdomain", function(data){
         chrome.tabs.create({
           url: "https://" + data.sl_subdomain + ".schoolloop.com"
         }, function(){
