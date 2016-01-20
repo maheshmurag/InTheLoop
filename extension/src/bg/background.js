@@ -41,30 +41,34 @@ var parseGradeChanges = function(subdomain){
             var classArray = [];
             
             if($("tbody > tr > td > ul > li > a:contains('Show Grades')", page).length > 0){
+                console.log("Grade update notifications won't work unless you show grades!");
+                chrome.browserAction.setBadgeText({text: "ERR"});
+                chrome.storage.local.set({popupMsg: "Click 'Show Grades' to enable notifications."});
+                return;
                 //visit each progress report, add to classArray
-                $("tbody > tr > td.pr_link", page).each(function (i, obj) {
-                    var link = "https://" + subdomain + ".schoolloop.com" + $("a", obj).attr("href");
-                    $.get(link, function(data){
-                        var progressReportPage = document.createElement("html");
-                        progressReportPage.innerHTML = data;
-                        var prPage = $(progressReportPage);
-                        var percent = $("table:first tr:nth-child(2) > td:nth-child(1) b:eq(1)", prPage).text().trim();
-                        percent = percent.substring(0, percent.length-1);
-                        
-                        var percentNum = 0;
-                        if(percent.length !== 0)
-                            percentNum = parseFloat(percent);
-                        if(isNaN(parseFloat(percent)))
-                            percentNum = 0;
-                        var className = $(".label1:first", prPage).text().trim();
-                        className = className.substring(0, className.length-1);
-                        var objToPush = {
-                            name: className,
-                            perc: percentNum
-                        };
-                        classArray.push(objToPush);
-                    });
-                }); 
+//                $("tbody > tr > td.pr_link", page).each(function (i, obj) {
+//                    var link = "https://" + subdomain + ".schoolloop.com" + $("a", obj).attr("href");
+//                    $.get(link, function(data){
+//                        var progressReportPage = document.createElement("html");
+//                        progressReportPage.innerHTML = data;
+//                        var prPage = $(progressReportPage);
+//                        var percent = $("table:first tr:nth-child(2) > td:nth-child(1) b:eq(1)", prPage).text().trim();
+//                        percent = percent.substring(0, percent.length-1);
+//                        
+//                        var percentNum = 0;
+//                        if(percent.length !== 0)
+//                            percentNum = parseFloat(percent);
+//                        if(isNaN(parseFloat(percent)))
+//                            percentNum = 0;
+//                        var className = $(".label1:first", prPage).text().trim();
+//                        className = className.substring(0, className.length-1);
+//                        var objToPush = {
+//                            name: className,
+//                            perc: percentNum
+//                        };
+//                        classArray.push(objToPush);
+//                    });
+//                }); 
             }
             else{
                 $(".portal_tab_cont.academics_cont .content .ajax_accordion", page).each(function (i, obj) {
@@ -161,8 +165,6 @@ var checkFunc = function () {
     chrome.storage.local.get("sl_subdomain",function (data){callParseGradeChanges(data.sl_subdomain);});
     
 };
-
-
 
 chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === "NotificationsAlarm") {
