@@ -1,5 +1,6 @@
 /*global $, chrome, document, console*/
-chrome.runtime.sendMessage({msg: "logged_in"}, function(response) {});
+var isShown = ($("tbody > tr > td > ul > li > a:contains('Show Grades')").length === 0);
+chrome.runtime.sendMessage({msg: "logged_in", shown: isShown}, function(response) {});
 
 var currentTheme = {
 	name: "No Theme",

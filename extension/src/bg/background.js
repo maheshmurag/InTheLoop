@@ -181,8 +181,15 @@ chrome.alarms.create("NotificationsAlarm", {
 chrome.extension.onMessage.addListener(
     function (request, sender, sendResponse) {        
         if(request.msg === "logged_in"){
-            chrome.browserAction.setBadgeText({'text': ''});
-            chrome.storage.local.set({popupMsg: ""});
+            if(request.shown)
+            {            
+                chrome.browserAction.setBadgeText({'text': ''});
+                chrome.storage.local.set({popupMsg: ""});
+            }
+            else{
+                    chrome.browserAction.setBadgeText({text: "ERR"});
+                    chrome.storage.local.set({popupMsg: "Click 'Show Grades' to enable notifications."});
+            }
         }
     }
 );
