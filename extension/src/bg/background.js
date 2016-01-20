@@ -64,7 +64,7 @@ var parseGradeChanges = function(subdomain){
                         };
                         classArray.push(objToPush);
                     });
-                });    
+                }); 
             }
             else{
                 $(".portal_tab_cont.academics_cont .content .ajax_accordion", page).each(function (i, obj) {
