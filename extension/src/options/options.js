@@ -293,13 +293,13 @@ slSubdomain.addEventListener("change", function(){
 var sl_user = document.getElementById('sl_username');
 sl_user.addEventListener("change", function(){
 	var userd = sl_user.value;
-	chrome.storage.local.set({sl_username:userd}, function(){});
+	chrome.storage.local.set({username:userd}, function(){});
 });
 
 var sl_pass = document.getElementById('sl_password');
 sl_pass.addEventListener("change", function(){
 	var passd = sl_pass.value;
-	chrome.storage.local.set({sl_password:passd}, function(){});
+	chrome.storage.local.set({password:passd}, function(){});
 });
 
 
