@@ -273,7 +273,7 @@ function getString(data){
   });
 
   $("span#q2").hover(function () {
-    $(this).append("<div class='tooltip'><p>Because of School Loop's restrictions, notifications will only work if you've recently logged into School Loop on your computer (Credentials are NOT stored)</p></div>");
+    $(this).append("<div class='tooltip'><p>Used to check for grade updates (only stored locally)</p></div>");
   }, function () {
     $("div.tooltip").remove();
   });

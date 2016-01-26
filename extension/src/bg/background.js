@@ -1,6 +1,113 @@
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
+
+var getYear = function(){
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1;//Jan is 0
+    var yyyy = today.getFullYear();
+    if(dd<10)
+        dd='0'+dd;
+    if(mm<10)
+        mm='0'+mm;
+    var today = dd+'/'+mm+'/'+yyyy;
+    return today;
+};
+
+var yearVal = getYear();
+
+var constants = {
+    "version": "2",
+    "devToken": "599F9C00-92DC-4B5C-9464-7971F01F8370",
+    "year": yearVal,
+    "devOS": "5"
+};
+
+    //"loginURL": "https://montavista.schoolloop.com/mapi/login?version="+constants.version" + "&devToken=" + constants.devToken + "&devOS="+ constants.devOS + "&year=" + constants.year + ""
+
+function saagar(){
+    var bString = getBString();
+    var obj = {};
+    var setObj = function(data){
+        obj = JSON.parse(data);
+        console.log("1");
+        console.log(obj);
+    };
+    var obj2 = {};
+    var setObj2 = function(data){
+        obj2 = JSON.parse(data);
+        console.log("2");
+        console.log(obj2);
+    };
+    var obj3 = {};
+    var setObj3 = function(data){
+        obj2 = JSON.parse(data);
+        console.log("3");
+        console.log(obj2);
+    };
+    $.ajax({
+        type: "GET",
+        beforeSend: function(xhr)
+        {
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
+        },
+        url: "https://montavista.schoolloop.com/mapi/progress_report", 
+        data: { 
+            studentID: '1376458845274',
+            periodID: '1438443835901'
+        },
+        complete: function(msg)
+        {
+            //successful if msg.status == 200
+            setObj(msg.responseText);
+        }
+    });
+    
+    $.ajax({
+        type: "GET",
+        beforeSend: function(xhr)
+        {
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
+        },
+        url: "https://montavista.schoolloop.com/mapi/login?version="+constants.version + "&devToken=" + constants.devToken + "&devOS="+ constants.devOS + "&year=" + constants.year + "", 
+        complete: function(msg)
+        {
+            //successful if msg.status == 200
+            setObj2(msg.responseText);
+        }
+    });
+    
+    $.ajax({
+        type: "GET",
+        beforeSend: function(xhr)
+        {
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
+        },
+        url: "https://montavista.schoolloop.com/mapi/report_card?studentID=1376458845274",
+        complete: function(msg)
+        {
+            //successful if msg.status == 200
+            setObj3(msg.responseText);
+        }
+    });
+}
+
+
 chrome.runtime.onInstalled.addListener(function () {
+    var school = "";
+    chrome.notifications.onClicked.addListener(function (notifId) {
+        chrome.tabs.create({
+            url: "chrome://extensions/?options=gpgdabkgkmihicgfgocdaahnegmpjhld"
+        });
+        chrome.notifications.clear("1", function(){});
+    });
+    var options = {
+        type: "basic",
+        iconUrl: "icons/notif.png",
+        title: "Welcome to In The Loop",
+        message: "Click to set up notifications"
+    };
+    chrome.notifications.create("1", options, function(){});
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({
         classes: {}
@@ -8,17 +115,9 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.local.set({popupMsg: ""});
     chrome.storage.local.set({notifs: true});
     chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
+    //TODO: create notification about credentials for notifications
     
-    var school = "";
-    var setSchool = function(data){
-        school = data;
-        chrome.notifications.onClicked.addListener(function (notifId) {
-            chrome.tabs.create({
-                url: "https://" + school +".schoolloop.com/portal/student_home"
-            });
-        });
-    };
-    chrome.storage.local.get("sl_subdomain",function (data){setSchool(data.sl_subdomain);});
+    
 });
 
 var parseGradeChanges = function(subdomain){
@@ -134,7 +233,7 @@ var parseGradeChanges = function(subdomain){
                             title: "In The Loop Notification",
                             message: s
                         };
-                        chrome.notifications.create("", options, function(){});
+                        chrome.notifications.create("2", options, function(){});
                     }
                     objToSync = {};
                     for (i = 0; i < classArray.length; i++) {
@@ -149,7 +248,24 @@ var parseGradeChanges = function(subdomain){
     });
 };
 
+var testChangeGrade = function(){
+    chrome.storage.local.get("classes", function(obj){var x = obj.classes; x["HAmLit"] = 88; chrome.storage.local.set({classes: x});});
+    checkFunc();
+}
+
 var checkFunc = function () {
+    var school = "";
+    var setSchool = function(data){
+        school = data;
+        chrome.notifications.onClicked.addListener(function (notifId) {
+            chrome.tabs.create({
+                url: "https://" + school +".schoolloop.com/portal/student_home"
+            });
+            chrome.notifications.clear("2", function(){});
+        });
+        
+    };
+    chrome.storage.local.get("sl_subdomain",function (data){setSchool(data.sl_subdomain);});
     var exitFunc = function(){
         console.log("In The Loop notifications are disabled!");
         return;
@@ -191,3 +307,7 @@ chrome.extension.onMessage.addListener(
         }
     }
 );
+
+function getBString(){
+    return "";
+}
