@@ -2,7 +2,7 @@
 /* jshint shadow:true */
 /* jshint loopfunc:true */
 
-//TODO: Set version number
+//TODO: Set correct version number
 var ITLversion = "V0.3.1";
 var studentID = "";
 var periodIDs = [];
@@ -61,15 +61,15 @@ var setPeriodIDs = function (bString) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://montavista.schoolloop.com/mapi/report_card?studentID="+studentID,
+        url: "https://montavista.schoolloop.com/mapi/report_card?studentID=" + studentID,
         complete: function (msg) {
             //successful if msg.status == 200
             set(msg.responseText);
         }
     });
 };
-var gradesFromIDs = function(bString, i){
-    if(i >= periodIDs.length) return;
+var gradesFromIDs = function (bString, i) {
+    if (i >= periodIDs.length) return;
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
@@ -83,21 +83,11 @@ var gradesFromIDs = function(bString, i){
         complete: function (msg) {
             var data = JSON.parse(msg.responseText);
             grades[periodIDs[i].courseName] = parseFloat(data[0].score) * 100;
-            gradesFromIDs(bString, i+1);
+            gradesFromIDs(bString, i + 1);
         }
     });
 };
 
-function populate(){
-    chrome.storage.local.get(["username", "password"], function(obj){
-        var username = obj.username;
-        var password = obj.password;
-        /* jshint ignore:start */
-        var bCred = btoa(username+":"+password);
-        setStudentID(bCred);//calls setPeriodIDs which calls gradesFromIDs
-        /* jshint ignore:end */
-    });
-}
 
 /**
  * Creates a notification
@@ -133,14 +123,11 @@ function createNotification(id, title, message, url, callback) {
 chrome.runtime.onInstalled.addListener(function () {
     createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
-    chrome.storage.local.set({classes: {}});
-    chrome.storage.local.set({popupMsg: ""});
-    chrome.storage.local.set({notifs: true});
-    chrome.storage.local.set({sl_subdomain:"montavista"}, function(){});
+    chrome.storage.local.set({classes: {}, username: "", password: "", popupMsg: "", notifs: true, sl_subdomain: "montavista"});
 });
 /* beautify preserve:end */
 
-var parseGradeChanges = function (subdomain) {
+var parseGradeChangesNoPass = function (subdomain) {
     var objToSync;
     $.get("https://" + subdomain + ".schoolloop.com/portal/student_home", function (data) {
         // load response text into a new page element
@@ -266,11 +253,32 @@ var checkFunc = function () {
         if (!data.notifs) exitFunc();
     });
 
-    chrome.storage.local.get("sl_subdomain", function (data) {
-        parseGradeChanges(data.sl_subdomain);
+    chrome.storage.local.get(["sl_subdomain","username", "password"], function (obj) {
+            if(obj.username === "" || obj.password === ""){
+                if(obj.sl_subdomain === ""){
+                    chrome.browserAction.setBadgeText({
+                        text: "ERR"
+                    });
+                    chrome.storage.local.set({
+                        popupMsg: "Please enter your school's subdomain in options."
+                    });   
+                }
+                else
+                    parseGradeChangesNoPass(obj.sl_subdomain);
+            }
+            else
+                parseGradeChanges(obj.username, obj.password);
     });
 
 };
+
+
+function parseGradeChanges(username, password) {
+    /* jshint ignore:start *///in order to avoid "btoa" is undefined
+    var bCred = btoa(username + ":" + password);
+    setStudentID(bCred); //calls setPeriodIDs which calls gradesFromIDs
+    /* jshint ignore:end */
+}
 
 chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === "NotificationsAlarm") {
