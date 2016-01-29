@@ -69,7 +69,10 @@ var setPeriodIDs = function (bString) {
     });
 };
 var gradesFromIDs = function (bString, i) {
-    if (i >= periodIDs.length) return;
+    if (i >= periodIDs.length){
+        checkForChanges();
+        return;
+    }
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
@@ -82,8 +85,20 @@ var gradesFromIDs = function (bString, i) {
         },
         complete: function (msg) {
             var data = JSON.parse(msg.responseText);
-            grades[periodIDs[i].courseName] = parseFloat(data[0].score) * 100;
+            grades[i].name = periodIDs[i].courseName;
+            grades[i].grade = parseFloat(data[0].score) * 100;
             gradesFromIDs(bString, i + 1);
+        }
+    });
+};
+var checkForChanges = function(){
+    //NOTE: Loops through grades object, and creates notifications for discrepancies
+    //TODO: deal with the student name field
+    chrome.local.get("classes", function(obj){
+        var classes = obj.classes;
+        for (var i = 0; i < grades.length; i++){
+            if(classes[grades[i].name] != grades[i].grade)
+                console.log("discrepancy for " + grades[i].name);
         }
     });
 };
@@ -141,7 +156,7 @@ var parseGradeChangesNoPass = function (subdomain) {
                 text: "ERR"
             });
             chrome.storage.local.set({
-                popupMsg: "Login to School Loop to enable notifications"
+                popupMsg: "Login to School Loop or enter your username/password in options to enable notifications"
             });
         } else { //logged in
             chrome.browserAction.setBadgeText({
@@ -153,12 +168,8 @@ var parseGradeChangesNoPass = function (subdomain) {
             var classArray = [];
 
             if ($("tbody > tr > td > ul > li > a:contains('Show Grades')", page).length > 0) {
-                console.log("Grade update notifications won't work unless you show grades!");
-                chrome.browserAction.setBadgeText({
-                    text: "ERR"
-                });
-                chrome.storage.local.set({
-                    popupMsg: "Click 'Show Grades' to enable notifications."
+                chrome.storage.local.get(["username", "password"], function (obj) {
+                    parseGradeChanges();
                 });
                 return;
             } else {
@@ -256,12 +267,7 @@ var checkFunc = function () {
     chrome.storage.local.get(["sl_subdomain","username", "password"], function (obj) {
             if(obj.username === "" || obj.password === ""){
                 if(obj.sl_subdomain === ""){
-                    chrome.browserAction.setBadgeText({
-                        text: "ERR"
-                    });
-                    chrome.storage.local.set({
-                        popupMsg: "Please enter your school's subdomain in options."
-                    });   
+                    badgeError("ERR", "Please enter your school's subdomain in options.");
                 }
                 else
                     parseGradeChangesNoPass(obj.sl_subdomain);
@@ -271,7 +277,6 @@ var checkFunc = function () {
     });
 
 };
-
 
 function parseGradeChanges(username, password) {
     /* jshint ignore:start *///in order to avoid "btoa" is undefined
@@ -291,24 +296,30 @@ chrome.alarms.create("NotificationsAlarm", {
     periodInMinutes: 5
 });
 
+//for debugging
+function printGrades(){
+    chrome.storage.local.get("classes", function(obj){
+        console.log(obj.classes);
+    });  
+}
+
+function badgeError(badge, popup){
+    chrome.browserAction.setBadgeText({
+        'text': badge
+    });
+    chrome.storage.local.set({
+        popupMsg: popup
+    });
+}
+
 //example of using a message handler from the inject scripts
 chrome.extension.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "logged_in") {
             if (request.shown) {
-                chrome.browserAction.setBadgeText({
-                    'text': ''
-                });
-                chrome.storage.local.set({
-                    popupMsg: ""
-                });
+                badgeError("", "");
             } else {
-                chrome.browserAction.setBadgeText({
-                    text: "ERR"
-                });
-                chrome.storage.local.set({
-                    popupMsg: "Click 'Show Grades' to enable notifications."
-                });
+                badgeError("ERR", "Click 'Show Grades' to enable notifications.")
             }
         }
     }
