@@ -92,8 +92,10 @@ function populate(){
     chrome.storage.local.get(["username", "password"], function(obj){
         var username = obj.username;
         var password = obj.password;
+        /* jshint ignore:start */
         var bCred = btoa(username+":"+password);
         setStudentID(bCred);//calls setPeriodIDs which calls gradesFromIDs
+        /* jshint ignore:end */
     });
 }
 
