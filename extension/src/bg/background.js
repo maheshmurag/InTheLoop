@@ -4,7 +4,6 @@
 
 //TODO: Set correct version number
 var ITLversion = "V0.3.1";
-var studentID = "";
 var periodIDs = [];
 var grades = {};
 
@@ -28,24 +27,24 @@ var constants = {
     "devOS": "5"
 };
 
-var setStudentID = function (bString) {
+var setStudentID = function (bString, subdomain) {
     function set(data) {
-        studentID = JSON.parse(data).students[0].studentID;
-        setPeriodIDs(bString);
+        var studentID = JSON.parse(data).students[0].studentID;
+        setPeriodIDs(bString, studentID, subdomain);
     }
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://montavista.schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
+        url: "https://" + subdomain + ".schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
         complete: function (msg) {
             //successful if msg.status == 200
             set(msg.responseText);
         }
     });
 };
-var setPeriodIDs = function (bString) {
+var setPeriodIDs = function (bString, studentID, subdomain) {
     function set(data) {
         data = JSON.parse(data);
         periodIDs = [];
@@ -54,21 +53,21 @@ var setPeriodIDs = function (bString) {
                 courseName: data[i].courseName,
                 periodID: data[i].periodID
             });
-        gradesFromIDs(bString, 0);
+        gradesFromIDs(bString, 0, subdomain, studentID);
     }
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://montavista.schoolloop.com/mapi/report_card?studentID=" + studentID,
+        url: "https://" + subdomain + ".schoolloop.com/mapi/report_card?studentID=" + studentID,
         complete: function (msg) {
             //successful if msg.status == 200
             set(msg.responseText);
         }
     });
 };
-var gradesFromIDs = function (bString, i) {
+var gradesFromIDs = function (bString, i, subdomain, studentID) {
     if (i >= periodIDs.length){
         checkForChanges();
         return;
@@ -78,7 +77,7 @@ var gradesFromIDs = function (bString, i) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://montavista.schoolloop.com/mapi/progress_report",
+        url: "https://" + subdomain + ".schoolloop.com/mapi/progress_report",
         data: {
             studentID: studentID,
             periodID: periodIDs[i].periodID
@@ -87,7 +86,7 @@ var gradesFromIDs = function (bString, i) {
             var data = JSON.parse(msg.responseText);
             grades[i].name = periodIDs[i].courseName;
             grades[i].grade = parseFloat(data[0].score) * 100;
-            gradesFromIDs(bString, i + 1);
+            gradesFromIDs(bString, i + 1, subdomain, studentID);
         }
     });
 };
@@ -244,6 +243,7 @@ var parseGradeChangesNoPass = function (subdomain) {
     });
 };
 
+//TODO: remove in production
 var testChangeGrade = function () {
     chrome.storage.local.get("classes", function (obj) {
         var x = obj.classes;
@@ -265,23 +265,19 @@ var checkFunc = function () {
     });
 
     chrome.storage.local.get(["sl_subdomain","username", "password"], function (obj) {
-            if(obj.username === "" || obj.password === ""){
-                if(obj.sl_subdomain === ""){
-                    badgeError("ERR", "Please enter your school's subdomain in options.");
-                }
-                else
-                    parseGradeChangesNoPass(obj.sl_subdomain);
-            }
-            else
-                parseGradeChanges(obj.username, obj.password);
+        if(obj.username === "" || obj.password === "" || obj.sl_subdomain === ""){
+            badgeError("ERR", "Please enter your username, password, and/or school's subdomain in options.");
+        }
+        else
+            parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
     });
 
 };
 
-function parseGradeChanges(username, password) {
+function parseGradeChanges(username, password, subdomain) {
     /* jshint ignore:start *///in order to avoid "btoa" is undefined
     var bCred = btoa(username + ":" + password);
-    setStudentID(bCred); //calls setPeriodIDs which calls gradesFromIDs
+    setStudentID(bCred, subdomain); //calls setPeriodIDs which calls gradesFromIDs
     /* jshint ignore:end */
 }
 
@@ -296,7 +292,7 @@ chrome.alarms.create("NotificationsAlarm", {
     periodInMinutes: 5
 });
 
-//for debugging
+//TODO: remove in production
 function printGrades(){
     chrome.storage.local.get("classes", function(obj){
         console.log(obj.classes);
@@ -319,7 +315,7 @@ chrome.extension.onMessage.addListener(
             if (request.shown) {
                 badgeError("", "");
             } else {
-                badgeError("ERR", "Click 'Show Grades' to enable notifications.")
+                badgeError("ERR", "Click 'Show Grades' to enable notifications.");
             }
         }
     }
