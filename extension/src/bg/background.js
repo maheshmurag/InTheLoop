@@ -28,22 +28,15 @@ var constants = {
     "devOS": "5"
 };
 
-//TODO: retrieve username/password from storage for these 3 functions
-var setStudentID = function () {
+var setStudentID = function (bString) {
     function set(data) {
         studentID = JSON.parse(data).students[0].studentID;
+        setPeriodIDs(bString);
     }
-    //    var username;
-    //    var setUsername = function (user) {
-    //        username = user;
-    //    };
-    //    chrome.storage.local.get("username", function (obj) {
-    //        setUsername(obj.username);
-    //    });
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + getBString());
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
         url: "https://montavista.schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
         complete: function (msg) {
@@ -52,7 +45,7 @@ var setStudentID = function () {
         }
     });
 };
-var setPeriodIDs = function () {
+var setPeriodIDs = function (bString) {
     function set(data) {
         data = JSON.parse(data);
         periodIDs = [];
@@ -61,11 +54,12 @@ var setPeriodIDs = function () {
                 courseName: data[i].courseName,
                 periodID: data[i].periodID
             });
+        gradesFromIDs(bString, 0);
     }
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + getBString());
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
         url: "https://montavista.schoolloop.com/mapi/report_card?studentID="+studentID,
         complete: function (msg) {
@@ -74,12 +68,12 @@ var setPeriodIDs = function () {
         }
     });
 };
-var gradesFromIDs = function(i){
+var gradesFromIDs = function(bString, i){
     if(i >= periodIDs.length) return;
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + getBString());
+            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
         url: "https://montavista.schoolloop.com/mapi/progress_report",
         data: {
@@ -89,23 +83,18 @@ var gradesFromIDs = function(i){
         complete: function (msg) {
             var data = JSON.parse(msg.responseText);
             grades[periodIDs[i].courseName] = parseFloat(data[0].score) * 100;
-            gradesFromIDs(i+1);
+            gradesFromIDs(bString, i+1);
         }
     });
 };
 
 function populate(){
-    var cred = getUsernamePass();
-    var username = cred.u;
-    var password = cred.p;
-    //TODO: implement jquery deferred for chaining: 
-//    var d = jQuery.Deferred(), 
-//    p = d.promise();
-//    p.then(getUsernamePass).then(setStudentID).then(setPeriodIDs).then(gradesFromIDs);
-//    d.resolve();
-    setStudentID(username, password);
-    setPeriodIDs(username, password);
-    gradesFromIDs(username, password);
+    chrome.storage.local.get(["username", "password"], function(obj){
+        var username = obj.username;
+        var password = obj.password;
+        var bCred = btoa(username+":"+password);
+        setStudentID(bCred);//calls setPeriodIDs which calls gradesFromIDs
+    });
 }
 
 /**
@@ -314,7 +303,3 @@ chrome.extension.onMessage.addListener(
         }
     }
 );
-
-function getBString() {
-    return "";
-}
