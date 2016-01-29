@@ -1,9 +1,12 @@
-//TODO: Set version number
-var ITLversion = "V0.3.1";
-
-
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
+/* jshint loopfunc:true */
+
+//TODO: Set version number
+var ITLversion = "V0.3.1";
+var studentID = "";
+var periodIDs = [];
+var grades = {};
 
 var getYear = function () {
     var today = new Date();
@@ -17,9 +20,7 @@ var getYear = function () {
     var today = dd + '/' + mm + '/' + yyyy;
     return today;
 };
-
 var yearVal = getYear();
-
 var constants = {
     "version": "2",
     "devToken": "599F9C00-92DC-4B5C-9464-7971F01F8370",
@@ -27,68 +28,18 @@ var constants = {
     "devOS": "5"
 };
 
-//"loginURL": "https://montavista.schoolloop.com/mapi/login?version="+constants.version" + "&devToken=" + constants.devToken + "&devOS="+ constants.devOS + "&year=" + constants.year + ""
-
-function saagar() {
-    var bString = getBString();
-    var obj = {};
-    var setObj = function (data) {
-        obj = JSON.parse(data);
-        console.log("1");
-        console.log(obj);
-    };
-
-    var obj3 = {};
-    var setObj3 = function (data) {
-        obj3 = JSON.parse(data);
-        console.log("3");
-        console.log(obj3);
-    };
-    $.ajax({
-        type: "GET",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
-        },
-        url: "https://montavista.schoolloop.com/mapi/progress_report",
-        data: {
-            studentID: '1376458845274',
-            periodID: '1438443835901'
-        },
-        complete: function (msg) {
-            //successful if msg.status == 200
-            setObj(msg.responseText);
-        }
-    });
-
-
-
-    $.ajax({
-        type: "GET",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + bString);
-        },
-        url: "https://montavista.schoolloop.com/mapi/report_card?studentID=1376458845274",
-        complete: function (msg) {
-            //successful if msg.status == 200
-            setObj3(msg.responseText);
-        }
-    });
-}
-
-var getStudentID = function () {
-    var obj2 = {};
-    var setObj2 = function (data) {
-        obj2 = JSON.parse(data);
-        console.log("2");
-        console.log(obj2);
-    };
-    var username;
-    var setUsername = function (user) {
-        username = user;
-    };
-    chrome.storage.local.get("username", function (obj) {
-        setUsername(obj.username);
-    });
+//TODO: retrieve username/password from storage for these 3 functions
+var setStudentID = function () {
+    function set(data) {
+        studentID = JSON.parse(data).students[0].studentID;
+    }
+    //    var username;
+    //    var setUsername = function (user) {
+    //        username = user;
+    //    };
+    //    chrome.storage.local.get("username", function (obj) {
+    //        setUsername(obj.username);
+    //    });
     $.ajax({
         type: "GET",
         beforeSend: function (xhr) {
@@ -97,11 +48,51 @@ var getStudentID = function () {
         url: "https://montavista.schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
         complete: function (msg) {
             //successful if msg.status == 200
-            setObj2(msg.responseText);
+            set(msg.responseText);
         }
     });
 };
-
+var setPeriodIDs = function () {
+    function set(data) {
+        data = JSON.parse(data);
+        periodIDs = [];
+        for (var i = 0; i < data.length; i++)
+            periodIDs.push({
+                courseName: data[i].courseName,
+                periodID: data[i].periodID
+            });
+    }
+    $.ajax({
+        type: "GET",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Basic ' + getBString());
+        },
+        url: "https://montavista.schoolloop.com/mapi/report_card?studentID="+studentID,
+        complete: function (msg) {
+            //successful if msg.status == 200
+            set(msg.responseText);
+        }
+    });
+};
+var gradesFromIDs = function(i){
+    if(i >= periodIDs.length) return;
+    $.ajax({
+        type: "GET",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Basic ' + getBString());
+        },
+        url: "https://montavista.schoolloop.com/mapi/progress_report",
+        data: {
+            studentID: studentID,
+            periodID: periodIDs[i].periodID
+        },
+        complete: function (msg) {
+            var data = JSON.parse(msg.responseText);
+            grades[periodIDs[i].courseName] = parseFloat(data[0].score) * 100;
+            gradesFromIDs(i+1);
+        }
+    });
+};
 
 /**
  * Creates a notification
