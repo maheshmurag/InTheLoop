@@ -1,3 +1,7 @@
+//TODO: Set version number
+var ITLversion = "V0.3.1";
+
+
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
 
@@ -131,7 +135,7 @@ function createNotification(id, title, message, url, callback) {
 }
 /* beautify preserve:start */
 chrome.runtime.onInstalled.addListener(function () {
-    createNotification("1", "Welcome to In The Loop", "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
+    createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({classes: {}});
     chrome.storage.local.set({popupMsg: ""});
