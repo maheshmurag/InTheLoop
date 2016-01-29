@@ -94,6 +94,20 @@ var gradesFromIDs = function(i){
     });
 };
 
+function populate(){
+    var cred = getUsernamePass();
+    var username = cred.u;
+    var password = cred.p;
+    //TODO: implement jquery deferred for chaining: 
+//    var d = jQuery.Deferred(), 
+//    p = d.promise();
+//    p.then(getUsernamePass).then(setStudentID).then(setPeriodIDs).then(gradesFromIDs);
+//    d.resolve();
+    setStudentID(username, password);
+    setPeriodIDs(username, password);
+    gradesFromIDs(username, password);
+}
+
 /**
  * Creates a notification
  * @param {number}   id       ID of notif
