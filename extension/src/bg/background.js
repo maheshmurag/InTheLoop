@@ -102,7 +102,7 @@ var getStudentID = function () {
 /**
  * Creates a notification
  * @param {number}   id       ID of notif
- * @param {string}         title    Header
+ * @param {string}   title    Header
  * @param {string}   message  Inner text
  * @param {string}   url      URL
  * @param {function} callback function to call afterwards
@@ -115,7 +115,7 @@ function createNotification(id, title, message, url, callback) {
         message: message
     };
 
-    chrome.notifications.create(options, function (createdId) {
+    chrome.notifications.create(id, options, function (createdId) {
         var handler = function (id) {
             if (id == createdId) {
                 chrome.tabs.create({
@@ -131,7 +131,7 @@ function createNotification(id, title, message, url, callback) {
 }
 /* beautify preserve:start */
 chrome.runtime.onInstalled.addListener(function () {
-    createNotification(1, "Welcome to In The Loop", "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
+    createNotification("1", "Welcome to In The Loop", "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({classes: {}});
     chrome.storage.local.set({popupMsg: ""});
@@ -174,30 +174,6 @@ var parseGradeChanges = function (subdomain) {
                     popupMsg: "Click 'Show Grades' to enable notifications."
                 });
                 return;
-                //visit each progress report, add to classArray
-                //                $("tbody > tr > td.pr_link", page).each(function (i, obj) {
-                //                    var link = "https://" + subdomain + ".schoolloop.com" + $("a", obj).attr("href");
-                //                    $.get(link, function(data){
-                //                        var progressReportPage = document.createElement("html");
-                //                        progressReportPage.innerHTML = data;
-                //                        var prPage = $(progressReportPage);
-                //                        var percent = $("table:first tr:nth-child(2) > td:nth-child(1) b:eq(1)", prPage).text().trim();
-                //                        percent = percent.substring(0, percent.length-1);
-                //                        
-                //                        var percentNum = 0;
-                //                        if(percent.length !== 0)
-                //                            percentNum = parseFloat(percent);
-                //                        if(isNaN(parseFloat(percent)))
-                //                            percentNum = 0;
-                //                        var className = $(".label1:first", prPage).text().trim();
-                //                        className = className.substring(0, className.length-1);
-                //                        var objToPush = {
-                //                            name: className,
-                //                            perc: percentNum
-                //                        };
-                //                        classArray.push(objToPush);
-                //                    });
-                //                }); 
             } else {
                 $(".portal_tab_cont.academics_cont .content .ajax_accordion", page).each(function (i, obj) {
                     var className = $("table > tbody > tr > td.course > a", obj).text().trim();
@@ -205,11 +181,9 @@ var parseGradeChanges = function (subdomain) {
                     var percentNum = 0;
                     if (percent.length !== 0)
                         percentNum = parseFloat(percent.substring(0, percent.length - 1));
-                    //var linkStr = "http://" + subdomain + ".schoolloop.com" + $("table > tbody > tr > td:nth-child(4) > a", obj).attr('href');
                     var objToPush = {
                         name: className,
                         perc: percentNum
-                            //,link: linkStr
                     };
                     classArray.push(objToPush);
                 });
@@ -224,22 +198,17 @@ var parseGradeChanges = function (subdomain) {
                 setNameMatches(data.name);
             });
             chrome.storage.local.get('classes', function (obj) {
-
                 if (Object.keys(obj.classes).length === 0) {
                     objToSync = {};
-                    //var linksToSync = {};
                     for (var i = 0; i < classArray.length; i++) {
                         objToSync[classArray[i].name] = classArray[i].perc;
-                        //linksToSync[classArray[i].name] = classArray[i].link;
                     }
                     chrome.storage.local.set({
                         classes: objToSync,
                         name: userName
-                            //,links: linksToSync,
                     });
                     return;
                 } else if (nameMatches) {
-                    //compare each grade and then notify and then set to current
                     var arr = [];
                     for (var i = 0; i < classArray.length; i++) {
                         if (obj.classes[classArray[i].name] != classArray[i].perc) {
@@ -260,13 +229,9 @@ var parseGradeChanges = function (subdomain) {
                                 s += arr[i] + ", ";
                             s += "and " + arr[arr.length - 1] + "!";
                         }
-                        var options = {
-                            type: "basic",
-                            iconUrl: "icons/notif.png",
-                            title: "In The Loop Notification",
-                            message: s
-                        };
-                        chrome.notifications.create("2", options, function () {});
+                        chrome.storage.local.get("sl_subdomain", function (data) {
+                            createNotification("2", "In The Loop Notification", s, "https://" + data.sl_subdomain + ".schoolloop.com/portal/student_home", function () {});
+                        });
                     }
                     objToSync = {};
                     for (i = 0; i < classArray.length; i++) {
@@ -301,18 +266,10 @@ var checkFunc = function () {
         if (!data.notifs) exitFunc();
     });
 
-    var setSchool = function (school) {
-        chrome.notifications.onClicked.addListener(function (notifId) {
-            chrome.tabs.create({
-                url: "https://" + school + ".schoolloop.com/portal/student_home"
-            });
-            chrome.notifications.clear("2", function () {});
-        });
-        parseGradeChanges(school);
-    };
     chrome.storage.local.get("sl_subdomain", function (data) {
-        setSchool(data.sl_subdomain);
+        parseGradeChanges(data.sl_subdomain);
     });
+
 };
 
 chrome.alarms.onAlarm.addListener(function (alarm) {
