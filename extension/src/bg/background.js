@@ -212,6 +212,13 @@ function testChangeGrade(callCheck) {
     if (callCheck) checkFunc();
 }
 
+//TODO: remove in production
+function testNotification() {
+    chrome.storage.local.get("sl_subdomain", function (data) {
+        createNotification("2", "In The Loop Notification", "Test", "https://" + data.sl_subdomain + ".schoolloop.com/portal/student_home", function () {});
+    });
+}
+
 function checkFunc() {
     var exitFunc = function () {
         console.log("In The Loop notifications are disabled!");
