@@ -207,7 +207,7 @@ function checkFunc() {
 
     chrome.storage.local.get(["sl_subdomain", "username", "password"], function (obj) {
         if (obj.username === "" || obj.password === "" || obj.sl_subdomain === "") {
-            badgeError("ERR", "Incorrect username, password, or school's subdomain.");
+            badgeError("ERR", "Incorrect username, password, or school subdomain.");
         } else {
             grades = [];
             parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
