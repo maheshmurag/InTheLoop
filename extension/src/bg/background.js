@@ -1,7 +1,6 @@
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
 
-//TODO: error if username/password wrong (if msg.status !== 200)
 //TODO: Set correct version number
 var ITLversion = "V0.3.5";
 var grades = [];
@@ -42,7 +41,7 @@ var setStudentID = function (bString, subdomain) {
             set(JSON.parse(msg));
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect")
+            badgeError("ERR", "Username, password, or subdomain incorrect");
             console.log("studentID: ");
             console.log(errormessage);
         }
@@ -70,7 +69,7 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
             set(JSON.parse(msg));
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect")
+            badgeError("ERR", "Username, password, or subdomain incorrect");
             console.log("setPeriodIDs: ");
             console.log(errormessage);
         }
@@ -101,7 +100,7 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
             gradesFromIDs(bString, periodIDs, i + 1, subdomain, studentID);
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect")
+            badgeError("ERR", "Username, password, or subdomain incorrect");
             console.log("gradesFromIDs: ");
             console.log(errormessage);
         }
