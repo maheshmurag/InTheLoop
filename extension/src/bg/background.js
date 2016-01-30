@@ -1,7 +1,7 @@
 /*global console, chrome, $, document*/
 /* jshint shadow:true */
-/* jshint loopfunc:true */
 
+//TODO: error if username/password wrong (if msg.status !== 200)
 //TODO: Set correct version number
 var ITLversion = "V0.3.1";
 var grades = [];
@@ -38,7 +38,6 @@ var setStudentID = function (bString, subdomain) {
         },
         url: "https://" + subdomain + ".schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
         complete: function (msg) {
-            //successful if msg.status == 200
             set(msg.responseText);
         }
     });
@@ -82,7 +81,6 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
             periodID: periodIDs[i].periodID
         },
         complete: function (msg) {
-            //            console.log("line 86")
             var data = JSON.parse(msg.responseText);
             var objP = {};
             objP.name = periodIDs[i].courseName + "";
@@ -103,10 +101,9 @@ function isEmpty(map) {
 }
 
 var checkForChanges = function () {
-    //NOTE: Loops through grades object, and creates notifications for discrepancies
     chrome.storage.local.get("classes", function (obj) {
         var classes = obj.classes;
-        if (isEmpty(classes)) { //Object.keys(classes).length === 0) {
+        if (isEmpty(classes)) {
             var objToSync = {};
             for (var i = 0; i < grades.length; i++) {
                 objToSync[grades[i].name] = grades[i].perc;
@@ -151,14 +148,6 @@ var checkForChanges = function () {
     });
 };
 
-/**
- * Creates a notification
- * @param {number}   id       ID of notif
- * @param {string}   title    Header
- * @param {string}   message  Inner text
- * @param {string}   url      URL
- * @param {function} callback function to call afterwards
- */
 function createNotification(id, title, message, url, callback) {
     var options = {
         type: "basic",
@@ -196,7 +185,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 //TODO: remove in production
-var testChangeGrade = function (callCheck) {
+function testChangeGrade (callCheck) {
     chrome.storage.local.get("classes", function (obj) {
         var x = obj.classes;
         x.HAmLit = 88;
@@ -207,7 +196,7 @@ var testChangeGrade = function (callCheck) {
     if (callCheck) checkFunc();
 };
 
-var checkFunc = function () {
+function checkFunc() {
     var exitFunc = function () {
         console.log("In The Loop notifications are disabled!");
         return;
@@ -217,7 +206,7 @@ var checkFunc = function () {
     });
 
     chrome.storage.local.get(["sl_subdomain", "username", "password"], function (obj) {
-        if (obj.username == "" || obj.password == "" || obj.sl_subdomain == "") {
+        if (obj.username === "" || obj.password === "" || obj.sl_subdomain === "") {
             badgeError("ERR", "Incorrect username, password, or school's subdomain.");
         } else {
             grades = [];
