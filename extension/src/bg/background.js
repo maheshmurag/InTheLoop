@@ -3,6 +3,7 @@
 
 //TODO: Set correct version number
 var ITLversion = "V0.3.5";
+var key = "";
 var grades = [];
 
 var getYear = function () {
@@ -234,7 +235,7 @@ function checkFunc() {
         } else {
             grades = [];
             //TODO: hide key
-            parseGradeChanges(obj.username, CryptoJS.AES.decrypt(obj.password, "").toString(CryptoJS.enc.Utf8), obj.sl_subdomain);
+            parseGradeChanges(obj.username, CryptoJS.AES.decrypt(obj.password, key).toString(CryptoJS.enc.Utf8), obj.sl_subdomain);
         }
     });
 }

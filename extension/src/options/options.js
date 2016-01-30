@@ -161,7 +161,7 @@ var themes = { //default theme set, although custom can change
 		}
 	}
 };
-
+var key = "";
 var custom_default = {
 	name: "Custom Theme",
 	key: "custom",
@@ -299,7 +299,7 @@ sl_user.addEventListener("change", function(){
 
 sl_pass.addEventListener("change", function(){
     //TODO: hide key
-	var passd = CryptoJS.AES.encrypt("" + sl_pass.value, "");
+	var passd = CryptoJS.AES.encrypt("" + sl_pass.value, key);
 	chrome.storage.local.set({password:passd}, function(){});
     checkFilled();
 });
@@ -325,7 +325,7 @@ function loadFields(){
 		slSubdomain.value = data.sl_subdomain;
         sl_user.value = data.username;
         //TODO: hide key
-        sl_pass.value = CryptoJS.AES.decrypt(data.password, "").toString(CryptoJS.enc.Utf8);
+        sl_pass.value = CryptoJS.AES.decrypt(data.password, key).toString(CryptoJS.enc.Utf8);
         notifsEnabled.checked = data.notifs;
         document.getElementById("resetButton").disabled = !data.notifs;
         if(!data.notifs){
