@@ -89,7 +89,10 @@ function recalculateOverallPercentage () {
         }
         sum = (nnn / ddd) * 100;
         sum = sum.toFixed(2);
-        setOverallPercentage(sum, true);
+        if(ddd === 0)
+            setOverallPercentageStr("-");
+        else
+            setOverallPercentage(sum, true);
     } else {
         for (var j = 0; j < categories.length; j++) {
             if (categories[j].score != "-") {
