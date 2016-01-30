@@ -1,4 +1,4 @@
-/*global console, chrome, $, document*/
+/*global console, chrome, $, document, CryptoJS*/
 /* jshint shadow:true */
 
 //TODO: Set correct version number
@@ -42,7 +42,7 @@ var setStudentID = function (bString, subdomain) {
         },
         error: function (errormessage) {
             badgeError("ERR", "Username, password, or subdomain incorrect");
-            console.log("studentID: ");
+            console.log("studentID err: ");
             console.log(errormessage);
         }
         
@@ -70,7 +70,7 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
         },
         error: function (errormessage) {
             badgeError("ERR", "Username, password, or subdomain incorrect");
-            console.log("setPeriodIDs: ");
+            console.log("setPeriodIDs err: ");
             console.log(errormessage);
         }
     });
@@ -101,7 +101,7 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
         },
         error: function (errormessage) {
             badgeError("ERR", "Username, password, or subdomain incorrect");
-            console.log("gradesFromIDs: ");
+            console.log("gradesFromIDs err: ");
             console.log(errormessage);
         }
     });
@@ -233,7 +233,8 @@ function checkFunc() {
             badgeError("ERR", "Please set your username, password, & school subdomain.");
         } else {
             grades = [];
-            parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
+            //TODO: hide key
+            parseGradeChanges(obj.username, CryptoJS.AES.decrypt(obj.password, "").toString(CryptoJS.enc.Utf8), obj.sl_subdomain);
         }
     });
 }

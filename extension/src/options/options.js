@@ -1,4 +1,4 @@
-/*global document, chrome, console, $*/
+/*global document, chrome, console, $, CryptoJS*/
 var themes = { //default theme set, although custom can change
 	none: {
 		name: "No Theme",
@@ -247,9 +247,7 @@ function saveThemes(){
 		if(getString(colorData) != getString(themes[currentTheme].colors)){
 				themes.custom.colors = colorData;
 				setTheme("custom");
-				chrome.storage.local.set({custom_theme: themes.custom}, function(){
-					//TODO: add notification saying "Saved"
-				});
+				chrome.storage.local.set({custom_theme: themes.custom}, function(){});
 		}
 }
 
@@ -300,7 +298,8 @@ sl_user.addEventListener("change", function(){
 
 
 sl_pass.addEventListener("change", function(){
-	var passd = sl_pass.value;
+    //TODO: hide key
+	var passd = CryptoJS.AES.encrypt("" + sl_pass.value, "");
 	chrome.storage.local.set({password:passd}, function(){});
     checkFilled();
 });
@@ -325,7 +324,8 @@ function loadFields(){
 	chrome.storage.local.get(["sl_subdomain", "username", "password", "notifs"], function(data){
 		slSubdomain.value = data.sl_subdomain;
         sl_user.value = data.username;
-        sl_pass.value = data.password;
+        //TODO: hide key
+        sl_pass.value = CryptoJS.AES.decrypt(data.password, "").toString(CryptoJS.enc.Utf8);
         notifsEnabled.checked = data.notifs;
         document.getElementById("resetButton").disabled = !data.notifs;
         if(!data.notifs){
