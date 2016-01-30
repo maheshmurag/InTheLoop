@@ -36,7 +36,6 @@ var setStudentID = function (bString, subdomain) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://" + subdomain + ".schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
         success: function (msg) {
             clearBadge();
             set(JSON.parse(msg));
@@ -64,7 +63,6 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://" + subdomain + ".schoolloop.com/mapi/report_card?studentID=" + studentID,
         success: function (msg) {
             clearBadge();
             set(JSON.parse(msg));
@@ -86,7 +84,6 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        url: "https://" + subdomain + ".schoolloop.com/mapi/progress_report",
         data: {
             studentID: studentID,
             periodID: periodIDs[i].periodID
