@@ -217,9 +217,7 @@ function setTheme(themeId){
 	dropdown.value = themeId;
 	loadTheme(themeId);
 	console.log('saving, currentTheme=' + themeId);
-	chrome.storage.local.set({current_theme:themes[themeId]}, function(){
-		//TODO: add feedback
-	});
+	chrome.storage.local.set({current_theme:themes[themeId]}, function(){});
 }
 
 //Loads a theme to the text fields
@@ -291,24 +289,37 @@ slSubdomain.addEventListener("change", function(){
 });
 
 var sl_user = document.getElementById('sl_username');
+var sl_pass = document.getElementById('sl_password');
+var notifsEnabled = document.getElementById("enableNotif");
+
 sl_user.addEventListener("change", function(){
 	var userd = sl_user.value;
 	chrome.storage.local.set({username:userd}, function(){});
+    checkFilled();
 });
 
-var sl_pass = document.getElementById('sl_password');
+
 sl_pass.addEventListener("change", function(){
 	var passd = sl_pass.value;
 	chrome.storage.local.set({password:passd}, function(){});
+    checkFilled();
 });
 
-var notifsEnabled = document.getElementById("enableNotif");
 notifsEnabled.addEventListener("change", function(){
     chrome.storage.local.set({notifs:notifsEnabled.checked});
     document.getElementById("resetButton").disabled = !notifsEnabled.checked;
     chrome.storage.local.set({classes: {}});
     chrome.extension.getBackgroundPage().console.log("set notifs: " + notifsEnabled.checked);
+    checkFilled();
 });
+
+function checkFilled(){
+    var u = sl_user.value;
+    var p = sl_pass.value;
+    var s = slSubdomain.value;
+    if(!(u === "" || p === "" || s === ""))
+        chrome.runtime.sendMessage({action: "setBadge", badgeTitle: "", badgeText: ""}, function(response){});
+}
 
 function loadFields(){
 	chrome.storage.local.get(["sl_subdomain", "username", "password", "notifs"], function(data){

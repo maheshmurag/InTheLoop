@@ -3,7 +3,7 @@
 
 //TODO: error if username/password wrong (if msg.status !== 200)
 //TODO: Set correct version number
-var ITLversion = "V0.3.1";
+var ITLversion = "V0.3.5";
 var grades = [];
 
 var getYear = function () {
@@ -28,7 +28,7 @@ var constants = {
 
 var setStudentID = function (bString, subdomain) {
     function set(data) {
-        var studentID = JSON.parse(data).students[0].studentID;
+        var studentID = data.students[0].studentID;
         setPeriodIDs(bString, studentID, subdomain);
     }
     $.ajax({
@@ -37,14 +37,20 @@ var setStudentID = function (bString, subdomain) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
         url: "https://" + subdomain + ".schoolloop.com/mapi/login?version=" + constants.version + "&devToken=" + constants.devToken + "&devOS=" + constants.devOS + "&year=" + constants.year + "",
-        complete: function (msg) {
-            set(msg.responseText);
+        success: function (msg) {
+            clearBadge();
+            set(JSON.parse(msg));
+        },
+        error: function (errormessage) {
+            badgeError("ERR", "Username, password, or subdomain incorrect")
+            console.log("studentID: ");
+            console.log(errormessage);
         }
+        
     });
 };
 var setPeriodIDs = function (bString, studentID, subdomain) {
     function set(data) {
-        data = JSON.parse(data);
         var periodIDs = [];
         for (var i = 0; i < data.length; i++)
             periodIDs.push({
@@ -59,9 +65,14 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
         url: "https://" + subdomain + ".schoolloop.com/mapi/report_card?studentID=" + studentID,
-        complete: function (msg) {
-            //successful if msg.status == 200
-            set(msg.responseText);
+        success: function (msg) {
+            clearBadge();
+            set(JSON.parse(msg));
+        },
+        error: function (errormessage) {
+            badgeError("ERR", "Username, password, or subdomain incorrect")
+            console.log("setPeriodIDs: ");
+            console.log(errormessage);
         }
     });
 };
@@ -80,13 +91,19 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
             studentID: studentID,
             periodID: periodIDs[i].periodID
         },
-        complete: function (msg) {
-            var data = JSON.parse(msg.responseText);
+        success: function (msg) {
+            clearBadge();
+            var data = JSON.parse(msg);
             var objP = {};
             objP.name = periodIDs[i].courseName + "";
             objP.perc = parseFloat(data[0].score) * 100;
             grades.push(objP);
             gradesFromIDs(bString, periodIDs, i + 1, subdomain, studentID);
+        },
+        error: function (errormessage) {
+            badgeError("ERR", "Username, password, or subdomain incorrect")
+            console.log("gradesFromIDs: ");
+            console.log(errormessage);
         }
     });
 };
@@ -185,7 +202,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 //TODO: remove in production
-function testChangeGrade (callCheck) {
+function testChangeGrade(callCheck) {
     chrome.storage.local.get("classes", function (obj) {
         var x = obj.classes;
         x.HAmLit = 88;
@@ -207,7 +224,7 @@ function checkFunc() {
 
     chrome.storage.local.get(["sl_subdomain", "username", "password"], function (obj) {
         if (obj.username === "" || obj.password === "" || obj.sl_subdomain === "") {
-            badgeError("ERR", "Incorrect username, password, or school subdomain.");
+            badgeError("ERR", "Please set your username, password, & school subdomain.");
         } else {
             grades = [];
             parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
@@ -240,6 +257,10 @@ function printGrades() {
     });
 }
 
+function clearBadge(){
+    badgeError("", "");
+}
+
 function badgeError(badge, popup) {
     chrome.browserAction.setBadgeText({
         'text': badge
@@ -252,12 +273,8 @@ function badgeError(badge, popup) {
 //example of using a message handler from the inject scripts
 chrome.extension.onMessage.addListener(
     function (request, sender, sendResponse) {
-        if (request.msg === "logged_in") {
-            if (request.shown) {
-                badgeError("", "");
-            } else {
-                badgeError("ERR", "Click 'Show Grades' to enable notifications.");
-            }
+        if (request.action === "setBadge") {
+            badgeError(request.badgeTitle, request.badgeText);
         }
     }
 );
