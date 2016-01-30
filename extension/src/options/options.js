@@ -302,17 +302,30 @@ sl_pass.addEventListener("change", function(){
 	chrome.storage.local.set({password:passd}, function(){});
 });
 
+var notifsEnabled = document.getElementById("enableNotif");
+notifsEnabled.addEventListener("change", function(){
+    chrome.storage.local.set({notifs:notifsEnabled.checked});
+    document.getElementById("resetButton").disabled = !notifsEnabled.checked;
+    chrome.storage.local.set({classes: {}});
+    chrome.extension.getBackgroundPage().console.log("set notifs: " + notifsEnabled.checked);
+});
 
-
-function loadSubdomain(){
-	chrome.storage.local.get("sl_subdomain", function(data){
+function loadFields(){
+	chrome.storage.local.get(["sl_subdomain", "username", "password", "notifs"], function(data){
 		slSubdomain.value = data.sl_subdomain;
+        sl_user.value = data.username;
+        sl_pass.value = data.password;
+        notifsEnabled.checked = data.notifs;
+        document.getElementById("resetButton").disabled = !data.notifs;
+        if(!data.notifs){
+            chrome.storage.local.set({classes: {}});
+        }
 	});
 }
 
 function init(){
 	loadThemes();
-	loadSubdomain();
+    loadFields();
 }
 
 var resetButton = document.getElementById("resetButton");
@@ -322,26 +335,6 @@ resetButton.addEventListener("click", function(){
     chrome.extension.getBackgroundPage().alert("Local grade data has been reset!");
 });
 
-var notifsEnabled = document.getElementById("enableNotif");
-notifsEnabled.addEventListener("change", function(){
-    chrome.storage.local.set({notifs:notifsEnabled.checked});
-    document.getElementById("resetButton").disabled = !notifsEnabled.checked;
-    chrome.storage.local.set({classes: {}});
-    chrome.extension.getBackgroundPage().console.log("set notifs: " + notifsEnabled.checked);
-});
-
-chrome.storage.local.get('notifs', function(data){
-    if(data.notifs){
-        document.getElementById("enableNotif").checked = true;
-        document.getElementById("resetButton").disabled = false;
-    }
-    else{
-        document.getElementById("enableNotif").checked = false;
-        chrome.storage.local.set({classes: {}});
-        document.getElementById("resetButton").disabled = true;
-    }
-        
-});
 
 document.addEventListener('DOMContentLoaded', init);
 document.getElementById("save").addEventListener("click", saveThemes);

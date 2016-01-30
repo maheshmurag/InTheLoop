@@ -194,7 +194,7 @@ function testChangeGrade (callCheck) {
         });
     });
     if (callCheck) checkFunc();
-};
+}
 
 function checkFunc() {
     var exitFunc = function () {
@@ -213,7 +213,7 @@ function checkFunc() {
             parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
         }
     });
-};
+}
 
 function parseGradeChanges(username, password, subdomain) {
     /* jshint ignore:start */ //in order to avoid "btoa" is undefined
