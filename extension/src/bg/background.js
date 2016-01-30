@@ -67,7 +67,7 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
     });
 };
 var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
-    if (i >= periodIDs.length){
+    if (i >= periodIDs.length) {
         checkForChanges();
         return;
     }
@@ -82,7 +82,7 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
             periodID: periodIDs[i].periodID
         },
         complete: function (msg) {
-//            console.log("line 86")
+            //            console.log("line 86")
             var data = JSON.parse(msg.responseText);
             var objP = {};
             objP.name = periodIDs[i].courseName + "";
@@ -94,19 +94,19 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
 };
 
 function isEmpty(map) {
-   for(var key in map) {
-      if (map.hasOwnProperty(key)) {
-         return false;
-      }
-   }
-   return true;
+    for (var key in map) {
+        if (map.hasOwnProperty(key)) {
+            return false;
+        }
+    }
+    return true;
 }
 
-var checkForChanges = function(){
+var checkForChanges = function () {
     //NOTE: Loops through grades object, and creates notifications for discrepancies
-    chrome.storage.local.get("classes", function(obj){
+    chrome.storage.local.get("classes", function (obj) {
         var classes = obj.classes;
-        if (isEmpty(classes)){//Object.keys(classes).length === 0) {
+        if (isEmpty(classes)) { //Object.keys(classes).length === 0) {
             var objToSync = {};
             for (var i = 0; i < grades.length; i++) {
                 objToSync[grades[i].name] = grades[i].perc;
@@ -115,8 +115,7 @@ var checkForChanges = function(){
                 classes: objToSync
             });
             return;
-        }
-        else{
+        } else {
             var arr = [];
             for (var i = 0; i < grades.length; i++) {
                 if (obj.classes[grades[i].name] != grades[i].perc) {
@@ -182,13 +181,19 @@ function createNotification(id, title, message, url, callback) {
         if (typeof callback == "function") callback();
     });
 }
-/* beautify preserve:start */
+
 chrome.runtime.onInstalled.addListener(function () {
-    createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function(){});
+    createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
-    chrome.storage.local.set({classes: {}, username: "", password: "", popupMsg: "", notifs: true, sl_subdomain: "montavista"});
+    chrome.storage.local.set({
+        classes: {},
+        username: "",
+        password: "",
+        popupMsg: "",
+        notifs: true,
+        sl_subdomain: "montavista"
+    });
 });
-/* beautify preserve:end */
 
 //TODO: remove in production
 var testChangeGrade = function (callCheck) {
@@ -199,7 +204,7 @@ var testChangeGrade = function (callCheck) {
             classes: x
         });
     });
-    if(callCheck) checkFunc();
+    if (callCheck) checkFunc();
 };
 
 var checkFunc = function () {
@@ -211,12 +216,10 @@ var checkFunc = function () {
         if (!data.notifs) exitFunc();
     });
 
-    chrome.storage.local.get(["sl_subdomain","username", "password"], function (obj) {
-        if(obj.username == "" || obj.password == "" || obj.sl_subdomain == ""){
+    chrome.storage.local.get(["sl_subdomain", "username", "password"], function (obj) {
+        if (obj.username == "" || obj.password == "" || obj.sl_subdomain == "") {
             badgeError("ERR", "Incorrect username, password, or school's subdomain.");
-        }
-        else
-        {
+        } else {
             grades = [];
             parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
         }
@@ -224,7 +227,7 @@ var checkFunc = function () {
 };
 
 function parseGradeChanges(username, password, subdomain) {
-    /* jshint ignore:start *///in order to avoid "btoa" is undefined
+    /* jshint ignore:start */ //in order to avoid "btoa" is undefined
     var bCred = btoa(username + ":" + password);
     setStudentID(bCred, subdomain); //calls setPeriodIDs which calls gradesFromIDs
     /* jshint ignore:end */
@@ -242,13 +245,13 @@ chrome.alarms.create("NotificationsAlarm", {
 });
 
 //TODO: remove in production
-function printGrades(){
-    chrome.storage.local.get("classes", function(obj){
+function printGrades() {
+    chrome.storage.local.get("classes", function (obj) {
         console.log(obj.classes);
-    });  
+    });
 }
 
-function badgeError(badge, popup){
+function badgeError(badge, popup) {
     chrome.browserAction.setBadgeText({
         'text': badge
     });
