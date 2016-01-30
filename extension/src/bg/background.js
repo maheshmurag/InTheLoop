@@ -4,8 +4,7 @@
 
 //TODO: Set correct version number
 var ITLversion = "V0.3.1";
-var periodIDs = [];
-var grades = {};
+var grades = [];
 
 var getYear = function () {
     var today = new Date();
@@ -47,13 +46,13 @@ var setStudentID = function (bString, subdomain) {
 var setPeriodIDs = function (bString, studentID, subdomain) {
     function set(data) {
         data = JSON.parse(data);
-        periodIDs = [];
+        var periodIDs = [];
         for (var i = 0; i < data.length; i++)
             periodIDs.push({
                 courseName: data[i].courseName,
                 periodID: data[i].periodID
             });
-        gradesFromIDs(bString, 0, subdomain, studentID);
+        gradesFromIDs(bString, periodIDs, 0, subdomain, studentID);
     }
     $.ajax({
         type: "GET",
@@ -67,7 +66,7 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
         }
     });
 };
-var gradesFromIDs = function (bString, i, subdomain, studentID) {
+var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
     if (i >= periodIDs.length){
         checkForChanges();
         return;
@@ -83,25 +82,75 @@ var gradesFromIDs = function (bString, i, subdomain, studentID) {
             periodID: periodIDs[i].periodID
         },
         complete: function (msg) {
+//            console.log("line 86")
             var data = JSON.parse(msg.responseText);
-            grades[i].name = periodIDs[i].courseName;
-            grades[i].grade = parseFloat(data[0].score) * 100;
-            gradesFromIDs(bString, i + 1, subdomain, studentID);
-        }
-    });
-};
-var checkForChanges = function(){
-    //NOTE: Loops through grades object, and creates notifications for discrepancies
-    //TODO: deal with the student name field
-    chrome.local.get("classes", function(obj){
-        var classes = obj.classes;
-        for (var i = 0; i < grades.length; i++){
-            if(classes[grades[i].name] != grades[i].grade)
-                console.log("discrepancy for " + grades[i].name);
+            var objP = {};
+            objP.name = periodIDs[i].courseName + "";
+            objP.perc = parseFloat(data[0].score) * 100;
+            grades.push(objP);
+            gradesFromIDs(bString, periodIDs, i + 1, subdomain, studentID);
         }
     });
 };
 
+function isEmpty(map) {
+   for(var key in map) {
+      if (map.hasOwnProperty(key)) {
+         return false;
+      }
+   }
+   return true;
+}
+
+var checkForChanges = function(){
+    //NOTE: Loops through grades object, and creates notifications for discrepancies
+    chrome.storage.local.get("classes", function(obj){
+        var classes = obj.classes;
+        if (isEmpty(classes)){//Object.keys(classes).length === 0) {
+            var objToSync = {};
+            for (var i = 0; i < grades.length; i++) {
+                objToSync[grades[i].name] = grades[i].perc;
+            }
+            chrome.storage.local.set({
+                classes: objToSync
+            });
+            return;
+        }
+        else{
+            var arr = [];
+            for (var i = 0; i < grades.length; i++) {
+                if (obj.classes[grades[i].name] != grades[i].perc) {
+                    console.log("Grade Discrepancy for class " + grades[i].name + ". " +
+                        obj.classes[grades[i].name] + " vs " + grades[i].perc);
+                    arr.push(grades[i].name);
+                }
+            }
+            if (arr.length > 0) {
+                var s = "";
+                if (arr.length == 1)
+                    s = "Your " + arr[0] + " grade has changed!";
+                else if (arr.length == 2)
+                    s = "Grades have changed for " + arr[0] + " and " + arr[1] + "!";
+                else {
+                    s = "Grades have changed for ";
+                    for (i = 0; i < arr.length - 1; i++)
+                        s += arr[i] + ", ";
+                    s += "and " + arr[arr.length - 1] + "!";
+                }
+                chrome.storage.local.get("sl_subdomain", function (data) {
+                    createNotification("2", "In The Loop Notification", s, "https://" + data.sl_subdomain + ".schoolloop.com/portal/student_home", function () {});
+                });
+            }
+            var objToSync = {};
+            for (i = 0; i < grades.length; i++) {
+                objToSync[grades[i].name] = grades[i].perc;
+            }
+            chrome.storage.local.set({
+                classes: objToSync
+            });
+        }
+    });
+};
 
 /**
  * Creates a notification
@@ -167,8 +216,8 @@ var parseGradeChangesNoPass = function (subdomain) {
             var classArray = [];
 
             if ($("tbody > tr > td > ul > li > a:contains('Show Grades')", page).length > 0) {
-                chrome.storage.local.get(["username", "password"], function (obj) {
-                    parseGradeChanges();
+                chrome.storage.local.get(["username", "password", "sl_subdomain"], function (obj) {
+                    parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
                 });
                 return;
             } else {
@@ -186,14 +235,14 @@ var parseGradeChangesNoPass = function (subdomain) {
                 });
             }
 
-            var userName = $("span.page_title", page).text().trim();
-            var nameMatches = false;
-            var setNameMatches = function (data) {
-                nameMatches = (userName == ("" + data).trim());
-            };
-            chrome.storage.local.get("name", function (data) {
-                setNameMatches(data.name);
-            });
+//            var userName = $("span.page_title", page).text().trim();
+//            var nameMatches = false;
+//            var setNameMatches = function (data) {
+//                nameMatches = (userName == ("" + data).trim());
+//            };
+//            chrome.storage.local.get("name", function (data) {
+//                setNameMatches(data.name);
+//            });
             chrome.storage.local.get('classes', function (obj) {
                 if (Object.keys(obj.classes).length === 0) {
                     objToSync = {};
@@ -201,8 +250,8 @@ var parseGradeChangesNoPass = function (subdomain) {
                         objToSync[classArray[i].name] = classArray[i].perc;
                     }
                     chrome.storage.local.set({
-                        classes: objToSync,
-                        name: userName
+                        classes: objToSync
+                        //,name: userName
                     });
                     return;
                 } else if (nameMatches) {
@@ -244,7 +293,7 @@ var parseGradeChangesNoPass = function (subdomain) {
 };
 
 //TODO: remove in production
-var testChangeGrade = function () {
+var testChangeGrade = function (callCheck) {
     chrome.storage.local.get("classes", function (obj) {
         var x = obj.classes;
         x.HAmLit = 88;
@@ -252,7 +301,7 @@ var testChangeGrade = function () {
             classes: x
         });
     });
-    checkFunc();
+    if(callCheck) checkFunc();
 };
 
 var checkFunc = function () {
@@ -265,13 +314,15 @@ var checkFunc = function () {
     });
 
     chrome.storage.local.get(["sl_subdomain","username", "password"], function (obj) {
-        if(obj.username === "" || obj.password === "" || obj.sl_subdomain === ""){
-            badgeError("ERR", "Please enter your username, password, and/or school's subdomain in options.");
+        if(obj.username == "" || obj.password == "" || obj.sl_subdomain == ""){
+            badgeError("ERR", "Incorrect username, password, or school's subdomain.");
         }
         else
+        {
+            grades = [];
             parseGradeChanges(obj.username, obj.password, obj.sl_subdomain);
+        }
     });
-
 };
 
 function parseGradeChanges(username, password, subdomain) {
