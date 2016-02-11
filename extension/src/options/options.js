@@ -269,7 +269,7 @@ function getString(data){
   });
 
   $("span#q2").hover(function () {
-    $(this).append("<div class='tooltip'><p>Used to check for grade updates (only stored locally)</p></div>");
+    $(this).append("<div class='tooltip'><p>Used to check for grade updates (encrypted & stored locally)</p></div>");
   }, function () {
     $("div.tooltip").remove();
   });
@@ -277,13 +277,8 @@ function getString(data){
 var slSubdomain = document.getElementById('sl_subdomain');
 slSubdomain.addEventListener("change", function(){
 	var subd = slSubdomain.value;
-	chrome.storage.local.set({sl_subdomain:subd}, function(){
-		chrome.notifications.onClicked.addListener(function (notifId) {
-            chrome.tabs.create({
-                url: "https://" + subd +".schoolloop.com/portal/student_home"
-            });
-        });
-	});
+	chrome.storage.local.set({sl_subdomain:subd}, function(){});
+    $("#subdomain-check").fadeIn(300).delay(1000).fadeOut();
 });
 
 var sl_user = document.getElementById('sl_username');
@@ -294,6 +289,7 @@ sl_user.addEventListener("change", function(){
 	var userd = sl_user.value;
 	chrome.storage.local.set({username:userd}, function(){});
     checkFilled();
+    $("#username-check").fadeIn(300).delay(1000).fadeOut();
 });
 
 
@@ -302,6 +298,7 @@ sl_pass.addEventListener("change", function(){
 	var passd = CryptoJS.AES.encrypt("" + sl_pass.value, key);
 	chrome.storage.local.set({password:passd}, function(){});
     checkFilled();
+    $("#password-check").fadeIn(300).delay(1000).fadeOut();
 });
 
 notifsEnabled.addEventListener("change", function(){

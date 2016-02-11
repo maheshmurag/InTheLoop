@@ -3,7 +3,20 @@
 <head>
 	<title>In The Loop - Options</title>
 	<style>
-		body {
+		@font-face {
+            font-family: 'fontello';
+            src: url('fontello.ttf') format('truetype');
+        }        
+        .demo-icon {
+            font-family: "fontello";
+            font-style: normal;
+            color: limegreen;
+            display: inline-block;
+            width: 1em;
+            text-align: center;
+            line-height: 1em;
+        }
+        body {
 			padding: 15px;
 		}
         span.question {
@@ -54,18 +67,28 @@
 <body>
     <div>
 <!--        <span class="question" id="q1" style="margin-left: -20px; margin-right: 5px;">?</span>-->
-        <label for="sl_subdomain"><strong>School Loop Subdomain:</strong></label>
+        <label for="sl_subdomain"><strong>School Subdomain:</strong></label>
         <span style="font-size: 80%;">https://</span>
         <input type="text" id="sl_subdomain" style="width:80px;">
-        <span style="font-size: 80%;">.schoolloop.com</span><br>
+        <span style="font-size: 80%;">.schoolloop.com</span>
+        <span id="subdomain-check" style="display:none;"><i class="demo-icon icon-ok">&#xe800;</i></span>
+        <br>
     </div>
 <!--    <div class="tip" data-tip="Your school's subdomain. Examples: 'montavista' or 'lynbrook'">?</div>-->
     
     <span class="question" id="q2" style="margin-left: -20px;margin-right: 5px;">?</span><label for="sl_username">School Loop Username</label>
-    <input type="text" id="sl_username"><br>
+    <input type="text" id="sl_username">
+    <span id="username-check" style="display:none;">Saved <i class="demo-icon icon-ok">&#xe800;</i></span>
+    <br>
     
     <label for="sl_password">School Loop Password</label>
-    <input type="password" id="sl_password"><br>
+    <input type="password" id="sl_password">
+    <span id="password-check" style="display:none;">Saved <i class="demo-icon icon-ok">&#xe800;</i></span>
+<!--
+    border-radius: 25px;
+    background: #73AD21;
+-->
+    <br>
     
 	<label for="theme_select"><strong>Select a Theme:</strong></label>
 		<select id="theme_select"></select>

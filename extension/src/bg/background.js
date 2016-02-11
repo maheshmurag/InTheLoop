@@ -1,9 +1,9 @@
-/*global console, chrome, $, document, CryptoJS*/
+/*global console, window, chrome, $, document, CryptoJS*/
 /* jshint shadow:true */
 
 //TODO: Set correct version number
 var ITLversion = "V0.3.5";
-var key = "";
+var key = "xHc4YZ1DcwurU33fBbCmcmsZ";
 var grades = [];
 
 var getYear = function () {
@@ -41,11 +41,18 @@ var setStudentID = function (bString, subdomain) {
             set(JSON.parse(msg));
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect");
+            if(errormessage.status === 401){
+                var errorResp = (""+errormessage.responseText);
+                if(errorResp.indexOf("1") > -1)
+                badgeError("ERR", "Username not found");                
+                else if(errorResp.indexOf("2") > -1)
+                    badgeError("ERR", "Password incorrect");
+            }
+            else if (errormessage.status === 0)
+                badgeError("ERR", "Unable to access School Loop");
             console.log("studentID err: ");
             console.log(errormessage);
         }
-        
     });
 };
 var setPeriodIDs = function (bString, studentID, subdomain) {
@@ -68,7 +75,15 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
             set(JSON.parse(msg));
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect");
+            if(errormessage.status === 401){
+                var errorResp = (""+errormessage.responseText);
+                if(errorResp.indexOf("1") > -1)
+                badgeError("ERR", "Username not found");                
+                else if(errorResp.indexOf("2") > -1)
+                    badgeError("ERR", "Password incorrect");
+            }
+            else if (errormessage.status === 0)
+                badgeError("ERR", "Unable to access School Loop");
             console.log("setPeriodIDs err: ");
             console.log(errormessage);
         }
@@ -98,7 +113,15 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
             gradesFromIDs(bString, periodIDs, i + 1, subdomain, studentID);
         },
         error: function (errormessage) {
-            badgeError("ERR", "Username, password, or subdomain incorrect");
+            if(errormessage.status === 401){
+                var errorResp = (""+errormessage.responseText);
+                if(errorResp.indexOf("1") > -1)
+                badgeError("ERR", "Username not found");                
+                else if(errorResp.indexOf("2") > -1)
+                    badgeError("ERR", "Password incorrect");
+            }
+            else if (errormessage.status === 0)
+                badgeError("ERR", "Unable to access School Loop");
             console.log("gradesFromIDs err: ");
             console.log(errormessage);
         }
@@ -172,7 +195,13 @@ function createNotification(id, title, message, url, callback) {
 
     chrome.notifications.create(id, options, function (createdId) {
         var handler = function (id) {
-            if (id == createdId) {
+            if(createdId === "1"){
+                if (chrome.runtime.openOptionsPage)
+                    chrome.runtime.openOptionsPage();
+                else
+                    window.open(chrome.runtime.getURL('src/options/options.html'));
+            }
+            else if (id == createdId) {
                 chrome.tabs.create({
                     url: url
                 });
@@ -187,6 +216,7 @@ function createNotification(id, title, message, url, callback) {
 
 chrome.runtime.onInstalled.addListener(function () {
     createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
+   
     //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({
         classes: {},
@@ -262,7 +292,7 @@ function printGrades() {
     });
 }
 
-function clearBadge(){
+function clearBadge() {
     badgeError("", "");
 }
 
