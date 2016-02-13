@@ -36,7 +36,6 @@ var setStudentID = function (bString, subdomain) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-        
         success: function (msg) {
             clearBadge();
             set(JSON.parse(msg));
@@ -71,7 +70,7 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-         success: function (msg) {
+        success: function (msg) {
             clearBadge();
             set(JSON.parse(msg));
         },
@@ -100,7 +99,7 @@ var gradesFromIDs = function (bString, periodIDs, i, subdomain, studentID) {
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Basic ' + bString);
         },
-         data: {
+        data: {
             studentID: studentID,
             periodID: periodIDs[i].periodID
         },
@@ -309,7 +308,6 @@ function badgeError(badge, popup) {
 //example of using a message handler from the inject scripts
 chrome.extension.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log(request)
         if (request.action === "setBadge") {
             badgeError(request.badgeTitle, request.badgeText);
         }
