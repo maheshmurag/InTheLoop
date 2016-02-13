@@ -34,7 +34,7 @@
 			"js": [ "lib/jquery-2.1.3.min.js", "src/scripts/themer.js"]
 		}
 	],
-	"permissions": ["storage", "alarms", "notifications"],
+	"permissions": ["storage", "alarms", "notifications", "tabs"],
 	"options_ui": {
 		"page": "src/options/options.html",
     	"chrome_style": true

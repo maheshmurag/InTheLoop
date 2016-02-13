@@ -9,8 +9,8 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 function reloadPages(){
     chrome.tabs.query({
         url:"*://*.schoolloop.com/*"
-    }, function(Tabs){
-        //console.log(Tabs);
+    }, 
+    function(Tabs){
         for(var i in Tabs){
             chrome.tabs.reload(Tabs[i].id);
         }

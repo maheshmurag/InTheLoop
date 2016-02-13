@@ -217,12 +217,28 @@ function setTheme(themeId){
 	dropdown.value = themeId;
 	loadTheme(themeId);
 	console.log('saving, currentTheme=' + themeId);
-	chrome.storage.local.set({current_theme:themes[themeId]}, function(){});
+	chrome.storage.local.set(
+        {
+            current_theme: themes[themeId]
+        }, function(){});
+}
+
+var editButton = document.getElementById("edit_theme_button");
+editButton.addEventListener("click", showEditValues);
+
+function showEditValues(){
+    document.getElementById("theme_colors").style.display = "block";
+    editButton.style.display = "none";
+}
+
+function hideEditValues(){
+    document.getElementById("theme_colors").style.display = "none";
+    editButton.style.display = "inline";
 }
 
 //Loads a theme to the text fields
 function loadTheme(themeId){
-	document.getElementById("theme_colors").style.display = (themeId == "none")?"none":"block";
+	//showEditValues(themeId);
 	var colors = themes[themeId].colors;
 	if(!colors)return;
 
@@ -235,20 +251,21 @@ function loadTheme(themeId){
 }
 
 function saveThemes(){
-		var colorData = {};
-		//update themes.custom with the current theme
-		colorData.primary = document.getElementById("color_primary").value;
-		colorData.accent = document.getElementById("color_accent").value;
-		colorData.background = document.getElementById("color_background").value;
-		colorData.background_content = document.getElementById("color_background_content").value;
-		colorData.text = document.getElementById("color_text").value;
-		colorData.text_secondary = document.getElementById("color_text_secondary").value;
-		//if the data has been changed, set theme to custom
-		if(getString(colorData) != getString(themes[currentTheme].colors)){
-				themes.custom.colors = colorData;
-				setTheme("custom");
-				chrome.storage.local.set({custom_theme: themes.custom}, function(){});
-		}
+    var colorData = {};
+    //update themes.custom with the current theme
+    colorData.primary = document.getElementById("color_primary").value;
+    colorData.accent = document.getElementById("color_accent").value;
+    colorData.background = document.getElementById("color_background").value;
+    colorData.background_content = document.getElementById("color_background_content").value;
+    colorData.text = document.getElementById("color_text").value;
+    colorData.text_secondary = document.getElementById("color_text_secondary").value;
+    //if the data has been changed, set theme to custom
+    if(getString(colorData) != getString(themes[currentTheme].colors)){
+            themes.custom.colors = colorData;
+            setTheme("custom");
+            chrome.storage.local.set({custom_theme: themes.custom}, function(){});
+    }
+    hideEditValues();
 }
 
 function getString(data){
