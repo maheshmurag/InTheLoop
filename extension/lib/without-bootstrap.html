@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+    <script src="jquery.minicolors.min.js"></script>
+    <link rel="stylesheet" href="jquery.minicolors.css">
+    <script>
+        $(document).ready( function() {
+            $('.demo').each( function() {
+                $(this).minicolors({
+                    change: function(value) {
+                        $("#ttt").html(value);
+                    }
+                });
+            });
+        }); 
+    </script>
+</head>
+<body>
+    <p id="ttt"></p>
+    <input id="demottt" class="demo" data-format="rgb" value="rgb(33, 147, 58)" style="width: 0%;border-width:0px;">
+</body>
+</html>

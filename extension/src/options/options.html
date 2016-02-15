@@ -94,18 +94,32 @@
     <span><select id="theme_select"></select><button id = "edit_theme_button" style="margin-left:10px;">Edit</button></span>
 
 	<div id="theme_colors" style="display: none; padding: 10px; margin: 10px; border: 1px solid #555555">
-		<label for="color_primary">Primary Color</label>
-			<input type="text" id="color_primary"><br>
-		<label for="color_accent">Accent Color</label>
-			<input type="text" id="color_accent"><br>
-		<label for="color_background">Background Color</label>
-			<input type="text" id="color_background"><br>
-		<label for="color_background_content">Content Background Color</label>
-			<input type="text" id="color_background_content"><br>
-		<label for="color_text">Text Color</label>
-			<input type="text" id="color_text"><br>
-		<label for="color_text_secondary">Secondary Text Color</label>
-			<input type="text" id="color_text_secondary"><br>
+        <div style="vertical-align: middle; line-height: 25px;">
+            <input id="color_primary" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_primary">Primary Color</label>
+<!--			<input type="text" id="color_primary"><br>-->
+            </div>
+		<div style="vertical-align: middle; line-height: 25px;">
+            <input id="color_accent" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_accent">Accent Color</label>
+            </div>
+		<div style="vertical-align: middle; line-height: 25px;">            
+            <input id="color_background" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_background">Background Color or URL: </label>
+            <input style="line-height: 5px;" type="text" id="background_URL">
+        </div>
+		<div style="vertical-align: middle; line-height: 25px;">
+			<input id="color_background_content" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_background_content">Content Background Color</label>
+        </div>
+		<div style="vertical-align: middle; line-height: 25px;">
+            <input id="color_text" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_text">Text Color</label>
+        </div>
+		<div style="vertical-align: middle; line-height: 25px;">    
+            <input id="color_text_secondary" type="text" class="demo" data-control="hue" style="width: 0%;border-width:0px;">
+            <label for="color_text_secondary">Secondary Text Color</label>
+        </div>
 		<button id="save">Save</button>
 		<div id="status"></div>
 	</div>
@@ -118,6 +132,8 @@
 	<script src="../../lib/underscore-min.js"></script>
 	<script src="../../lib/jquery-2.1.3.min.js"></script>
 	<script src="../../lib/aes.js"></script>
+    <script src="../../lib/jquery.minicolors.min.js"></script>
+    <link rel="stylesheet" href="../../lib/jquery.minicolors.css">
     <script src="options.js"></script>
 </body>
 
