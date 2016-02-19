@@ -279,10 +279,9 @@ function saveThemes() {
     //update themes.custom with the current theme
     colorData.primary = document.getElementById("color_primary").value;
     colorData.accent = document.getElementById("color_accent").value;
-    colorData.background = document.getElementById("color_background").value;
     var backURL = document.getElementById("background_URL").value;
     if(backURL.length > 0)
-        colorData.background = "url(" + colorData.background + ") no-repeat fixed center center/cover";
+        colorData.background = "url(" + backURL + ") no-repeat fixed center center/cover";
     else
         colorData.background = document.getElementById("color_background").value;
     colorData.background_content = document.getElementById("color_background_content").value;
@@ -346,7 +345,6 @@ sl_user.addEventListener("change", function () {
 
 
 sl_pass.addEventListener("change", function () {
-    //TODO: hide key
     var passd = CryptoJS.AES.encrypt("" + sl_pass.value, key);
     chrome.storage.local.set({
         password: passd
@@ -383,7 +381,6 @@ function loadFields() {
     chrome.storage.local.get(["sl_subdomain", "username", "password", "notifs"], function (data) {
         slSubdomain.value = data.sl_subdomain;
         sl_user.value = data.username;
-        //TODO: hide key
         sl_pass.value = CryptoJS.AES.decrypt(data.password, key).toString(CryptoJS.enc.Utf8);
         notifsEnabled.checked = data.notifs;
         document.getElementById("resetButton").disabled = !data.notifs;
