@@ -74,7 +74,7 @@ chrome.storage.local.get('popupMsg', function (data) {
 
 init();
 
-document.getElementById("openTab").addEventListener("click", openTab);
+//document.getElementById("openTab").addEventListener("click", openTab);
 
 document.getElementById("options").addEventListener("click", function () {
     if (chrome.runtime.openOptionsPage) {

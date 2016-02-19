@@ -2,7 +2,7 @@
 /* jshint shadow:true */
 
 //TODO: Set correct version number
-var ITLversion = "V0.5";
+var ITLversion = "V0.5.1";
 var key = "";
 var grades = [];
 
