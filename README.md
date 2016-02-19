@@ -7,7 +7,8 @@ InTheLoop is still in development, but the beta version is available [here](http
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Privacy
-The only data In The Loop stores are custom themes made by the user. The extension does not send data to any server, and does not store login credentials, grade info, or any other personal information.
+All data is stored locally. Its source code is available at https://github.com/mash99/InTheLoop. The "Reads your browsing history" permission is used by chrome.tabs to open and refresh School Loop.
+
 
 ##Future Features:   
 1. Improved user interface 
@@ -21,6 +22,9 @@ The only data In The Loop stores are custom themes made by the user. The extensi
 9. Make changes to grade trend
 
 ##Changelog
+
+0.5 - Way better notifications, better UI for deleting grades/theming.
+
 0.3 - Notifications
 
 0.2.1 - Theming + bug fixes
