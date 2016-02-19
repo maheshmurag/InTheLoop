@@ -22,6 +22,7 @@ function runGrades(){
     parseCategories();
     parseScale();
     parseGradeEntries();
+    recalculateOverallPercentage();
     if (entries.length !== 0 && categories.length !== 0 && !failed) {
         if (!pointageSystem) {
             insertAddCatButton();
@@ -420,7 +421,7 @@ function sharedDelFunction (caller) {
             setCategoryPercentage(elementPos, categories[elementPos].score * 100, true);
         }
         recalculateOverallPercentage();
-        caller.parent().parent().fadeOut(300, function () {
+        caller.parent().parent().fadeOut(400, function () {
             $(this).remove();
         });
     } catch (err) {
