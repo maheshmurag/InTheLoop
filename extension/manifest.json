@@ -1,7 +1,7 @@
 {
 	"manifest_version" : 2,
 	"name": "In The Loop for School Loop™ (beta)",
-  	"version": "0.3.1",
+  	"version": "0.5.0",
 	"short_name": "In The Loop",
 
   	"description": "A suite of features that improve the School Loop interface",
@@ -34,7 +34,7 @@
 			"js": [ "lib/jquery-2.1.3.min.js", "src/scripts/themer.js"]
 		}
 	],
-	"permissions": ["storage", "alarms", "notifications", "tabs"],
+	"permissions": ["storage", "alarms", "notifications"],
 	"options_ui": {
 		"page": "src/options/options.html",
     	"chrome_style": true

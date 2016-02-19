@@ -202,9 +202,7 @@ function createNotification(id, title, message, url, callback) {
                     window.open(chrome.runtime.getURL('src/options/options.html'));
             }
             else if (id == createdId) {
-                chrome.tabs.create({
-                    url: url
-                });
+                window.open(url);
                 chrome.notifications.clear(id);
                 chrome.notifications.onClicked.removeListener(handler);
             }
@@ -217,7 +215,6 @@ function createNotification(id, title, message, url, callback) {
 chrome.runtime.onInstalled.addListener(function () {
     createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
    
-    //chrome.tabs.create({ url: "http://maheshmurag.com/InTheLoop/" });
     chrome.storage.local.set({
         classes: {},
         username: "",

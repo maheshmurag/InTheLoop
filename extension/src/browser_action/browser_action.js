@@ -1,29 +1,30 @@
 /*global define, chrome, $, console, document, window*/
 function openTab() {
-    chrome.tabs.query({
-        url: ["*://*.schoolloop.com/", "*://*.schoolloop.com/portal/student_home*"]
-    }, function (tabs) {
-        //console.log(tabs);
-        if (tabs.length === 0) createTab();
-        else selectTab(tabs[0].id);
-    });
+    
+//    chrome.tabs.query({
+//        url: ["*://*.schoolloop.com/", "*://*.schoolloop.com/portal/student_home*"]
+//    }, function (tabs) {
+//        //console.log(tabs);
+//        if (tabs.length === 0) createTab();
+//        else selectTab(tabs[0].id);
+//    });
 
 }
-
-function createTab() {
-    chrome.storage.local.get("sl_subdomain", function (data) {
-        chrome.tabs.create({
-            url: "https://" + data.sl_subdomain + ".schoolloop.com"
-        }, function () {});
-    });
-}
-
-function selectTab(tabNo) {
-    console.log("selectTab " + tabNo);
-    chrome.tabs.update(tabNo, {
-        active: true
-    });
-}
+//
+//function createTab() {
+//    chrome.storage.local.get("sl_subdomain", function (data) {
+//        chrome.tabs.create({
+//            url: "https://" + data.sl_subdomain + ".schoolloop.com"
+//        }, function () {});
+//    });
+//}
+//
+//function selectTab(tabNo) {
+//    console.log("selectTab " + tabNo);
+//    chrome.tabs.update(tabNo, {
+//        active: true
+//    });
+//}
 
 var sandboxEnabled = document.getElementById("sandbox");
 sandboxEnabled.addEventListener("change", function () {

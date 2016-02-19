@@ -1,21 +1,21 @@
 /*global chrome*/
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-    if(changes.current_theme || changes.custom || changes.sandbox_enabled){
-        reloadPages();
-    }
-});
-
-function reloadPages(){
-    chrome.tabs.query({
-        url:"*://*.schoolloop.com/*"
-    }, 
-    function(Tabs){
-        for(var i in Tabs){
-            chrome.tabs.reload(Tabs[i].id);
-        }
-    });
-}
+//chrome.storage.onChanged.addListener(function(changes, namespace) {
+//    if(changes.current_theme || changes.custom || changes.sandbox_enabled){
+//        reloadPages();
+//    }
+//});
+//
+//function reloadPages(){
+//    chrome.tabs.query({
+//        url:"*://*.schoolloop.com/*"
+//    }, 
+//    function(Tabs){
+//        for(var i in Tabs){
+//            chrome.tabs.reload(Tabs[i].id);
+//        }
+//    });
+//}
 
 /*
 
