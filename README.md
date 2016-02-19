@@ -7,7 +7,7 @@ InTheLoop is still in development, but the beta version is available [here](http
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Privacy
-All data is stored locally. Its source code is available at https://github.com/mash99/InTheLoop. The "Reads your browsing history" permission is used by chrome.tabs to open and refresh School Loop.
+All data is stored locally. Its source code is available at https://github.com/mash99/InTheLoop.
 
 
 ##Future Features:   
