@@ -138,7 +138,12 @@ function hideDelButton (event) {
 function addDelButton () {
     $(".hub_general > .general_body > tr").each(function (i, tr) {
         var asstNameLink = $("td:nth-child(1) > div > a", tr);
-        asstNameLink.after("[<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>]");
+        $("td:nth-child(1) > div", tr).css("min-width", "");
+        $("td:nth-child(1) > div", tr).css("width", "80%");
+        $("td:nth-child(1) > div", tr).css("margin-right", "5px");
+        var toAdd = $("<a href=\"javascript:void(0);\" class = \"del\" id = \"del" + (i + 1) + "\">X</a>");
+        toAdd.css("line-height", "" + $("td:nth-child(1)", tr).css("height"));        toAdd.css("float", "left");
+        $("td:nth-child(1) > div", tr).after(toAdd);
     });
 }
 function checkIfPointageSystem () {
@@ -393,13 +398,13 @@ function setCategoryPercentage (index, newScore, animate) {
 }
 function sharedDelFunction (caller) {
     try {
-        var cName = caller.parent().contents().filter(function () {
+        var cName = caller.prev().contents().filter(function () {
             return this.nodeType == 3;
         }).text().trim().replace("[", "").replace("]", "").trim();
         var elementPos = categories.map(function (x) {
             return x.name;
         }).indexOf(cName);
-        var tr = caller.parent().parent().parent();
+        var tr = caller.parent().parent();
         var pointNstr = tr.find("td:nth-child(4)", tr).contents().filter(function () {
             return this.nodeType == 3;
         }).text().replace(/\s/g, "");
@@ -415,7 +420,7 @@ function sharedDelFunction (caller) {
             setCategoryPercentage(elementPos, categories[elementPos].score * 100, true);
         }
         recalculateOverallPercentage();
-        caller.parent().parent().parent().fadeOut(300, function () {
+        caller.parent().parent().fadeOut(300, function () {
             $(this).remove();
         });
     } catch (err) {
@@ -465,7 +470,8 @@ function insertTopRow () {
                 //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
                 var isHighlighted = ($(".hub_general > .general_body > tr:nth-child(2)").attr("class") != "highlight") ? "highlight" : "";
                 recalculateOverallPercentage();
-                var newRow = $("<tr style='display:none;' class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='min-width: 105px;'>" + categoryName + "<br><a href='#'>" + asstName + "[<a href=\"javascript:void(0);\" class = \"deldel\">X</a>] </a></div></td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                var newRow = $("<tr style='display:none;' class='" + isHighlighted + "'><td><div class='float_l padding_r5' style='width: 80%;margin-right:5px;'>" + categoryName + "<br><a href='#'>" + asstName + " </a></div><a href='javascript:void(0);' class='deldel' style='line-height: 27px; float: left;'>X</a> </td><td style='width:100%;'></td><td>" + dateToday + "<br></td><td nowrap=''><div>Score: " + asstPointN + "</div>" + asstPointN + " / " + asstPointD + " = " + asstCalcScore + "%</td><td class='list_text'><div style='width: 125px;'></div></td></tr>");
+                
                 $("#inserted").after(newRow);
                 newRow.fadeIn();
 
