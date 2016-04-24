@@ -2,7 +2,7 @@
 /* jshint shadow:true */
 
 //TODO: Set correct version number
-var ITLversion = "V0.5.1";
+var ITLversion = "V0.5.5";
 var key = "";
 var grades = [];
 
@@ -212,17 +212,23 @@ function createNotification(id, title, message, url, callback) {
     });
 }
 
-chrome.runtime.onInstalled.addListener(function () {
-    createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
-   
-    chrome.storage.local.set({
-        classes: {},
-        username: "",
-        password: "",
-        popupMsg: "",
-        notifs: true,
-        sl_subdomain: "montavista"
-    });
+chrome.runtime.onInstalled.addListener(function (details) {
+    console.log("InTheLoop: onInstalled listener evoked. Reason: " + details.reason);
+    if(details.reason == "install"){
+        createNotification("1", "Welcome to In The Loop " + ITLversion, "Click to set up notifications", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
+        chrome.storage.local.set({
+            classes: {},
+            username: "",
+            password: "",
+            popupMsg: "",
+            notifs: true,
+            sandbox_enabled: true,
+            sl_subdomain: "montavista"
+        });
+    }
+    else if(details.reason == "update"){
+        createNotification("1", "In The Loop has just updated!", "Click to change options", "chrome://extensions/?options=ppigcngidmooiiafkelbilbojiijffag", function () {});
+    }
 });
 
 //TODO: remove in production

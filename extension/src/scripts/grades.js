@@ -1,5 +1,5 @@
-/*global chrome, setInterval, document, clearInterval, $, jQuery, alert, console*/
-
+/*global chrome, setInterval, document, clearInterval, $, jQuery, alert, console, btoa*/
+/* jshint shadow:true */
 // GLOBAL VARS
 var entries = [];
 var categories = [];
@@ -10,14 +10,28 @@ var overallP = $("b:nth-of-type(2)").text() + "";
 var pointageSystem = false;
 var rowCount = 0;
 
-$( document ).ready(function(){
+$(document).ready(function(){
     chrome.storage.local.get({sandbox_enabled:true}, function(data){
-        if(data.sandbox_enabled)runGrades();
+        if(data.sandbox_enabled)
+            runGrades();
     });
 });
 
+function printCat(){
+    console.log(categories);
+}
+
+function egg(){
+    var name = $("div.content_margin h2:nth-child(1).float-l");
+    var nameStr = btoa(name.text().trim().toLowerCase());
+        var bool = true;
+        setInterval(function(){name.css('color', bool?'red':'green'); bool = !bool;}, 1000);
+    }
+}
+
 function runGrades(){
     console.log('Running In The Loop grade magic');
+    egg();
     checkIfPointageSystem();
     parseCategories();
     parseScale();
@@ -30,6 +44,7 @@ function runGrades(){
             readdTooltips();
         }
         if (!failed) {
+            printCat();
             addDelButton();
             insertTopRow();
             repopulateDropdown();
@@ -89,11 +104,10 @@ function recalculateOverallPercentage () {
             }
         }
         sum = (nnn / ddd) * 100;
-        sum = sum.toFixed(2);
-        if(ddd === 0)
+        if(ddd === 0 || isNaN(sum))
             setOverallPercentageStr("-");
         else
-            setOverallPercentage(sum, true);
+            setOverallPercentage(sum.toFixed(2), true);
     } else {
         for (var j = 0; j < categories.length; j++) {
             if (categories[j].score != "-") {
@@ -101,12 +115,12 @@ function recalculateOverallPercentage () {
                 totalWeight += categories[j].percentage;
             }
         }
-        if (totalWeight === 0) {
+        sum = sum / totalWeight * 100;
+        if (totalWeight === 0 || isNaN(sum)) {
             setOverallPercentageStr("-");
         } else if (totalWeight !== 0) {
-            sum = sum / totalWeight * 100;
-            sum = sum.toFixed(2);
-            setOverallPercentage(sum, true);
+            
+            setOverallPercentage(sum.toFixed(2), true);
         }
     }
 }
@@ -239,7 +253,49 @@ function parseGradeEntries () {
             var pointN = $("td:nth-child(4)", tr).contents().filter(function () {
                 return this.nodeType == 3;
             }).text().replace(/\s/g, "");
-            if (!(pointN.indexOf("/") < 0 || pointN.indexOf("=") < 0)) {
+            if(pointN.trim() == "-"){//extra credit
+                var divWithScore = $("td:nth-child(4) > div", tr).text().replace("Score:","").trim();
+                if(divWithScore !== ""){
+                    console.log("In The Loop is treating the assignment '" + nameText + "' as extra credit.");
+                    var cName = $("td:nth-child(1) > div", tr).contents().filter(function () {
+                        return this.nodeType == 3;
+                    }).text().trim().replace("[", "").replace("]", "").trim();
+                    var elementPos = categories.map(function (x) {
+                        return x.name;
+                    }).indexOf(cName);
+                    if (elementPos >= 0) {
+                        categories[elementPos].pointsN += num(divWithScore);
+                        var obj = {
+                            name: nameText,
+                            pointValN: num(divWithScore),
+                            pointValD: 0,
+                            categoryName: cName,
+                            categoryIndex: elementPos
+                        };
+                        entries.push(obj);
+                    }
+                    else if(pointageSystem){
+                        if(categories.length >= 1){
+                            categories[0].pointsN += num(divWithScore);
+                            var objP = {
+                                name: nameText,
+                                pointValN: num(divWithScore),
+                                pointValD: 0,
+                                categoryName: cName,
+                                categoryIndex: 0
+                            };
+                            entries.push(objP);
+                        }
+                    }
+                    else{
+                        console.log("In The Loop is pretending that the assignment '" + nameText + "' has no effect on your grade because it was unable to identify the category '" + cName + "' (292)");
+                        //console.log("In The Loop failed to process grade entries (269)");
+                        //failed = true;
+                        //return;
+                    }
+                }
+            }
+            else if (!(pointN.indexOf("/") < 0 || pointN.indexOf("=") < 0)) {
                 var asstPointD = num(pointN.substring(pointN.indexOf("/") + 1, pointN.indexOf("=")));
                 var asstPointN = num(pointN.substring(0, pointN.indexOf("/")));
                 if(isNaN(asstPointD) || isNaN(asstPointN)){
@@ -266,15 +322,33 @@ function parseGradeEntries () {
                     };
                     entries.push(obj);
                 }
+                else if(pointageSystem){
+                    if(categories.length >= 1){
+                        categories[0].pointN += asstPointN;
+                        categories[0].pointD += asstPointD;
+                        var obj = {
+                            name: nameText,
+                            pointValN: asstPointN,
+                            pointValD: asstPointD,
+                            categoryName: cName,
+                            categoryIndex: 0
+                        };
+                        entries.push(obj);
+                    }
+                    else
+                        console.log("In The Loop is pretending that the assignment '" + nameText + "' has no effect on your grade because it was unable to identify the category '" + cName + "' (339)");
+                }
                 else{
-                    console.log("In The Loop failed to process grade entries (261)");
-                    failed = true;
-                    return;
+                    console.log("In The Loop is pretending that the assignment '" + nameText + "' has no effect on your grade because it was unable to identify the category '" + cName + "' (342)");
+                    //console.log("In The Loop failed to process grade entries (261)");
+                    //failed = true;
+                    //return;
                 }
             }
         });
     } catch (err) {
         console.log("In The Loop failed to process grade entries");
+        console.log(err);
         failed = true;
     }
 }
@@ -402,26 +476,57 @@ function sharedDelFunction (caller) {
         var cName = caller.prev().contents().filter(function () {
             return this.nodeType == 3;
         }).text().trim().replace("[", "").replace("]", "").trim();
+        var nameText = $("div > a", caller.parent()).text();
         var elementPos = categories.map(function (x) {
             return x.name;
         }).indexOf(cName);
+        if(elementPos < 0 && !pointageSystem){
+            console.log("In The Loop is pretending that the assignment '" + nameText + "' has no effect on your grade because it was unable to identify the category '" + cName + "' (484)");
+            caller.parent().parent().fadeOut(170, function () {
+                $(this).remove();
+            });
+            return;
+        }
         var tr = caller.parent().parent();
         var pointNstr = tr.find("td:nth-child(4)", tr).contents().filter(function () {
             return this.nodeType == 3;
         }).text().replace(/\s/g, "");
-        var pointD = num(pointNstr.substring(pointNstr.indexOf("/") + 1, pointNstr.indexOf("=")));
-        var pointN = num(pointNstr.substring(0, pointNstr.indexOf("/")));
+        var pointD = 0, pointN = 0;
+        if(pointNstr.trim() == "-"){
+            var divWithScore = $("td:nth-child(4) > div", tr).text().replace("Score:","").trim();
+            if(divWithScore !== ""){
+                pointD = 0;
+                pointN = num(divWithScore);
+            }
+            else{
+                pointD = 0;
+                pointN = 0;
+            }
+        }
+        else{
+            pointD = num(pointNstr.substring(pointNstr.indexOf("/") + 1, pointNstr.indexOf("=")));
+            pointN = num(pointNstr.substring(0, pointNstr.indexOf("/")));
+        }
+        if(elementPos < 0)
+        {
+            if(categories.length >= 0) 
+                elementPos = 0;
+            else{
+                console.log("In The Loop failed to delete the grade entry (515)");
+                return;
+            }
+        }
         categories[elementPos].pointsN -= pointN;
         categories[elementPos].pointsD -= pointD;
         if (categories[elementPos].pointsD === 0) {
             categories[elementPos].score = "-";
-            setCategoryPercentageStr(elementPos, categories[elementPos].score);
+            setCategoryPercentageStr(elementPos, "-");
         } else {
             categories[elementPos].score = categories[elementPos].pointsN / categories[elementPos].pointsD;
             setCategoryPercentage(elementPos, categories[elementPos].score * 100, true);
         }
         recalculateOverallPercentage();
-        caller.parent().parent().fadeOut(400, function () {
+        caller.parent().parent().fadeOut(170, function () {
             $(this).remove();
         });
     } catch (err) {
@@ -459,13 +564,20 @@ function insertTopRow () {
                     asstName = document.getElementById('aName').value,
                     asstPointN = num(num(document.getElementById('aNum').value).toFixed(2)),
                     asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
-                    asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100).toFixed(2),
+                    asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100),
                     categoryName = categories[ACI].name;
+                if(!isNaN(asstCalcScore))
+                    asstCalcScore = asstCalcScore.toFixed(2);
+                else
+                    asstCalcScore = "- ";
                 categories[ACI].pointsN += asstPointN;
                 categories[ACI].pointsD += asstPointD;
                 categories[ACI].score = (categories[ACI].pointsN) / (categories[ACI].pointsD);
-                var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100.0) * 100.0) / 100.0).toFixed(2));
-                setCategoryPercentage(ACI, newCatScore, true);
+                var newCatScore = num((Math.round(((categories[ACI].pointsN) / (categories[ACI].pointsD) * 100.0) * 100.0) / 100.0));
+                if(!isNaN(newCatScore))
+                    setCategoryPercentage(ACI, newCatScore.toFixed(2), true);
+                else
+                    setCategoryPercentageStr(ACI, "-");
                 var date = new Date();
                 var dateToday = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear().toString().substring(2); //formatted string mm/dd/yy
                 //checks the first item's color and sets isHighlighted to the opposite (either "highlighted" or "")
