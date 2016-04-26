@@ -1,9 +1,9 @@
  [![Build Status](https://travis-ci.org/mash99/InTheLoop.svg?branch=develop)](https://travis-ci.org/mash99/InTheLoop)
-# InTheLoop
+# In The Loop
 An extension that improves the SchoolLoop interface by letting users calculate what their grades would be after the teacher updates grades, allowing users to change the appearance of their School Loop page, and notifying users when their grades change.  
 
 ##Installation
-InTheLoop is available [here](https://chrome.google.com/webstore/detail/in-the-loop-for-school-lo/ppigcngidmooiiafkelbilbojiijffag).
+In The Loop is available [here](https://chrome.google.com/webstore/detail/in-the-loop-for-school-lo/ppigcngidmooiiafkelbilbojiijffag).
 Note: This extension only works for number grades (not for letter grades like "A")
 
 ##Privacy
