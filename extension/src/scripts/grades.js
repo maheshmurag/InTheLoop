@@ -6,6 +6,7 @@ var categories = [];
 var scoresToLetters = [];
 
 var failed = false;
+var originalOverallPercentage = "100%";
 var overallP = $("b:nth-of-type(2)").text() + "";
 var pointageSystem = false;
 var rowCount = 0;
@@ -24,6 +25,7 @@ function printCat(){
 function egg(){
     var name = $("div.content_margin h2:nth-child(1).float-l");
     var nameStr = btoa(name.text().trim().toLowerCase());
+
         var bool = true;
         setInterval(function(){name.css('color', bool?'red':'green'); bool = !bool;}, 1000);
     }
@@ -38,13 +40,14 @@ function runGrades(){
     parseGradeEntries();
     recalculateOverallPercentage();
     if (entries.length !== 0 && categories.length !== 0 && !failed) {
+        retrieveOriginalOverall();
+        displayOriginalOverall();
         if (!pointageSystem) {
             insertAddCatButton();
             makeCategoriesEditable();
             readdTooltips();
         }
         if (!failed) {
-            printCat();
             addDelButton();
             insertTopRow();
             repopulateDropdown();
@@ -56,8 +59,31 @@ function runGrades(){
             });
         }
     } else {
+        createSimpleNotification("In The Loop Notification", "In The Loop failed to start for this class because of a weirdly formatted grade entry ('Late', 'Excused', etc) or other error.", 5000);
         console.log("In The Loop failed to start! (Line 457); e.length = " + entries.length + "; c.length = " + categories.length);
     }
+}
+
+function createSimpleNotification(notifTitle, notifMessage, notifTimeout) {
+    chrome.runtime.sendMessage(
+        {
+            action: "createSimpleNotification",
+            title: notifTitle,
+            message: notifMessage,
+            id: "3",
+            timeout: notifTimeout
+        },
+        function(response) {});
+}
+
+
+function retrieveOriginalOverall(){
+    originalOverallPercentage = " " + $("b:nth-of-type(2)").text();
+}
+
+function displayOriginalOverall(){
+    $("b:nth-of-type(2)").after(
+        $('<span class="list_text"><img src="https://cdn.schoolloop.com/1609131626/img/spacer.gif" width="10" height="13" alt="">Original Score (Before In The Loop Processing):</span><b>' + originalOverallPercentage + '</strong>'));
 }
 
 function setOverallPercentage (value, animate) {
@@ -92,6 +118,9 @@ function setOverallPercentageStr(newStr) {
     $("b:nth-of-type(1)").text(newStr);
 }
 function recalculateOverallPercentage () {
+    console.log("Grade Entries (" + entries.length + ") & Categories (" + categories.length + ") - for debugging purposes only:");
+    console.log(entries);
+    console.log(categories);
     var sum = 0,
         totalWeight = 0;
     if (pointageSystem) {
@@ -119,7 +148,6 @@ function recalculateOverallPercentage () {
         if (totalWeight === 0 || isNaN(sum)) {
             setOverallPercentageStr("-");
         } else if (totalWeight !== 0) {
-            
             setOverallPercentage(sum.toFixed(2), true);
         }
     }
@@ -163,8 +191,8 @@ function addDelButton () {
 }
 function checkIfPointageSystem () {
     try {
-        pointageSystem = $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(2)').text().indexOf("Score") > -1;
-        rowCount = $('h2:contains("Score") + div > table > tbody > tr').length - 1;
+        pointageSystem = $('h2:contains("Scores per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(2)').text().indexOf("Score") > -1;
+        rowCount = $('h2:contains("Scores per Category") + div > table > tbody > tr').length - 1;
     } catch (err) {
         console.log("In The Loop failed to process pointage system");
         failed = true;
@@ -182,8 +210,8 @@ function readdTooltips () {
             pD += categories[i].pointsD;
         }
         var sumStr = pN + " / " + pD;
-        $('h2:contains("Score per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(3)').html('<div class="tip" data-tip="' + sumStr + '">Score</div>');
-        $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+        $('h2:contains("Scores per Category") + div > table > tbody > tr:nth-child(1) > td:nth-child(3)').html('<div class="tip" data-tip="' + sumStr + '">Score</div>');
+        $('h2:contains("Scores per Category") + div > table > tbody > tr').each(function (i, tr) {
             if (i > 0) {
                 var x = $("td:nth-child(3)", tr);
                 var xxy = x.text();
@@ -203,7 +231,7 @@ function readdTooltips () {
 function parseCategories () {
     categories = [];
     try {
-        $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+        $('h2:contains("Scores per Category") + div > table > tbody > tr').each(function (i, tr) {
             if (i > 0) {
                 var catName, catPTmp, catPercent, catSTmp, catScore;
                 var tempCat = $("td:nth-child(1)", tr).children();
@@ -300,6 +328,7 @@ function parseGradeEntries () {
                 var asstPointN = num(pointN.substring(0, pointN.indexOf("/")));
                 if(isNaN(asstPointD) || isNaN(asstPointN)){
                     console.log("In The Loop failed to process grade entries (NaN 237)");
+                    console.log("Failed on '" + nameText + "' (NaN 237)");
                     failed = true;
                     return;
                 }
@@ -345,6 +374,9 @@ function parseGradeEntries () {
                     //return;
                 }
             }
+            else{
+                console.log("In The Loop failed to process the assignment '" + nameText + "' and is pretending it has no effect on your grade. (351)");
+            }
         });
     } catch (err) {
         console.log("In The Loop failed to process grade entries");
@@ -362,7 +394,7 @@ function newCatChanged () {
 function makeCategoriesEditable () {
     if (pointageSystem) return;
     try {
-        $('h2:contains("Score per Category") + div > table > tbody > tr').each(function (i, tr) {
+        $('h2:contains("Scores per Category") + div > table > tbody > tr').each(function (i, tr) {
             if (i > 0) {
                 var percentStr = $("td:nth-child(2)", tr).text();
                 var percent = num(percentStr.substring(0, percentStr.length - 1));
@@ -378,7 +410,7 @@ function makeCategoriesEditable () {
 function addCategory () {
     try {
         var trToAdd = $("<tr style='display: none;'><td><input placeholder='Category Name' type='text' style='max-width:75%' class='addedCat' min='0'></input></td><td nowrap style='max-width:1px'><input min='0' class='addedCatWeight' value='0' style='max-width:65%;' type='number'></input>%</td><td style='max-width:1px' nowrap>-</td></tr>");
-        $("h2:contains('Score') + div > table > tbody > tr:last").after(trToAdd);
+        $("h2:contains('Scores per Category') + div > table > tbody > tr:last").after(trToAdd);
         trToAdd.fadeIn();
         $(".addedCat").change(newCatChanged);
         $(".addedCatWeight").change(newCatChanged);
@@ -392,7 +424,7 @@ function insertAddCatButton () {
     if (!pointageSystem) {
         try {
             var st = 'Category: <section style="display:inline;" class="flat"><button class="addCat">Add Category</button></section>';
-            $("h2:contains('Score') + div > table > tbody > tr:first > td:nth-child(1)").html(st);
+            $("h2:contains('Scores per Category') + div > table > tbody > tr:first > td:nth-child(1)").html(st);
             $(".addCat").click(addCategory);
 
         } catch (err) {
@@ -431,7 +463,7 @@ function parseScale () {
 }
 function setCategoryPercentageStr (index, newStr) {
     try {
-        $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
+        $("h2:contains('Scores per Category') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newStr);
         readdTooltips();
     } catch (err) {
         console.log("In The Loop failed to set the category percentage");
@@ -445,9 +477,9 @@ function setCategoryPercentage (index, newScore, animate) {
 
     try {
         if (!animate) {
-            $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
+            $("h2:contains('Scores per Category') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)").text(newScore + "%");
         } else {
-            var origElement = $("h2:contains('Score') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
+            var origElement = $("h2:contains('Scores per Category') + div > table > tbody > tr:nth-child(" + (index + 2) + ") td:nth-child(3)");
             var origScore = origElement.text() + "";
             origScore = num(origScore.substring(0, origScore.indexOf("%")));
             jQuery({
@@ -485,6 +517,9 @@ function sharedDelFunction (caller) {
             caller.parent().parent().fadeOut(170, function () {
                 $(this).remove();
             });
+            entries = entries.filter(function( obj ) {
+                return !(obj.name === nameText && obj.categoryName === cName);
+            });
             return;
         }
         var tr = caller.parent().parent();
@@ -518,6 +553,9 @@ function sharedDelFunction (caller) {
         }
         categories[elementPos].pointsN -= pointN;
         categories[elementPos].pointsD -= pointD;
+        entries = entries.filter(function( obj ) {
+            return !(obj.name === nameText && obj.categoryName === cName);
+        });
         if (categories[elementPos].pointsD === 0) {
             categories[elementPos].score = "-";
             setCategoryPercentageStr(elementPos, "-");
@@ -566,6 +604,15 @@ function insertTopRow () {
                     asstPointD = num(num(document.getElementById('aDen').value).toFixed(1)), //tofixed adds trailing zeroes
                     asstCalcScore = (Math.round((asstPointN / asstPointD * 100) * 100) / 100),
                     categoryName = categories[ACI].name;
+                var objToAddToEntries = {
+                            name: asstName,
+                            pointValN: asstPointN,
+                            pointValD: asstPointD,
+                            categoryName: categoryName,
+                            categoryIndex: ACI
+                        };
+                        entries.push(objToAddToEntries);
+
                 if(!isNaN(asstCalcScore))
                     asstCalcScore = asstCalcScore.toFixed(2);
                 else

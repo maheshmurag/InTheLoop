@@ -161,7 +161,6 @@ var themes = { //default theme set, although custom can change
         }
     }
 };
-var key = "";
 var custom_default = {
     name: "Custom Theme",
     key: "custom",

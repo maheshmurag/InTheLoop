@@ -1,9 +1,8 @@
-/*global console, window, chrome, $, document, CryptoJS*/
+/*global console, window, chrome, $, document, CryptoJS, setTimeout*/
 /* jshint shadow:true */
 
 //TODO: Set correct version number
-var ITLversion = "V0.5.5";
-var key = "";
+var ITLversion = "V0.6.0";
 var grades = [];
 
 var getYear = function () {
@@ -59,10 +58,12 @@ var setPeriodIDs = function (bString, studentID, subdomain) {
     function set(data) {
         var periodIDs = [];
         for (var i = 0; i < data.length; i++)
+        {
             periodIDs.push({
                 courseName: data[i].courseName,
                 periodID: data[i].periodID
             });
+        }
         gradesFromIDs(bString, periodIDs, 0, subdomain, studentID);
     }
     $.ajax({
@@ -232,10 +233,10 @@ chrome.runtime.onInstalled.addListener(function (details) {
 });
 
 //TODO: remove in production
-function testChangeGrade(callCheck) {
+function testChangeGrade(className, callCheck) {
     chrome.storage.local.get("classes", function (obj) {
         var x = obj.classes;
-        x.HAmLit = 88;
+        x[className] = 12;
         chrome.storage.local.set({
             classes: x
         });
@@ -316,6 +317,17 @@ chrome.extension.onMessage.addListener(
         }
         else if(request.action === "console.log"){
             console.log(request.message);
+        }
+        else if(request.action === "createSimpleNotification"){
+            var options = {
+                type: "basic",
+                iconUrl: "icons/notif.png",
+                title: request.title,
+                message: request.message
+            };
+            chrome.notifications.create(request.id, options, function(id) {
+                var timer = setTimeout(function(){chrome.notifications.clear(id);}, request.timeout);
+            });
         }
     }
 );
