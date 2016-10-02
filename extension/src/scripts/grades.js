@@ -25,7 +25,7 @@ function printCat(){
 function egg(){
     var name = $("div.content_margin h2:nth-child(1).float-l");
     var nameStr = btoa(name.text().trim().toLowerCase());
-
+    if(false){
         var bool = true;
         setInterval(function(){name.css('color', bool?'red':'green'); bool = !bool;}, 1000);
     }
