@@ -1,4 +1,4 @@
-/*global console, window, chrome, $, document, CryptoJS, setTimeout*/
+/*global console, window, chrome, $, document, CryptoJS, setTimeout, key*/
 /* jshint shadow:true */
 
 //TODO: Set correct version number

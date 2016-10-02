@@ -1,4 +1,4 @@
-/*global document, chrome, console, $, CryptoJS*/
+/*global document, chrome, console, $, CryptoJS, key*/
 var themes = { //default theme set, although custom can change
     none: {
         name: "No Theme",
