@@ -11,6 +11,8 @@ All data is stored locally. Its source code is available at https://github.com/m
 
 ##Changelog
 
+0.6.0 - Fixed the "scores per category" bug, added a notification when ITL fails, and added display of score before ITL processing
+
 0.5 - Way better notifications, better UI for deleting grades/theming.
 
 0.3 - Notifications
