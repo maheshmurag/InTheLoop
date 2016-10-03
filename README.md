@@ -9,7 +9,7 @@ Note: This extension only works for number grades (not for letter grades like "A
 ##Privacy
 -  All data is stored locally on the user's computer. No data about the user is collected or sent anywhere.
 -  The username & password information, if entered by the user, is encrypted and stored locally.
--  Data stored (only if the user voluntarily allows and enters it): school subdomain (i.e. "lynbrook", "montavista", etc), username, password, overall grade percentages for each class (used for notifications), theme selection/customization
+-  Data stored (only if the user voluntarily allows and enters it): school subdomain (i.e. "lynbrook", "montavista", etc), username, password, overall grade percentages for each class (used for notifications), and theme selection/customization options
 
 Its source code is available at https://github.com/mash99/InTheLoop.
 
