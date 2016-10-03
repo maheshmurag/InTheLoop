@@ -4,12 +4,22 @@ An extension that improves the SchoolLoop interface by letting users calculate w
 
 ##Installation
 In The Loop is available [here](https://chrome.google.com/webstore/detail/in-the-loop-for-school-lo/ppigcngidmooiiafkelbilbojiijffag).
-Note: This extension only works for number grades (not for letter grades like "A")
+Note: This extension only works for number grades (not for letter grades like "A") for now
 
 ##Privacy
-All data is stored locally. Its source code is available at https://github.com/mash99/InTheLoop.
+-  All data is stored locally on the user's computer. No data about the user is collected or sent anywhere.
+-  The username & password information, if entered by the user, is encrypted and stored locally.
+-  Data stored (only if the user voluntarily allows and enters it): school subdomain (i.e. "lynbrook", "montavista", etc), username, password, overall grade percentages for each class (used for notifications), theme selection/customization
+
+Its source code is available at https://github.com/mash99/InTheLoop.
+
+##Future
+1.  Make it work for letter grades!
+2.  Assignment features
 
 ##Changelog
+
+0.6.1 - Updated low-quality icons (still need an icon unique to ITL!)
 
 0.6.0 - Fixed the "scores per category" bug, added a notification when ITL fails, and added display of score before ITL processing
 
@@ -27,7 +37,7 @@ All data is stored locally. Its source code is available at https://github.com/m
 
 0.0.7 - Attempted fix for points-based (no weightage) grade parsing by detecting  
 
-##Demo of Grade Calculation:
+##Demo of Grade Calculation (demoing version 0.2.1):
 Adding Grades
 ![](https://i.gyazo.com/6c424770f10b8598c4439b36c89193b4.gif)
 
